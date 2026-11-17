@@ -1,0 +1,13 @@
+# Dépendances et build
+node_modules/
+dist/
+*.log
+
+# Fichiers d'environnement (non utilisés : la configuration publique est dans src/config/supabase.js)
+.env*
+
+# Système et éditeur
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
