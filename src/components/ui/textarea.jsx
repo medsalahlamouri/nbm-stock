@@ -1,3 +1,4 @@
+// Composant shadcn/ui « textarea » (licence MIT), adapté à la maquette (mêmes bordures que les champs).
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
@@ -6,7 +7,9 @@ function Textarea({ className, ...props }) {
     <textarea
       data-slot="textarea"
       className={cn(
-        'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+        'flex min-h-20 w-full rounded-[10px] border border-line2 bg-surf px-3 py-2.5 text-[14px] text-ink transition-[border-color,box-shadow] outline-none placeholder:text-muted2',
+        'focus-visible:border-ink focus-visible:ring-1 focus-visible:ring-ink focus-visible:outline-none',
+        'disabled:cursor-not-allowed disabled:bg-surf2 aria-invalid:border-red aria-invalid:ring-1 aria-invalid:ring-red',
         className,
       )}
       {...props}

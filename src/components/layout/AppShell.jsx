@@ -1,0 +1,93 @@
+/*
+ * Habillage des écrans connectés (docs/DESIGN.md §3) :
+ * menu latéral noir fixe (≥ 1024 px) ou en panneau coulissant (tablette), en-tête, contenu centré.
+ * Le contenu de chaque page apparaît avec une courte transition ; les pages sont chargées à la demande.
+ */
+import { Suspense, useState } from 'react'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { motion } from 'motion/react'
+import { Menu } from 'lucide-react'
+import { toast } from 'sonner'
+import { useAuth } from '@/hooks/useAuth'
+import { formatDateLongue } from '@/lib/format'
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
+import { Sidebar } from '@/components/layout/Sidebar'
+import { FilAriane, FilProvider } from '@/components/layout/FilAriane'
+import { ThemeToggle } from '@/components/layout/ThemeToggle'
+import { Alertes } from '@/components/layout/Alertes'
+import { Avatar } from '@/components/commun/Avatar'
+import { ChargementPage } from '@/components/layout/Chargement'
+import { transitionPage } from '@/components/commun/animations'
+
+export function AppShell() {
+  const { utilisateur, deconnexion } = useAuth()
+  const [menuOuvert, setMenuOuvert] = useState(false)
+  // Date du jour de l'en-tête, calculée une fois à l'ouverture de l'application
+  const [aujourdHui] = useState(() => formatDateLongue(new Date()))
+  const location = useLocation()
+  const naviguer = useNavigate()
+  const compte = utilisateur?.profil === 'GERANT' ? '/gerant/compte' : '/chef/compte'
+
+  const seDeconnecter = async () => {
+    setMenuOuvert(false)
+    await deconnexion()
+    toast.success('Vous êtes déconnecté.')
+    naviguer('/connexion', { replace: true })
+  }
+
+  return (
+    <FilProvider>
+      <div className="min-h-svh bg-bg">
+        <a href="#contenu" className="sr-only z-[60] rounded-lg bg-strong px-3 py-2 text-bg focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
+          Aller au contenu
+        </a>
+
+        {/* Menu latéral fixe (ordinateur) */}
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] border-r border-sideline lg:block">
+          <Sidebar onDeconnexion={seDeconnecter} />
+        </aside>
+
+        {/* Menu latéral coulissant (tablette, moins de 1024 px) */}
+        <Sheet open={menuOuvert} onOpenChange={setMenuOuvert}>
+          <SheetContent side="left" className="w-[280px] border-sideline bg-side p-0 sm:max-w-[280px] [&>button]:text-sidetxt">
+            <SheetTitle className="sr-only">Menu principal</SheetTitle>
+            <SheetDescription className="sr-only">Navigation dans l'application</SheetDescription>
+            <Sidebar onNaviguer={() => setMenuOuvert(false)} onDeconnexion={seDeconnecter} />
+          </SheetContent>
+        </Sheet>
+
+        <div className="lg:pl-[260px]">
+          {/* En-tête */}
+          <header className="sticky top-0 z-30 flex min-h-[64px] items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur-md sm:px-8">
+            <button
+              type="button"
+              onClick={() => setMenuOuvert(true)}
+              aria-label="Ouvrir le menu"
+              className="inline-flex size-[38px] cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surf text-ink hover:bg-surf2 lg:hidden"
+            >
+              <Menu className="size-[18px]" />
+            </button>
+            <FilAriane className="flex-1" />
+            <div className="flex shrink-0 items-center gap-2.5">
+              <span className="mr-1 hidden text-[14px] text-mutedtxt md:inline">{aujourdHui}</span>
+              <ThemeToggle />
+              <Alertes />
+              <Link to={compte} aria-label="Mon compte" className="rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+                <Avatar utilisateur={utilisateur} taille={42} />
+              </Link>
+            </div>
+          </header>
+
+          {/* Contenu */}
+          <main id="contenu" className="mx-auto w-full max-w-[1280px] px-4 pt-7 pb-12 sm:px-8">
+            <motion.div key={location.pathname} {...transitionPage}>
+              <Suspense fallback={<ChargementPage />}>
+                <Outlet />
+              </Suspense>
+            </motion.div>
+          </main>
+        </div>
+      </div>
+    </FilProvider>
+  )
+}

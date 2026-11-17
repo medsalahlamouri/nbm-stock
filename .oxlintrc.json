@@ -12,7 +12,7 @@
   },
   "overrides": [
     {
-      "files": ["src/components/ui/**"],
+      "files": ["src/components/ui/**", "src/routes.jsx"],
       "rules": {
         "react/only-export-components": "off"
       }

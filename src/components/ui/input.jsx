@@ -1,3 +1,5 @@
+// Composant shadcn/ui « input » (licence MIT), adapté à la maquette :
+// hauteur 44 px, rayon 10 px, bordure --line2, fond --surf, focus contour 2 px encre.
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
@@ -7,9 +9,11 @@ function Input({ className, type, ...props }) {
       type={type}
       data-slot="input"
       className={cn(
-        'border-input selection:bg-primary selection:text-primary-foreground file:text-foreground placeholder:text-muted-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-        'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+        'h-11 w-full min-w-0 rounded-[10px] border border-line2 bg-surf px-3 text-[14px] text-ink transition-[border-color,box-shadow] duration-150 outline-none placeholder:text-muted2',
+        'file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
+        'focus-visible:border-ink focus-visible:ring-1 focus-visible:ring-ink focus-visible:outline-none',
+        'disabled:cursor-not-allowed disabled:bg-surf2 disabled:text-muted read-only:bg-surf2',
+        'aria-invalid:border-red aria-invalid:ring-1 aria-invalid:ring-red',
         className,
       )}
       {...props}

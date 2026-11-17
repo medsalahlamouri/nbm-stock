@@ -1,31 +1,40 @@
-import { ThemeProvider, useTheme } from '@/components/layout/ThemeProvider'
-import { Button } from '@/components/ui/button'
-import { Toaster } from '@/components/ui/sonner'
-
 /*
- * Écran provisoire de la phase 2 : vérifie que Tailwind, le thème, les polices
- * et shadcn/ui fonctionnent. Il sera remplacé au lot 0 par le routeur et l'AppShell.
+ * Racine de l'application : assemble les fournisseurs de contexte.
+ * - ThemeProvider : thème clair / sombre (mémorisé)
+ * - QueryClientProvider : cache des données (TanStack Query)
+ * - AuthProvider : session Supabase et profil de l'utilisateur connecté
+ * - TooltipProvider : infobulles shadcn/ui
+ * - MotionConfig : animations désactivées si le système demande de les réduire
+ * - RouterProvider : routes et gardes (src/routes.jsx)
+ * - Toaster : notifications en bas à droite (sonner)
  */
-function VerificationSocle() {
-  const { theme, basculer } = useTheme()
-  return (
-    <main className="mx-auto flex min-h-svh max-w-xl flex-col justify-center gap-4 px-8">
-      <h1 className="font-serif text-[30px] font-semibold tracking-[-0.02em]">NBM Stock</h1>
-      <p className="text-muted-foreground">
-        Projet Vite + React prêt. Thème actuel : {theme === 'dark' ? 'sombre' : 'clair'}.
-      </p>
-      <div className="flex gap-2">
-        <Button onClick={basculer}>Changer de thème</Button>
-      </div>
-    </main>
-  )
-}
+import { Suspense } from 'react'
+import { RouterProvider } from 'react-router'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { MotionConfig } from 'motion/react'
+import { ThemeProvider } from '@/components/layout/ThemeProvider'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from '@/components/ui/sonner'
+import { AuthProvider } from '@/hooks/useAuth'
+import { queryClient } from '@/lib/requetes'
+import { router } from '@/routes'
+import { EcranDemarrage } from '@/components/layout/Chargement'
 
 export default function App() {
   return (
     <ThemeProvider>
-      <VerificationSocle />
-      <Toaster />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider delayDuration={300}>
+            <MotionConfig reducedMotion="user">
+              <Suspense fallback={<EcranDemarrage />}>
+                <RouterProvider router={router} />
+              </Suspense>
+              <Toaster />
+            </MotionConfig>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   )
 }
