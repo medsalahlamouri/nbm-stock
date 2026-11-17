@@ -83,7 +83,7 @@ docs/                      contrat back-end, système visuel, fiches des écrans
 
 ## Comptes de test
 
-- Gérant : `gerant.nbm@example.com`
-- Chef magasin : `chef.nbm@example.com`
+- Gérant : `gerant@gmail.com`
+- Chef magasin : `chef@gmail.com`
 
 Les mots de passe ne figurent dans aucun fichier du dépôt.
