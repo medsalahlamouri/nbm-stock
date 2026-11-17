@@ -7,7 +7,7 @@ import { Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
-export function Champ({ libelle, obligatoire, erreur, aide, verrouille, infoVerrou, className, children, droite }) {
+export function Champ({ libelle, obligatoire, erreur, aide, verrouille, infoVerrou, className, children, droite, modifie = false }) {
   const id = useId()
   const idAide = `${id}-aide`
   const idErreur = `${id}-erreur`
@@ -17,6 +17,8 @@ export function Champ({ libelle, obligatoire, erreur, aide, verrouille, infoVerr
         id: children.props.id ?? id,
         'aria-invalid': erreur ? true : undefined,
         'aria-describedby': decrit,
+        // Champ modifié signalé en doré (formulaires de modification)
+        className: cn(children.props.className, modifie && !erreur && 'border-gold2 bg-hl'),
       })
     : children
 
@@ -27,6 +29,11 @@ export function Champ({ libelle, obligatoire, erreur, aide, verrouille, infoVerr
           <label htmlFor={children?.props?.id ?? id} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink2">
             {libelle}
             {obligatoire && <span className="text-red" aria-hidden="true">*</span>}
+            {modifie && (
+              <span className="size-1.5 rounded-full bg-gold2" title="Champ modifié">
+                <span className="sr-only">(modifié)</span>
+              </span>
+            )}
             {verrouille && (
               <Tooltip>
                 <TooltipTrigger asChild>

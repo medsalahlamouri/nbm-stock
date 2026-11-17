@@ -52,6 +52,17 @@ export function GrilleIndicateurs({ className, children }) {
   return <div className={cn('grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] gap-4', className)}>{children}</div>
 }
 
+/** Petite tuile chiffrée sur fond --surf2 (synthèses, évaluation) */
+export function Tuile({ libelle, valeur, className, ton }) {
+  const couleurs = { danger: 'text-dfg', ok: 'text-okfg', warn: 'text-wfg', info: 'text-ifg' }
+  return (
+    <div className={cn('min-w-0 rounded-xl border border-line bg-surf2 px-4 py-3.5', className)}>
+      <p className="truncate text-[13px] text-mutedtxt">{libelle}</p>
+      <p className={cn('mt-1 truncate text-[22px] leading-tight font-semibold tracking-[-0.01em] text-strong tabular', couleurs[ton])}>{valeur}</p>
+    </div>
+  )
+}
+
 /** Ligne « libellé … valeur » des récapitulatifs */
 export function LigneInfo({ libelle, children, className, fort = false }) {
   return (
