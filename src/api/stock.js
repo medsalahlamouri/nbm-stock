@@ -48,13 +48,13 @@ export async function historiqueProduit(idProduit, stockActuel) {
  * Série pour la courbe d'évolution du stock : un point par jour sur la période,
  * stock en fin de journée (reconstitué en remontant les mouvements depuis le stock actuel).
  */
-export function serieStock(historique, stockActuel, jours = 90) {
+export function serieStock(historique, stockActuel, jours = 90, pas = 1) {
   const fin = new Date()
   fin.setHours(23, 59, 59, 999)
   const points = []
   let stock = Number(stockActuel ?? 0)
   let index = 0
-  for (let j = 0; j < jours; j += 1) {
+  for (let j = 0; j < jours; j += pas) {
     const jour = new Date(fin)
     jour.setDate(fin.getDate() - j)
     // Annule les mouvements postérieurs à la fin de ce jour pour obtenir le stock à cette date

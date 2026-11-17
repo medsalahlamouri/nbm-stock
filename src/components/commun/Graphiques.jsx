@@ -127,7 +127,35 @@ export function CourbeStock({ donnees, seuil, libelleSeuil = 'Point de commande'
               label={{ value: `${libelleSeuil} (${formatNombre(seuil)})`, position: 'insideTopRight', fill: 'var(--dfg)', fontSize: 11 }}
             />
           )}
-          <Area type="stepAfter" dataKey="stock" stroke="var(--strong)" strokeWidth={2} fill="url(#degradeStock)" isAnimationActive={!reduit} animationDuration={700} />
+          <Area
+            type="monotone"
+            dataKey="stock"
+            stroke="var(--strong)"
+            strokeWidth={2.25}
+            fill="url(#degradeStock)"
+            isAnimationActive={!reduit}
+            animationDuration={700}
+            dot={
+              donnees.length <= 20
+                ? (p) => (
+                    <circle
+                      key={p.index}
+                      cx={p.cx}
+                      cy={p.cy}
+                      r={4.5}
+                      fill="var(--surf)"
+                      stroke={seuil !== null && seuil !== undefined && p.value <= seuil ? 'var(--red)' : 'var(--strong)'}
+                      strokeWidth={2}
+                    />
+                  )
+                : false
+            }
+            activeDot={{ r: 5.5, fill: 'var(--strong)', stroke: 'var(--surf)', strokeWidth: 2 }}
+          >
+            {donnees.length <= 20 && (
+              <LabelList dataKey="stock" position="top" offset={10} formatter={formatNombre} style={{ fontSize: 11, fontWeight: 600, fill: 'var(--ink)' }} />
+            )}
+          </Area>
         </AreaChart>
       </ResponsiveContainer>
     </div>
