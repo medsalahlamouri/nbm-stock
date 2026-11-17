@@ -79,4 +79,8 @@ Toutes les fiches de `docs/ECRANS.md` ont au moins une capture. Sont sans captur
 | `11a`, `11e` | Modifier ou supprimer un mouvement saisi ; motifs « Retour atelier », « Perte / casse » ; date, heure, observation | Aucune RPC de modification ni de suppression ; `enregistrer_mouvement(p_id_produit, p_quantite)` déduit le motif (MP → Consommation atelier, article → Production atelier). C5 : « un mouvement enregistré n'est jamais modifiable » | Pas de modification ni de suppression. Les corrections passent par l'**inventaire** (C6). `11e` sert de modèle visuel pour l'aperçu « Effet sur le stock » de C5. |
 | `11b` | Choix du type et du motif | Motif imposé par le type du produit | Motif affiché en lecture seule, déduit du produit |
 
-Les autres écarts éventuels seront signalés écran par écran pendant la construction.
+| `2a`, `8a`, `15c` | « Valeur du stock MP » | `v_etat_stock.valeur_stock` n'est renseignée que pour les articles (stock × prix de vente) | Calculée dans la front-end : stock × dernier prix d'achat facturé (à défaut, meilleur devis) |
+| `7a` | Références `USR-02`, `USR-03` | `id_utilisateur` est un uuid, sans numéro | Pas de référence affichée (rien n'est inventé) ; e-mail en sous-ligne |
+| `14c` | Adresse et téléphone de NBM sur la facture | Aucune table « entreprise » | Nom et ville seulement, à compléter dans `src/config/entreprise.js` |
+| `4c` | « fournisseur depuis avril 2026 » | Pas de date de création dans `fournisseur` | Non affiché |
+| `13f`, `11b` | Date et heure modifiables | `modifier_demande` ne modifie ni client ni date ; `enregistrer_mouvement` date le mouvement à l'instant | Champs verrouillés ou absents |
