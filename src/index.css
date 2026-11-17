@@ -1,0 +1,299 @@
+/*
+ * Feuille de style globale de NBM Stock.
+ * 1. Tailwind CSS 4 et animations de shadcn/ui
+ * 2. Variables de la maquette (docs/DESIGN.md §1), thème clair et sombre
+ * 3. Jetons shadcn/ui reliés aux variables de la maquette
+ * 4. Exposition des jetons à Tailwind (@theme inline) : bg-surf, text-muted, bg-okbg…
+ */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Le thème sombre est piloté par l'attribut data-theme="dark" sur <html> */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- 2. Variables de la maquette ---------- */
+:root,
+[data-theme='light'] {
+  --bg: #f4f3ef;
+  --surf: #ffffff;
+  --surf2: #f8f7f4;
+  --line: #e5e3dd;
+  --line2: #d2cfc7;
+  --line3: #eeece7;
+  --grid: #eae8e2;
+  --seg: #eceae4;
+  --ink: #111111;
+  --strong: #111111;
+  --ink2: #2d2d2a;
+  --ink3: #4a4945;
+  --muted: #6a6964;
+  --muted2: #8a8984;
+  --nbg: #eceae5;
+  --nfg: #55544f;
+  --hl: #f3eee2;
+  --side: #0e0e10;
+  --sideline: #0e0e10;
+  --sidetxt: #e6e6e3;
+  --sidemut: #94948f;
+  --sideon: #26262a;
+  --sidehi: #ffffff;
+  --sideav: #f0efeb;
+  --sideavt: #111111;
+  --okbg: #e4efe0;
+  --okfg: #2b5a27;
+  --dbg: #f7e1db;
+  --dfg: #a12f21;
+  --wbg: #f5e8cb;
+  --wfg: #79520e;
+  --ibg: #e3e9f1;
+  --ifg: #2b4a6b;
+  --red: #c9533f;
+  --gold: #c2a066;
+  --gold2: #b4862c;
+  --sand: #cfcbc1;
+  --green: #3d7a36;
+  --blue: #5b7a99;
+  --dline: #ebd0c8;
+  --dline2: #e2b9ae;
+  --dline3: #d9a497;
+  --dtxt: #5a2a20;
+  --shadow-card: 0 1px 2px rgba(26, 24, 20, 0.04);
+  --shadow-hover: 0 6px 18px rgba(26, 24, 20, 0.08);
+  --shadow-seg: 0 1px 3px rgba(26, 24, 20, 0.14);
+  --shadow-pop: 0 18px 48px rgba(26, 24, 20, 0.08);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0c0c0d;
+  --surf: #161618;
+  --surf2: #1c1c1f;
+  --line: #2a2a2e;
+  --line2: #3b3b41;
+  --line3: #222226;
+  --grid: #26262a;
+  --seg: #222226;
+  --ink: #f1f0ec;
+  --strong: #f1f0ec;
+  --ink2: #dadad4;
+  --ink3: #bebdb7;
+  --muted: #9e9d97;
+  --muted2: #7e7d86;
+  --nbg: #2a2a2f;
+  --nfg: #c4c3bd;
+  --hl: #2a2720;
+  --side: #050506;
+  --sideline: #26262a;
+  --sidetxt: #e0e0dc;
+  --sidemut: #86868f;
+  --sideon: #1c1c20;
+  --sidehi: #ffffff;
+  --sideav: #f0efeb;
+  --sideavt: #111111;
+  --okbg: #18291a;
+  --okfg: #8ccb85;
+  --dbg: #3a1c18;
+  --dfg: #f09381;
+  --wbg: #3a2e15;
+  --wfg: #e5bc6a;
+  --ibg: #1a2533;
+  --ifg: #95b6d9;
+  --red: #e2654f;
+  --gold: #c9a86a;
+  --gold2: #d6aa4e;
+  --sand: #4b4b52;
+  --green: #5fa556;
+  --blue: #7fa0c2;
+  --dline: #4a2a24;
+  --dline2: #5a3028;
+  --dline3: #6a3a30;
+  --dtxt: #f3c1b5;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-seg: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-pop: 0 18px 48px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+/* ---------- 3. Jetons shadcn/ui ---------- */
+:root {
+  --radius: 0.625rem; /* 10 px : boutons et champs */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surf);
+  --card-foreground: var(--ink);
+  --popover: var(--surf);
+  --popover-foreground: var(--ink);
+  --primary: var(--strong);
+  --primary-foreground: var(--bg);
+  --secondary: var(--surf2);
+  --secondary-foreground: var(--ink);
+  --muted-bg: var(--surf2);
+  --muted-foreground: var(--muted);
+  --accent: var(--surf2);
+  --accent-foreground: var(--ink);
+  --destructive: var(--red);
+  --border: var(--line);
+  --input: var(--line2);
+  --ring: var(--ink);
+  --chart-1: var(--strong);
+  --chart-2: var(--gold);
+  --chart-3: var(--blue);
+  --chart-4: var(--green);
+  --chart-5: var(--red);
+  --sidebar: var(--side);
+  --sidebar-foreground: var(--sidetxt);
+  --sidebar-primary: var(--sidehi);
+  --sidebar-primary-foreground: var(--side);
+  --sidebar-accent: var(--sideon);
+  --sidebar-accent-foreground: var(--sidehi);
+  --sidebar-border: var(--sideline);
+  --sidebar-ring: var(--sideav);
+}
+
+/* ---------- 4. Exposition à Tailwind ---------- */
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Fraunces', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Consolas, monospace;
+
+  /* Jetons shadcn/ui */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted-bg);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Variables de la maquette (noms courts de DESIGN.md) */
+  --color-bg: var(--bg);
+  --color-surf: var(--surf);
+  --color-surf2: var(--surf2);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-line3: var(--line3);
+  --color-grid: var(--grid);
+  --color-seg: var(--seg);
+  --color-ink: var(--ink);
+  --color-strong: var(--strong);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --color-muted2: var(--muted2);
+  --color-mutedtxt: var(--muted);
+  --color-nbg: var(--nbg);
+  --color-nfg: var(--nfg);
+  --color-hl: var(--hl);
+  --color-side: var(--side);
+  --color-sideline: var(--sideline);
+  --color-sidetxt: var(--sidetxt);
+  --color-sidemut: var(--sidemut);
+  --color-sideon: var(--sideon);
+  --color-sidehi: var(--sidehi);
+  --color-sideav: var(--sideav);
+  --color-sideavt: var(--sideavt);
+  --color-okbg: var(--okbg);
+  --color-okfg: var(--okfg);
+  --color-dbg: var(--dbg);
+  --color-dfg: var(--dfg);
+  --color-wbg: var(--wbg);
+  --color-wfg: var(--wfg);
+  --color-ibg: var(--ibg);
+  --color-ifg: var(--ifg);
+  --color-red: var(--red);
+  --color-gold: var(--gold);
+  --color-gold2: var(--gold2);
+  --color-sand: var(--sand);
+  --color-green: var(--green);
+  --color-blue: var(--blue);
+  --color-dline: var(--dline);
+  --color-dline2: var(--dline2);
+  --color-dline3: var(--dline3);
+  --color-dtxt: var(--dtxt);
+
+  /* Rayons de la maquette */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+
+  /* Ombres de la maquette */
+  --shadow-card: var(--shadow-card);
+  --shadow-hover: var(--shadow-hover);
+  --shadow-seg: var(--shadow-seg);
+  --shadow-pop: var(--shadow-pop);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 14px;
+    line-height: 1.55;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  /* Focus visible au clavier : contour 2 px couleur encre (DESIGN.md) */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--hl);
+    color: var(--ink);
+  }
+}
+
+/* Chiffres alignés dans les tableaux et indicateurs */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Réduction des animations demandée par le système */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="NBM Stock — gestion de stock de Nabeul Bois et Meubles" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>NBM Stock — Nabeul Bois et Meubles</title>
+
+    <!-- Polices : Fraunces (titres) et Inter (texte) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap"
+    />
+
+    <!-- Applique le thème mémorisé avant le premier affichage (évite un flash clair en mode sombre) -->
+    <script>
+      try {
+        var t = localStorage.getItem('nbm-theme')
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.setAttribute('data-theme', t)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
