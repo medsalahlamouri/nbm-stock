@@ -140,7 +140,7 @@ export async function listerJournal({ idUtilisateur, idsUtilisateurs, domaine, d
 /** Toutes les lignes d'une période (compteurs et graphiques) */
 export async function lireJournalPeriode({ idUtilisateur, idsUtilisateurs, depuis }) {
   return toutLire(() => {
-    let requete = supabase.from('journal_activite').select('id_journal, id_utilisateur, date_heure, action, objet, detail')
+    let requete = supabase.from('journal_activite').select('id_journal, id_utilisateur, date_heure, action, objet, detail, utilisateur(nom, prenom)')
     if (idUtilisateur) requete = requete.eq('id_utilisateur', idUtilisateur)
     if (idsUtilisateurs) requete = requete.in('id_utilisateur', idsUtilisateurs.length ? idsUtilisateurs : ['00000000-0000-0000-0000-000000000000'])
     if (depuis) requete = requete.gte('date_heure', depuis)
