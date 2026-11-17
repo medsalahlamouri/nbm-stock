@@ -50,3 +50,6 @@ export const PROFILS = {
   GERANT: 'Gérant',
   CHEF_MAGASIN: 'Chef magasin',
 }
+
+/** Couleurs des séries de graphiques, dans l'ordre de la maquette */
+export const COULEURS = ['var(--red)', 'var(--gold)', 'var(--green)', 'var(--sand)', 'var(--strong)', 'var(--blue)', 'var(--gold2)', 'var(--muted2)']

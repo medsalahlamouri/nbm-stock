@@ -39,13 +39,73 @@ export const DOMAINES_JOURNAL = {
   statistiques: { objets: ['produit'], actions: ['MODIFICATION'] },
 }
 
-/** Domaine d'une ligne du journal (pour la couleur et les compteurs) */
-export function domaineLigne(ligne) {
-  for (const [nom, d] of Object.entries(DOMAINES_JOURNAL)) {
-    if (nom === 'statistiques') continue
+/** Domaines affichés (badge et onglets) */
+export const LIBELLES_DOMAINES = {
+  stock: { libelle: 'Stock', ton: 'neutral' },
+  achats: { libelle: 'Achats', ton: 'info' },
+  ventes: { libelle: 'Ventes', ton: 'ok' },
+  comptes: { libelle: 'Comptes', ton: 'warn' },
+  statistiques: { libelle: 'Statistiques', ton: 'gold' },
+  connexion: { libelle: 'Connexion', ton: 'neutral' },
+  autre: { libelle: 'Autre', ton: 'neutral' },
+}
+
+/**
+ * Domaine d'une ligne du journal.
+ * Gérant : les modifications de produits sont des réglages de paramètres de calcul (« Statistiques »).
+ * Chef : connexions et changements de mot de passe forment le domaine « Connexion ».
+ */
+export function domaineLigne(ligne, profil) {
+  if (['CONNEXION', 'CHANGEMENT_MDP'].includes(ligne.action)) return profil === 'GERANT' ? 'comptes' : 'connexion'
+  if (profil === 'GERANT' && ligne.objet === 'produit' && ligne.action === 'MODIFICATION') return 'statistiques'
+  for (const nom of ['stock', 'achats', 'ventes', 'comptes']) {
+    const d = DOMAINES_JOURNAL[nom]
     if (d.objets.includes(ligne.objet) || d.actions.includes(ligne.action)) return nom
   }
   return 'autre'
+}
+
+const OBJETS = {
+  fournisseur: ['Fournisseur', 'm'],
+  devis: ['Devis', 'm'],
+  produit: ['Produit', 'm'],
+  client: ['Client', 'm'],
+  utilisateur: ['Compte', 'm'],
+  demande_client: ['Demande', 'f'],
+  ligne_demande: ['Demande', 'f'],
+  commande_fournisseur: ['Commande', 'f'],
+  facture_fournisseur: ['Facture fournisseur', 'f'],
+  facture_client: ['Facture client', 'f'],
+  mouvement_stock: ['Mouvement', 'm'],
+}
+const PARTICIPES = {
+  AJOUT: ['ajouté', 'enregistrée'],
+  MODIFICATION: ['modifié', 'modifiée'],
+  SUPPRESSION: ['supprimé', 'supprimée'],
+  DESACTIVATION: ['désactivé', 'désactivée'],
+  REACTIVATION: ['réactivé', 'réactivée'],
+  ANNULATION: ['annulé', 'annulée'],
+}
+const OPERATIONS = {
+  MOUVEMENT: 'Mouvement de stock',
+  INVENTAIRE: 'Inventaire validé',
+  COMMANDE: 'Commande passée',
+  FACTURE_FOURNISSEUR: 'Facture fournisseur saisie',
+  FACTURE_CLIENT: 'Facture client établie',
+  CONNEXION: 'Connexion',
+  CHANGEMENT_MDP: 'Mot de passe changé',
+  CREATION_COMPTE: 'Compte chef créé',
+  REINITIALISATION_MDP: 'Mot de passe réinitialisé',
+  SAUVEGARDE: 'Sauvegarde téléchargée',
+}
+
+/** Libellé lisible d'une opération : « Mouvement de stock », « Fournisseur ajouté », « Demande annulée »… */
+export function libelleOperation(ligne) {
+  if (OPERATIONS[ligne.action] && !(ligne.action === 'ANNULATION')) return OPERATIONS[ligne.action]
+  const participe = PARTICIPES[ligne.action]
+  const [nom, genre] = OBJETS[ligne.objet] ?? [null, 'm']
+  if (participe && nom) return `${nom} ${genre === 'f' ? participe[1] : participe[0]}`
+  return libelleAction(ligne.action).libelle
 }
 
 function filtrerDomaine(requete, domaine) {

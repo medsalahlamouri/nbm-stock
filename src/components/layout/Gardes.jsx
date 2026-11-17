@@ -30,8 +30,10 @@ export function RouteProfil({ profil }) {
 }
 
 export function RoutePublique() {
-  const { session, utilisateur, chargement } = useAuth()
-  if (chargement) return <EcranDemarrage />
+  const { session, utilisateur } = useAuth()
+  // Écran de démarrage seulement à l'ouverture : pendant une connexion, le formulaire reste affiché
+  // (il doit pouvoir montrer « Compte désactivé » si le serveur refuse).
+  if (session === undefined) return <EcranDemarrage />
   if (session && utilisateur?.actif) {
     return <Navigate to={utilisateur.doit_changer_mdp ? '/changer-mot-de-passe' : accueilDuProfil(utilisateur.profil)} replace />
   }
