@@ -1,6 +1,6 @@
-// Écran provisoire (B3) : remplacé par l'écran définitif dans son lot.
-import { EcranAVenir } from '@/components/commun/EcranAVenir'
+// B3 — Stock des articles (/gerant/stock/articles) : voir StockProduits.jsx
+import { StockProduits } from '@/pages/gerant/StockProduits'
 
 export default function StockArticles() {
-  return <EcranAVenir titre="Stock des articles" fiche="B3" />
+  return <StockProduits type="ARTICLE" />
 }

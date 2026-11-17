@@ -1,6 +1,6 @@
-// Écran provisoire (B2) : remplacé par l'écran définitif dans son lot.
-import { EcranAVenir } from '@/components/commun/EcranAVenir'
+// B2 — Stock des matières premières (/gerant/stock/matieres) : voir StockProduits.jsx
+import { StockProduits } from '@/pages/gerant/StockProduits'
 
 export default function StockMatieres() {
-  return <EcranAVenir titre="Stock des matières premières" fiche="B2" />
+  return <StockProduits type="MP" />
 }
