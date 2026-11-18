@@ -1,7 +1,6 @@
 # Maquette — index des captures
 
-Captures PNG de la maquette « Maquette NBM Stock », dans
-`docs/maquette/captures/`.
+Captures PNG de la maquette « NBM Stock », dans `docs/maquette/captures/`.
 
 Les chiffres et les noms affichés sont des **exemples** : l'application lit toujours les données réelles de Supabase.
 **La maquette fait foi pour le visuel, `docs/BACKEND.md` pour les données et les règles.**

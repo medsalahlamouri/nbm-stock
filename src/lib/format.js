@@ -1,5 +1,5 @@
 /*
- * Formatage des valeurs affichées (docs/docs/CONVENTIONS.md §4 règle 19) :
+ * Formatage des valeurs affichées (docs/CONVENTIONS.md §4 règle 19) :
  * - montants : « 1 234,500 DT » (3 décimales) dans les documents, arrondis dans les indicateurs ;
  * - dates : « 13/11/2026 » ; date longue de l'en-tête : « Vendredi 13 novembre 2026 » ;
  * - téléphone tunisien à 8 chiffres : « 73 000 101 » ;
