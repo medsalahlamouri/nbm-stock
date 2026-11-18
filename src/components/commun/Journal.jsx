@@ -13,7 +13,15 @@ import { EtatVide } from '@/components/commun/Etats'
 import { Onglets } from '@/components/commun/Onglets'
 import { Recherche } from '@/components/commun/Recherche'
 
-export function JournalActivite({ lignes, profil, domaines, afficherUtilisateur = false, chargement, erreur, onReessayer }) {
+export function JournalActivite({
+  lignes,
+  profil,
+  domaines,
+  afficherUtilisateur = false,
+  chargement,
+  erreur,
+  onReessayer,
+}) {
   const [domaine, setDomaine] = useState('tout')
   const [recherche, setRecherche] = useState('')
 
@@ -37,37 +45,84 @@ export function JournalActivite({ lignes, profil, domaines, afficherUtilisateur 
   const filtrees = useMemo(
     () =>
       enrichies.filter(
-        (l) => (domaine === 'tout' || l.domaine === domaine) && correspond(recherche, l.operation, l.detail, l.auteur, LIBELLES_DOMAINES[l.domaine]?.libelle),
+        (l) =>
+          (domaine === 'tout' || l.domaine === domaine) &&
+          correspond(
+            recherche,
+            l.operation,
+            l.detail,
+            l.auteur,
+            LIBELLES_DOMAINES[l.domaine]?.libelle,
+          ),
       ),
     [enrichies, domaine, recherche],
   )
 
   const colonnes = [
-    { id: 'date', entete: 'Date', cellule: (l) => <span className="tabular">{formatDate(l.date_heure)}</span>, largeur: 120 },
-    { id: 'heure', entete: 'Heure', cellule: (l) => <span className="text-mutedtxt tabular">{formatHeure(l.date_heure)}</span>, largeur: 80 },
+    {
+      id: 'date',
+      entete: 'Date',
+      cellule: (l) => <span className="tabular">{formatDate(l.date_heure)}</span>,
+      largeur: 120,
+    },
+    {
+      id: 'heure',
+      entete: 'Heure',
+      cellule: (l) => <span className="text-mutedtxt tabular">{formatHeure(l.date_heure)}</span>,
+      largeur: 80,
+    },
     ...(afficherUtilisateur
-      ? [{ id: 'auteur', entete: 'Chef magasin', cellule: (l) => <span className="font-medium">{l.auteur || '—'}</span>, tri: (l) => l.auteur }]
+      ? [
+          {
+            id: 'auteur',
+            entete: 'Chef magasin',
+            cellule: (l) => <span className="font-medium">{l.auteur || '—'}</span>,
+            tri: (l) => l.auteur,
+          },
+        ]
       : []),
     {
       id: 'domaine',
       entete: 'Domaine',
-      cellule: (l) => <Badge ton={LIBELLES_DOMAINES[l.domaine]?.ton}>{LIBELLES_DOMAINES[l.domaine]?.libelle}</Badge>,
+      cellule: (l) => (
+        <Badge ton={LIBELLES_DOMAINES[l.domaine]?.ton}>
+          {LIBELLES_DOMAINES[l.domaine]?.libelle}
+        </Badge>
+      ),
       largeur: 120,
     },
-    { id: 'operation', entete: 'Opération', cellule: (l) => <span className="font-semibold text-ink">{l.operation}</span> },
-    { id: 'detail', entete: 'Détail', cellule: (l) => <span className="text-ink3">{l.detail || '—'}</span>, classe: 'min-w-[240px]' },
+    {
+      id: 'operation',
+      entete: 'Opération',
+      cellule: (l) => <span className="text-ink font-semibold">{l.operation}</span>,
+    },
+    {
+      id: 'detail',
+      entete: 'Détail',
+      cellule: (l) => <span className="text-ink3">{l.detail || '—'}</span>,
+      classe: 'min-w-[240px]',
+    },
   ]
 
   const options = [
     { valeur: 'tout', libelle: 'Tout' },
-    ...domaines.map((d) => ({ valeur: d, libelle: LIBELLES_DOMAINES[d].libelle, compteur: compteurs[d] ?? 0 })),
+    ...domaines.map((d) => ({
+      valeur: d,
+      libelle: LIBELLES_DOMAINES[d].libelle,
+      compteur: compteurs[d] ?? 0,
+    })),
   ]
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
         <Onglets options={options} valeur={domaine} onChange={setDomaine} libelle="Domaine" />
-        <Recherche valeur={recherche} onChange={setRecherche} placeholder="Rechercher dans le journal" className="sm:w-[320px]" />
+        <Recherche
+          valeur={recherche}
+          onChange={setRecherche}
+          placeholder="Rechercher dans le journal"
+          className="sm:w-[320px]"
+        />
       </div>
       <DataTable
         colonnes={colonnes}
@@ -81,7 +136,11 @@ export function JournalActivite({ lignes, profil, domaines, afficherUtilisateur 
           <EtatVide
             icone={History}
             titre="Aucune opération"
-            message={recherche || domaine !== 'tout' ? 'Aucune opération ne correspond aux critères.' : 'Aucune opération enregistrée sur cette période.'}
+            message={
+              recherche || domaine !== 'tout'
+                ? 'Aucune opération ne correspond aux critères.'
+                : 'Aucune opération enregistrée sur cette période.'
+            }
           />
         }
       />

@@ -25,7 +25,8 @@ export function RouteProtegee() {
 
 export function RouteProfil({ profil }) {
   const { utilisateur } = useAuth()
-  if (utilisateur?.profil !== profil) return <Navigate to={accueilDuProfil(utilisateur?.profil)} replace />
+  if (utilisateur?.profil !== profil)
+    return <Navigate to={accueilDuProfil(utilisateur?.profil)} replace />
   return <Outlet />
 }
 
@@ -35,7 +36,16 @@ export function RoutePublique() {
   // (il doit pouvoir montrer « Compte désactivé » si le serveur refuse).
   if (session === undefined) return <EcranDemarrage />
   if (session && utilisateur?.actif) {
-    return <Navigate to={utilisateur.doit_changer_mdp ? '/changer-mot-de-passe' : accueilDuProfil(utilisateur.profil)} replace />
+    return (
+      <Navigate
+        to={
+          utilisateur.doit_changer_mdp
+            ? '/changer-mot-de-passe'
+            : accueilDuProfil(utilisateur.profil)
+        }
+        replace
+      />
+    )
   }
   return <Outlet />
 }

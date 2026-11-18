@@ -13,7 +13,12 @@ export function ActionIcone({ libelle, icone: Icone, onClick, to, ton }) {
     <Tooltip>
       <TooltipTrigger asChild>
         {to ? (
-          <Link to={to} aria-label={libelle} className={classes} onClick={(e) => e.stopPropagation()}>
+          <Link
+            to={to}
+            aria-label={libelle}
+            className={classes}
+            onClick={(e) => e.stopPropagation()}
+          >
             {contenu}
           </Link>
         ) : (

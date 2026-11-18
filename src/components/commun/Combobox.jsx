@@ -8,7 +8,15 @@ import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { correspond } from '@/lib/format'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import { useChamp } from '@/components/commun/Champ'
 
 /**
  * @param {{ valeur: string|number|null, onChange: (valeur) => void,
@@ -30,31 +38,35 @@ export function Combobox({
   libelle,
 }) {
   const [ouvert, setOuvert] = useState(false)
+  const champ = useChamp()
   const choisie = options.find((o) => String(o.valeur) === String(valeur))
 
   return (
     <Popover open={ouvert} onOpenChange={setOuvert}>
       <PopoverTrigger asChild>
         <button
-          id={id}
+          id={id ?? champ?.id}
           type="button"
           role="combobox"
           aria-expanded={ouvert}
-          aria-invalid={invalide || undefined}
+          aria-invalid={invalide || champ?.invalide || undefined}
+          aria-describedby={champ?.decrit}
           aria-label={libelle}
           disabled={disabled}
           className={cn(
-            'flex h-11 w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-[10px] border border-line2 bg-surf px-3 text-left text-[14px] transition-[border-color,box-shadow] outline-none focus-visible:border-ink focus-visible:ring-1 focus-visible:ring-ink disabled:cursor-not-allowed disabled:bg-surf2 disabled:text-mutedtxt aria-invalid:border-red',
+            'border-line2 bg-surf focus-visible:border-ink focus-visible:ring-ink disabled:bg-surf2 disabled:text-mutedtxt aria-invalid:border-red flex h-11 w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-[10px] border px-3 text-left text-[14px] transition-[border-color,box-shadow] outline-none focus-visible:ring-1 disabled:cursor-not-allowed',
             className,
           )}
         >
           {choisie ? (
             <span className="flex min-w-0 items-baseline gap-2 truncate">
-              <span className="truncate text-ink">{choisie.libelle}</span>
-              {choisie.sousLibelle && <span className="truncate text-[12px] text-mutedtxt">{choisie.sousLibelle}</span>}
+              <span className="text-ink truncate">{choisie.libelle}</span>
+              {choisie.sousLibelle && (
+                <span className="text-mutedtxt truncate text-[12px]">{choisie.sousLibelle}</span>
+              )}
             </span>
           ) : (
-            <span className="truncate text-muted2">{placeholder}</span>
+            <span className="text-muted2 truncate">{placeholder}</span>
           )}
           <span className="flex shrink-0 items-center gap-1">
             {effacable && choisie && !disabled && (
@@ -73,17 +85,24 @@ export function Combobox({
                     onChange(null)
                   }
                 }}
-                className="inline-flex size-6 items-center justify-center rounded-md text-mutedtxt hover:bg-surf2 hover:text-ink"
+                className="text-mutedtxt hover:bg-surf2 hover:text-ink inline-flex size-6 items-center justify-center rounded-md"
               >
                 <X className="size-3.5" />
               </span>
             )}
-            <ChevronsUpDown className="size-4 text-mutedtxt" aria-hidden="true" />
+            <ChevronsUpDown className="text-mutedtxt size-4" aria-hidden="true" />
           </span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[260px] p-0" align="start">
-        <Command filter={(_valeur, recherche, motsCles) => (correspond(recherche, ...(motsCles ?? [])) ? 1 : 0)}>
+      <PopoverContent
+        className="w-[var(--radix-popover-trigger-width)] min-w-[260px] p-0"
+        align="start"
+      >
+        <Command
+          filter={(_valeur, recherche, motsCles) =>
+            correspond(recherche, ...(motsCles ?? [])) ? 1 : 0
+          }
+        >
           <CommandInput placeholder={recherchePlaceholder} />
           <CommandList>
             <CommandEmpty>{vide}</CommandEmpty>
@@ -100,12 +119,23 @@ export function Combobox({
                   }}
                   className="flex items-center gap-2 py-2"
                 >
-                  <Check className={cn('size-4 shrink-0', String(option.valeur) === String(valeur) ? 'opacity-100' : 'opacity-0')} />
+                  <Check
+                    className={cn(
+                      'size-4 shrink-0',
+                      String(option.valeur) === String(valeur) ? 'opacity-100' : 'opacity-0',
+                    )}
+                  />
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[14px] text-ink">{option.libelle}</span>
-                    {option.sousLibelle && <span className="truncate text-[12px] text-mutedtxt">{option.sousLibelle}</span>}
+                    <span className="text-ink truncate text-[14px]">{option.libelle}</span>
+                    {option.sousLibelle && (
+                      <span className="text-mutedtxt truncate text-[12px]">
+                        {option.sousLibelle}
+                      </span>
+                    )}
                   </span>
-                  {option.droite && <span className="shrink-0 text-[12px] text-mutedtxt">{option.droite}</span>}
+                  {option.droite && (
+                    <span className="text-mutedtxt shrink-0 text-[12px]">{option.droite}</span>
+                  )}
                 </CommandItem>
               ))}
             </CommandGroup>

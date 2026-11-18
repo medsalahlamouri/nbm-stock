@@ -28,7 +28,9 @@ export function FilAriane({ className }) {
   const matches = useMatches()
   const { dernier } = useContext(FilContext)
   const avecFil = [...matches].reverse().find((m) => m.handle?.fil)
-  const elements = (avecFil?.handle.fil ?? []).map((e) => (typeof e === 'string' ? { libelle: e } : e))
+  const elements = (avecFil?.handle.fil ?? []).map((e) =>
+    typeof e === 'string' ? { libelle: e } : e,
+  )
   if (dernier && elements.length) elements[elements.length - 1] = { libelle: dernier }
 
   return (
@@ -37,18 +39,28 @@ export function FilAriane({ className }) {
         {elements.map((element, index) => {
           const estDernier = index === elements.length - 1
           return (
-            <li key={`${element.libelle}-${index}`} className={cn('flex min-w-0 items-center gap-2', !estDernier && 'hidden sm:flex')}>
-              {index > 0 && <span className="text-muted2" aria-hidden="true">/</span>}
+            <li
+              key={`${element.libelle}-${index}`}
+              className={cn('flex min-w-0 items-center gap-2', !estDernier && 'hidden sm:flex')}
+            >
+              {index > 0 && (
+                <span className="text-muted2" aria-hidden="true">
+                  /
+                </span>
+              )}
               {estDernier ? (
-                <span aria-current="page" className="truncate font-medium text-ink">
+                <span aria-current="page" className="text-ink truncate font-medium">
                   {element.libelle}
                 </span>
               ) : element.to ? (
-                <Link to={element.to} className="truncate text-mutedtxt transition-colors hover:text-ink">
+                <Link
+                  to={element.to}
+                  className="text-mutedtxt hover:text-ink truncate transition-colors"
+                >
                   {element.libelle}
                 </Link>
               ) : (
-                <span className="truncate text-mutedtxt">{element.libelle}</span>
+                <span className="text-mutedtxt truncate">{element.libelle}</span>
               )}
             </li>
           )

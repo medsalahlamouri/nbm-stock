@@ -9,7 +9,16 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Check, CircleCheck, CircleX, FileText, Loader2, Printer, Receipt, TriangleAlert } from 'lucide-react'
+import {
+  Check,
+  CircleCheck,
+  CircleX,
+  FileText,
+  Loader2,
+  Printer,
+  Receipt,
+  TriangleAlert,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { CANAUX, etablirFactureClient, lireDemande } from '@/api/ventes'
 import { useDemandes } from '@/hooks/useDonnees'
@@ -27,8 +36,12 @@ import { EtatErreur, EtatVide, SqueletteBloc } from '@/components/commun/Etats'
 function Recapitulatif({ demande }) {
   const naviguer = useNavigate()
   const [resultat, setResultat] = useState(null)
-  const manquantsParId = Object.fromEntries((resultat?.ok === false ? resultat.manquants : []).map((m) => [m.id_produit, m]))
-  const tousDisponibles = demande.lignes.every((l) => l.quantite <= (l.produit?.quantite_stock ?? 0))
+  const manquantsParId = Object.fromEntries(
+    (resultat?.ok === false ? resultat.manquants : []).map((m) => [m.id_produit, m]),
+  )
+  const tousDisponibles = demande.lignes.every(
+    (l) => l.quantite <= (l.produit?.quantite_stock ?? 0),
+  )
 
   const facture = useMutation({
     mutationFn: () => etablirFactureClient(demande.id_demande),
@@ -37,7 +50,10 @@ function Recapitulatif({ demande }) {
       if (r?.ok === false) return // pas une erreur : articles manquants affichés dans l'écran
       await invalider('ventes', 'stock')
       toast.success(`Facture ${r.numero} établie : ${formatMontant(r.montant_total)}.`, {
-        action: { label: 'Imprimer', onClick: () => naviguer(`/chef/factures-client/${r.id_facture}/imprimer`) },
+        action: {
+          label: 'Imprimer',
+          onClick: () => naviguer(`/chef/factures-client/${r.id_facture}/imprimer`),
+        },
       })
     },
     onError: (e) => toast.error(messageErreur(e)),
@@ -64,11 +80,16 @@ function Recapitulatif({ demande }) {
           }
         />
         {resultat.alertes?.length > 0 && (
-          <Encart ton="warn" icone={TriangleAlert} titre="Seuils minimums atteints après cette vente">
+          <Encart
+            ton="warn"
+            icone={TriangleAlert}
+            titre="Seuils minimums atteints après cette vente"
+          >
             <ul className="mt-1 flex flex-col gap-0.5">
               {resultat.alertes.map((a) => (
                 <li key={a.id_produit}>
-                  {a.designation} : stock {formatNombre(a.stock)} (seuil {formatNombre(a.seuil)}) — pensez à lancer une production.
+                  {a.designation} : stock {formatNombre(a.stock)} (seuil {formatNombre(a.seuil)}) —
+                  pensez à lancer une production.
                 </li>
               ))}
             </ul>
@@ -82,11 +103,14 @@ function Recapitulatif({ demande }) {
     <div className="grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]">
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="p-[22px] pb-4">
-          <CarteEntete titre="Articles demandés" description="Le stock disponible est vérifié par le serveur au moment de l'établissement." />
+          <CarteEntete
+            titre="Articles demandés"
+            description="Le stock disponible est vérifié par le serveur au moment de l'établissement."
+          />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[14px]">
-            <thead className="border-y border-line bg-surf2 text-[12px] font-semibold tracking-[0.04em] text-mutedtxt uppercase">
+            <thead className="border-line bg-surf2 text-mutedtxt border-y text-[12px] font-semibold tracking-[0.04em] uppercase">
               <tr>
                 <th className="h-[42px] px-3 pl-[22px] text-left">Article</th>
                 <th className="px-3 text-right">Quantité</th>
@@ -101,17 +125,25 @@ function Recapitulatif({ demande }) {
                 const dispo = manquant ? manquant.disponible : l.produit?.quantite_stock
                 const ok = !manquant && l.quantite <= dispo
                 return (
-                  <tr key={l.id_produit} className="border-b border-line3">
+                  <tr key={l.id_produit} className="border-line3 border-b">
                     <td className="h-[52px] px-3 pl-[22px]">
-                      <div className="font-semibold text-ink">{l.produit?.designation}</div>
-                      <div className="text-[12px] text-mutedtxt">{l.produit?.code}</div>
+                      <div className="text-ink font-semibold">{l.produit?.designation}</div>
+                      <div className="text-mutedtxt text-[12px]">{l.produit?.code}</div>
                     </td>
-                    <td className="px-3 text-right tabular">{formatNombre(l.quantite)}</td>
-                    <td className="px-3 text-right tabular">{formatMontant(l.prix_unitaire)}</td>
-                    <td className="px-3 text-right font-semibold tabular">{formatMontant(l.quantite * l.prix_unitaire)}</td>
+                    <td className="tabular px-3 text-right">{formatNombre(l.quantite)}</td>
+                    <td className="tabular px-3 text-right">{formatMontant(l.prix_unitaire)}</td>
+                    <td className="tabular px-3 text-right font-semibold">
+                      {formatMontant(l.quantite * l.prix_unitaire)}
+                    </td>
                     <td className="px-3 pr-[22px]">
-                      <span className={`inline-flex items-center gap-1.5 text-[13px] font-medium ${ok ? 'text-okfg' : 'text-dfg'}`}>
-                        {ok ? <CircleCheck className="size-4" aria-hidden="true" /> : <CircleX className="size-4" aria-hidden="true" />}
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-[13px] font-medium ${ok ? 'text-okfg' : 'text-dfg'}`}
+                      >
+                        {ok ? (
+                          <CircleCheck className="size-4" aria-hidden="true" />
+                        ) : (
+                          <CircleX className="size-4" aria-hidden="true" />
+                        )}
                         {formatNombre(dispo)} {l.produit?.unite}
                         <span className="sr-only">{ok ? ' : suffisant' : ' : insuffisant'}</span>
                       </span>
@@ -123,8 +155,10 @@ function Recapitulatif({ demande }) {
           </table>
         </div>
         <div className="flex items-center justify-end gap-3 px-[22px] py-4">
-          <span className="text-[14px] text-mutedtxt">Total</span>
-          <span className="font-serif text-[26px] font-semibold text-strong tabular">{formatMontant(demande.montant)}</span>
+          <span className="text-mutedtxt text-[14px]">Total</span>
+          <span className="text-strong tabular font-serif text-[26px] font-semibold">
+            {formatMontant(demande.montant)}
+          </span>
         </div>
       </Carte>
 
@@ -137,31 +171,47 @@ function Recapitulatif({ demande }) {
             </LigneInfo>
             <LigneInfo libelle="Téléphone">{formatTelephone(demande.client?.telephone)}</LigneInfo>
             <LigneInfo libelle="Demande">
-              <span className="font-mono">{reference('DEM', demande.id_demande)}</span> du {formatDate(demande.date_demande)}
+              <span className="font-mono">{reference('DEM', demande.id_demande)}</span> du{' '}
+              {formatDate(demande.date_demande)}
             </LigneInfo>
             <LigneInfo libelle="Canal">{CANAUX[demande.canal]}</LigneInfo>
           </dl>
         </Carte>
         {resultat?.ok === false && (
-          <Encart ton="danger" icone={TriangleAlert} titre="Stock insuffisant : la facture n'a pas été établie">
+          <Encart
+            ton="danger"
+            icone={TriangleAlert}
+            titre="Stock insuffisant : la facture n'a pas été établie"
+          >
             <ul className="mt-1 flex flex-col gap-0.5">
               {resultat.manquants.map((m) => (
                 <li key={m.id_produit}>
-                  {m.designation} : demandé {formatNombre(m.demande)}, disponible {formatNombre(m.disponible)}
+                  {m.designation} : demandé {formatNombre(m.demande)}, disponible{' '}
+                  {formatNombre(m.disponible)}
                 </li>
               ))}
             </ul>
-            <p className="mt-2">La demande reste en attente. Produisez les articles manquants ou modifiez la demande.</p>
+            <p className="mt-2">
+              La demande reste en attente. Produisez les articles manquants ou modifiez la demande.
+            </p>
           </Encart>
         )}
         {!tousDisponibles && !resultat && (
           <Encart ton="warn" icone={TriangleAlert}>
-            Certains articles semblent insuffisants en stock : le serveur refusera probablement la facture.
+            Certains articles semblent insuffisants en stock : le serveur refusera probablement la
+            facture.
           </Encart>
         )}
-        <Encart ton="neutral">Paiement comptant : la facture est réputée payée dès son établissement.</Encart>
+        <Encart ton="neutral">
+          Paiement comptant : la facture est réputée payée dès son établissement.
+        </Encart>
         <div className="flex flex-wrap gap-2.5">
-          <Button size="lg" className="flex-1" onClick={() => facture.mutate()} disabled={facture.isPending}>
+          <Button
+            size="lg"
+            className="flex-1"
+            onClick={() => facture.mutate()}
+            disabled={facture.isPending}
+          >
             {facture.isPending ? <Loader2 className="animate-spin" /> : <Check />}
             Établir la facture
           </Button>
@@ -180,14 +230,26 @@ export default function FactureClientFormulaire() {
   const [parametres, setParametres] = useSearchParams()
   const idDemande = parametres.get('demande') ? Number(parametres.get('demande')) : null
   const demandes = useDemandes()
-  const demande = useQuery({ queryKey: ['demande', idDemande], queryFn: () => lireDemande(idDemande), enabled: Boolean(idDemande) })
+  const demande = useQuery({
+    queryKey: ['demande', idDemande],
+    queryFn: () => lireDemande(idDemande),
+    enabled: Boolean(idDemande),
+  })
   const options = (demandes.data ?? [])
     .filter((d) => d.etat === 'EN_ATTENTE')
-    .map((d) => ({ valeur: d.id_demande, libelle: `${reference('DEM', d.id_demande)} · ${d.client?.nom}`, sousLibelle: formatDate(d.date_demande), droite: formatMontant(d.montant) }))
+    .map((d) => ({
+      valeur: d.id_demande,
+      libelle: `${reference('DEM', d.id_demande)} · ${d.client?.nom}`,
+      sousLibelle: formatDate(d.date_demande),
+      droite: formatMontant(d.montant),
+    }))
 
   return (
     <Page>
-      <PageEntete titre="Établir une facture" description="Vérifiez le stock des articles demandés, puis établissez la facture. Le stock est mis à jour automatiquement." />
+      <PageEntete
+        titre="Établir une facture"
+        description="Vérifiez le stock des articles demandés, puis établissez la facture. Le stock est mis à jour automatiquement."
+      />
       <Carte>
         <div className="max-w-[560px]">
           <Combobox
@@ -202,7 +264,11 @@ export default function FactureClientFormulaire() {
       </Carte>
       {!idDemande ? (
         <Carte>
-          <EtatVide icone={FileText} titre="Choisissez une demande en attente" message="Son récapitulatif et le stock disponible de chaque article s'afficheront ici." />
+          <EtatVide
+            icone={FileText}
+            titre="Choisissez une demande en attente"
+            message="Son récapitulatif et le stock disponible de chaque article s'afficheront ici."
+          />
         </Carte>
       ) : demande.isPending ? (
         <SqueletteBloc hauteur={220} />
@@ -212,11 +278,19 @@ export default function FactureClientFormulaire() {
         </Carte>
       ) : demande.data.etat !== 'EN_ATTENTE' ? (
         <Carte>
-          <Encart ton="info" icone={Receipt} titre={`Demande ${demande.data.etat === 'FACTUREE' ? 'déjà facturée' : 'annulée'}`}>
+          <Encart
+            ton="info"
+            icone={Receipt}
+            titre={`Demande ${demande.data.etat === 'FACTUREE' ? 'déjà facturée' : 'annulée'}`}
+          >
             {demande.data.facture ? (
               <>
-                Facture {demande.data.facture.numero} du {formatDate(demande.data.facture.date_facture)}.{' '}
-                <Link to={`/chef/factures-client/${demande.data.facture.id_facture_c}/imprimer`} className="font-semibold underline underline-offset-2">
+                Facture {demande.data.facture.numero} du{' '}
+                {formatDate(demande.data.facture.date_facture)}.{' '}
+                <Link
+                  to={`/chef/factures-client/${demande.data.facture.id_facture_c}/imprimer`}
+                  className="font-semibold underline underline-offset-2"
+                >
                   Voir la facture
                 </Link>
               </>

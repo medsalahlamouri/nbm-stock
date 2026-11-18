@@ -27,8 +27,12 @@ import { ConfirmDialog } from '@/components/commun/Dialogues'
 
 function Ecart({ valeur }) {
   if (valeur === null) return <span className="text-muted2">—</span>
-  if (valeur === 0) return <span className="font-medium text-okfg">0</span>
-  return <span className={cn('font-semibold', valeur > 0 ? 'text-okfg' : 'text-dfg')}>{valeur > 0 ? `+${formatNombre(valeur)}` : `−${formatNombre(Math.abs(valeur))}`}</span>
+  if (valeur === 0) return <span className="text-okfg font-medium">0</span>
+  return (
+    <span className={cn('font-semibold', valeur > 0 ? 'text-okfg' : 'text-dfg')}>
+      {valeur > 0 ? `+${formatNombre(valeur)}` : `−${formatNombre(Math.abs(valeur))}`}
+    </span>
+  )
 }
 
 export default function Inventaire() {
@@ -43,18 +47,28 @@ export default function Inventaire() {
     () =>
       produits
         .filter((p) => comptes[p.id_produit] !== undefined && comptes[p.id_produit] !== '')
-        .map((p) => ({ ...p, compte: Number(comptes[p.id_produit]), ecart: Number(comptes[p.id_produit]) - p.quantite_stock })),
+        .map((p) => ({
+          ...p,
+          compte: Number(comptes[p.id_produit]),
+          ecart: Number(comptes[p.id_produit]) - p.quantite_stock,
+        })),
     [produits, comptes],
   )
   const ajustements = saisis.filter((l) => l.ecart !== 0)
-  const filtres = produits.filter((p) => p.type === type && correspond(recherche, p.code, p.designation))
+  const filtres = produits.filter(
+    (p) => p.type === type && correspond(recherche, p.code, p.designation),
+  )
 
   const inventaire = useMutation({
-    mutationFn: () => enregistrerInventaire(saisis.map((l) => ({ id_produit: l.id_produit, quantite_comptee: l.compte }))),
+    mutationFn: () =>
+      enregistrerInventaire(
+        saisis.map((l) => ({ id_produit: l.id_produit, quantite_comptee: l.compte })),
+      ),
     onSuccess: async (resultat) => {
       await invalider('stock')
       const n = resultat?.ajustements ?? ajustements.length
-      if (n > 0) toast.success(`Inventaire validé : ${formatNombre(n)} ajustement(s) enregistré(s).`)
+      if (n > 0)
+        toast.success(`Inventaire validé : ${formatNombre(n)} ajustement(s) enregistré(s).`)
       else toast.success('Inventaire validé : aucun ajustement nécessaire.')
       setComptes({})
     },
@@ -62,8 +76,21 @@ export default function Inventaire() {
   })
 
   const colonnes = [
-    { id: 'produit', entete: 'Produit', tri: (p) => p.designation, cellule: (p) => <CellulePrincipale titre={p.designation} sousTitre={`${p.code} · ${p.unite}`} /> },
-    { id: 'stock', entete: 'Stock enregistré', align: 'right', tri: (p) => p.quantite_stock, cellule: (p) => <span className="font-semibold">{formatNombre(p.quantite_stock)}</span> },
+    {
+      id: 'produit',
+      entete: 'Produit',
+      tri: (p) => p.designation,
+      cellule: (p) => (
+        <CellulePrincipale titre={p.designation} sousTitre={`${p.code} · ${p.unite}`} />
+      ),
+    },
+    {
+      id: 'stock',
+      entete: 'Stock enregistré',
+      align: 'right',
+      tri: (p) => p.quantite_stock,
+      cellule: (p) => <span className="font-semibold">{formatNombre(p.quantite_stock)}</span>,
+    },
     {
       id: 'compte',
       entete: 'Quantité comptée',
@@ -81,7 +108,7 @@ export default function Inventaire() {
             setComptes((c) => ({ ...c, [p.id_produit]: v }))
           }}
           className={cn(
-            'h-9 w-28 rounded-lg border bg-surf px-3 text-right text-[14px] tabular outline-none focus-visible:border-ink focus-visible:ring-1 focus-visible:ring-ink',
+            'bg-surf tabular focus-visible:border-ink focus-visible:ring-ink h-9 w-28 rounded-lg border px-3 text-right text-[14px] outline-none focus-visible:ring-1',
             comptes[p.id_produit] ? 'border-gold2 bg-hl' : 'border-line2',
           )}
         />
@@ -91,7 +118,11 @@ export default function Inventaire() {
       id: 'ecart',
       entete: 'Écart',
       align: 'right',
-      cellule: (p) => <Ecart valeur={comptes[p.id_produit] ? Number(comptes[p.id_produit]) - p.quantite_stock : null} />,
+      cellule: (p) => (
+        <Ecart
+          valeur={comptes[p.id_produit] ? Number(comptes[p.id_produit]) - p.quantite_stock : null}
+        />
+      ),
     },
   ]
 
@@ -114,10 +145,33 @@ export default function Inventaire() {
         }
       />
       <GrilleIndicateurs>
-        <StatCard libelle="Lignes comptées" valeur={saisis.length} sousTexte={`sur ${formatNombre(produits.length)} produits actifs`} icone={ClipboardCheck} />
-        <StatCard libelle="Écarts constatés" valeur={ajustements.length} sousTexte="deviendront des ajustements" icone={Eraser} ton={ajustements.length ? 'warn' : 'ok'} />
-        <StatCard libelle="Excédents" valeur={ajustements.filter((l) => l.ecart > 0).reduce((t, l) => t + l.ecart, 0)} sousTexte="unités en plus" ton="ok" icone={Layers} />
-        <StatCard libelle="Manquants" valeur={ajustements.filter((l) => l.ecart < 0).reduce((t, l) => t - l.ecart, 0)} sousTexte="unités en moins" ton="danger" icone={Armchair} />
+        <StatCard
+          libelle="Lignes comptées"
+          valeur={saisis.length}
+          sousTexte={`sur ${formatNombre(produits.length)} produits actifs`}
+          icone={ClipboardCheck}
+        />
+        <StatCard
+          libelle="Écarts constatés"
+          valeur={ajustements.length}
+          sousTexte="deviendront des ajustements"
+          icone={Eraser}
+          ton={ajustements.length ? 'warn' : 'ok'}
+        />
+        <StatCard
+          libelle="Excédents"
+          valeur={ajustements.filter((l) => l.ecart > 0).reduce((t, l) => t + l.ecart, 0)}
+          sousTexte="unités en plus"
+          ton="ok"
+          icone={Layers}
+        />
+        <StatCard
+          libelle="Manquants"
+          valeur={ajustements.filter((l) => l.ecart < 0).reduce((t, l) => t - l.ecart, 0)}
+          sousTexte="unités en moins"
+          ton="danger"
+          icone={Armchair}
+        />
       </GrilleIndicateurs>
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
@@ -126,11 +180,26 @@ export default function Inventaire() {
             onChange={setType}
             libelle="Type de produit"
             options={[
-              { valeur: 'MP', libelle: 'Matières premières', icone: Layers, compteur: saisis.filter((l) => l.type === 'MP').length },
-              { valeur: 'ARTICLE', libelle: 'Articles', icone: Armchair, compteur: saisis.filter((l) => l.type === 'ARTICLE').length },
+              {
+                valeur: 'MP',
+                libelle: 'Matières premières',
+                icone: Layers,
+                compteur: saisis.filter((l) => l.type === 'MP').length,
+              },
+              {
+                valeur: 'ARTICLE',
+                libelle: 'Articles',
+                icone: Armchair,
+                compteur: saisis.filter((l) => l.type === 'ARTICLE').length,
+              },
             ]}
           />
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="Code ou désignation" className="sm:w-[300px]" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="Code ou désignation"
+            className="sm:w-[300px]"
+          />
         </div>
         <DataTable
           colonnes={colonnes}
@@ -141,7 +210,13 @@ export default function Inventaire() {
           onReessayer={stock.refetch}
           libelleElements="produit(s)"
           taillePage={10}
-          vide={<EtatVide icone={ClipboardCheck} titre="Aucun produit" message="Aucun produit actif ne correspond." />}
+          vide={
+            <EtatVide
+              icone={ClipboardCheck}
+              titre="Aucun produit"
+              message="Aucun produit actif ne correspond."
+            />
+          }
         />
       </Carte>
 
@@ -159,9 +234,9 @@ export default function Inventaire() {
         onConfirmer={() => inventaire.mutateAsync()}
       >
         {ajustements.length > 0 ? (
-          <div className="max-h-[260px] overflow-y-auto rounded-xl border border-line">
+          <div className="border-line max-h-[260px] overflow-y-auto rounded-xl border">
             <table className="w-full text-[13px]">
-              <thead className="bg-surf2 text-[11px] font-semibold tracking-[0.04em] text-mutedtxt uppercase">
+              <thead className="bg-surf2 text-mutedtxt text-[11px] font-semibold tracking-[0.04em] uppercase">
                 <tr>
                   <th className="px-3 py-2 text-left">Produit</th>
                   <th className="px-3 py-2 text-right">Enregistré</th>
@@ -171,11 +246,13 @@ export default function Inventaire() {
               </thead>
               <tbody>
                 {ajustements.map((l) => (
-                  <tr key={l.id_produit} className="border-t border-line3">
+                  <tr key={l.id_produit} className="border-line3 border-t">
                     <td className="px-3 py-2">{l.designation}</td>
-                    <td className="px-3 py-2 text-right tabular">{formatNombre(l.quantite_stock)}</td>
-                    <td className="px-3 py-2 text-right tabular">{formatNombre(l.compte)}</td>
-                    <td className="px-3 py-2 text-right tabular">
+                    <td className="tabular px-3 py-2 text-right">
+                      {formatNombre(l.quantite_stock)}
+                    </td>
+                    <td className="tabular px-3 py-2 text-right">{formatNombre(l.compte)}</td>
+                    <td className="tabular px-3 py-2 text-right">
                       <Ecart valeur={l.ecart} />
                     </td>
                   </tr>
@@ -184,7 +261,9 @@ export default function Inventaire() {
             </table>
           </div>
         ) : (
-          <Encart ton="ok">Aucun ajustement nécessaire : les quantités comptées correspondent au stock enregistré.</Encart>
+          <Encart ton="ok">
+            Aucun ajustement nécessaire : les quantités comptées correspondent au stock enregistré.
+          </Encart>
         )}
       </ConfirmDialog>
     </Page>

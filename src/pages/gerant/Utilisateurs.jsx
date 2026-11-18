@@ -37,7 +37,9 @@ export default function Utilisateurs() {
 
   const liste = chefs.data ?? []
   const filtres = liste.filter(
-    (u) => (statut === 'tous' || (statut === 'actifs' ? u.actif : !u.actif)) && correspond(recherche, u.nom, u.prenom, u.email, u.telephone),
+    (u) =>
+      (statut === 'tous' || (statut === 'actifs' ? u.actif : !u.actif)) &&
+      correspond(recherche, u.nom, u.prenom, u.email, u.telephone),
   )
 
   const colonnes = [
@@ -45,21 +47,40 @@ export default function Utilisateurs() {
       id: 'utilisateur',
       entete: 'Utilisateur',
       tri: (u) => `${u.nom} ${u.prenom}`,
-      cellule: (u) => <CellulePrincipale avant={<Avatar utilisateur={u} taille={40} />} titre={`${u.prenom} ${u.nom}`} sousTitre={u.email} />,
+      cellule: (u) => (
+        <CellulePrincipale
+          avant={<Avatar utilisateur={u} taille={40} />}
+          titre={`${u.prenom} ${u.nom}`}
+          sousTitre={u.email}
+        />
+      ),
     },
-    { id: 'tel', entete: 'Téléphone', cellule: (u) => <span className="tabular">{formatTelephone(u.telephone)}</span> },
+    {
+      id: 'tel',
+      entete: 'Téléphone',
+      cellule: (u) => <span className="tabular">{formatTelephone(u.telephone)}</span>,
+    },
     {
       id: 'connexion',
       entete: 'Dernière connexion',
       tri: (u) => u.derniere_connexion ?? '',
-      cellule: (u) => (u.derniere_connexion ? <span className="tabular">{formatDateHeure(u.derniere_connexion).replace(' à ', ' · ')}</span> : <span className="text-mutedtxt">Jamais</span>),
+      cellule: (u) =>
+        u.derniere_connexion ? (
+          <span className="tabular">
+            {formatDateHeure(u.derniere_connexion).replace(' à ', ' · ')}
+          </span>
+        ) : (
+          <span className="text-mutedtxt">Jamais</span>
+        ),
     },
     {
       id: 'statut',
       entete: 'Statut',
       cellule: (u) => (
         <div className="flex flex-wrap gap-1.5">
-          <BadgeEtat etat={u.actif ? statutActif(true) : { libelle: 'Désactivé', ton: 'neutral' }} />
+          <BadgeEtat
+            etat={u.actif ? statutActif(true) : { libelle: 'Désactivé', ton: 'neutral' }}
+          />
           {u.actif && u.doit_changer_mdp && <Badge ton="warn">MDP provisoire</Badge>}
         </div>
       ),
@@ -70,9 +91,23 @@ export default function Utilisateurs() {
       align: 'right',
       cellule: (u) => (
         <div className="flex items-center justify-end gap-1">
-          {u.actif && <ActionIcone libelle="Réinitialiser le mot de passe" icone={KeyRound} onClick={() => confirmationReinit.ouvrir(u)} />}
-          <ActionIcone libelle="Activité" icone={Clock} to={`/gerant/utilisateurs/${u.id_utilisateur}?onglet=activite`} />
-          <ActionIcone libelle="Modifier" icone={Pencil} to={`/gerant/utilisateurs/${u.id_utilisateur}/modifier`} />
+          {u.actif && (
+            <ActionIcone
+              libelle="Réinitialiser le mot de passe"
+              icone={KeyRound}
+              onClick={() => confirmationReinit.ouvrir(u)}
+            />
+          )}
+          <ActionIcone
+            libelle="Activité"
+            icone={Clock}
+            to={`/gerant/utilisateurs/${u.id_utilisateur}?onglet=activite`}
+          />
+          <ActionIcone
+            libelle="Modifier"
+            icone={Pencil}
+            to={`/gerant/utilisateurs/${u.id_utilisateur}/modifier`}
+          />
           {u.actif ? (
             <Button
               variant="outline"
@@ -116,14 +151,26 @@ export default function Utilisateurs() {
       />
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="Rechercher (nom, e-mail, téléphone)" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="Rechercher (nom, e-mail, téléphone)"
+          />
           <Onglets
             valeur={statut}
             onChange={setStatut}
             libelle="Statut"
             options={[
-              { valeur: 'actifs', libelle: 'Actifs', compteur: liste.filter((u) => u.actif).length },
-              { valeur: 'inactifs', libelle: 'Désactivés', compteur: liste.filter((u) => !u.actif).length },
+              {
+                valeur: 'actifs',
+                libelle: 'Actifs',
+                compteur: liste.filter((u) => u.actif).length,
+              },
+              {
+                valeur: 'inactifs',
+                libelle: 'Désactivés',
+                compteur: liste.filter((u) => !u.actif).length,
+              },
               { valeur: 'tous', libelle: 'Tous', compteur: liste.length },
             ]}
           />
@@ -142,7 +189,11 @@ export default function Utilisateurs() {
             <EtatVide
               icone={Users}
               titre={liste.length ? 'Aucun compte ne correspond' : 'Aucun chef magasin'}
-              message={liste.length ? 'Modifiez la recherche ou le filtre.' : 'Créez le compte du chef magasin : un mot de passe provisoire lui sera attribué.'}
+              message={
+                liste.length
+                  ? 'Modifiez la recherche ou le filtre.'
+                  : 'Créez le compte du chef magasin : un mot de passe provisoire lui sera attribué.'
+              }
               action={
                 !liste.length && (
                   <Button asChild>
@@ -157,7 +208,8 @@ export default function Utilisateurs() {
         />
       </Carte>
       <Encart ton="neutral" icone={Info}>
-        Mot de passe oublié : le gérant réinitialise le mot de passe et remet à la personne un mot de passe provisoire. L'application n'envoie aucun e-mail.
+        Mot de passe oublié : le gérant réinitialise le mot de passe et remet à la personne un mot
+        de passe provisoire. L'application n'envoie aucun e-mail.
       </Encart>
 
       <ConfirmDialog
@@ -175,7 +227,13 @@ export default function Utilisateurs() {
         libelleConfirmer="Désactiver"
         onConfirmer={() => suppression.mutateAsync(confirmationDesactivation.cible)}
       />
-      <MotDePasseProvisoire ouvert={Boolean(provisoire)} onFermer={fermerProvisoire} motDePasse={provisoire?.motDePasse} personne={provisoire?.personne} titre="Nouveau mot de passe provisoire" />
+      <MotDePasseProvisoire
+        ouvert={Boolean(provisoire)}
+        onFermer={fermerProvisoire}
+        motDePasse={provisoire?.motDePasse}
+        personne={provisoire?.personne}
+        titre="Nouveau mot de passe provisoire"
+      />
     </Page>
   )
 }

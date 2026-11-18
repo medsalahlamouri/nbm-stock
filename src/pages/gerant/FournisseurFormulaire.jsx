@@ -28,7 +28,12 @@ import { Carte, CarteEntete } from '@/components/commun/Carte'
 import { Badge, BadgeEtat } from '@/components/commun/Badge'
 import { Champ } from '@/components/commun/Champ'
 import { EtatErreur, SqueletteFormulaire } from '@/components/commun/Etats'
-import { FicheResume, PiedFormulaire, ZoneDanger, compterModifies } from '@/components/commun/Formulaire'
+import {
+  FicheResume,
+  PiedFormulaire,
+  ZoneDanger,
+  compterModifies,
+} from '@/components/commun/Formulaire'
 import { ConfirmDialog } from '@/components/commun/Dialogues'
 
 const schema = z.object({
@@ -44,7 +49,9 @@ function Formulaire({ fournisseur }) {
   const [confirmer, setConfirmer] = useState(false)
   const liste = useFournisseurs()
   const resume = liste.data?.find((f) => f.id_fournisseur === fournisseur?.id_fournisseur)
-  const { suppression, reactivation } = useSuppression('fournisseur', { onSupprime: () => naviguer('/gerant/fournisseurs') })
+  const { suppression, reactivation } = useSuppression('fournisseur', {
+    onSupprime: () => naviguer('/gerant/fournisseurs'),
+  })
   const {
     register,
     handleSubmit,
@@ -62,7 +69,9 @@ function Formulaire({ fournisseur }) {
 
   const soumettre = async (valeurs) => {
     try {
-      const resultat = modification ? await modifierFournisseur(fournisseur.id_fournisseur, valeurs) : await creerFournisseur(valeurs)
+      const resultat = modification
+        ? await modifierFournisseur(fournisseur.id_fournisseur, valeurs)
+        : await creerFournisseur(valeurs)
       await invalider('achats')
       toast.success(modification ? 'Fournisseur modifié.' : 'Fournisseur ajouté.')
       naviguer(`/gerant/fournisseurs/${resultat.id_fournisseur}`)
@@ -71,7 +80,10 @@ function Formulaire({ fournisseur }) {
     }
   }
 
-  const retour = () => naviguer(modification ? `/gerant/fournisseurs/${fournisseur.id_fournisseur}` : '/gerant/fournisseurs')
+  const retour = () =>
+    naviguer(
+      modification ? `/gerant/fournisseurs/${fournisseur.id_fournisseur}` : '/gerant/fournisseurs',
+    )
 
   return (
     <Page>
@@ -80,7 +92,8 @@ function Formulaire({ fournisseur }) {
         description={
           modification ? (
             <>
-              <span className="font-mono">{reference('FRN', fournisseur.id_fournisseur)}</span> · les champs modifiés sont signalés en doré.
+              <span className="font-mono">{reference('FRN', fournisseur.id_fournisseur)}</span> ·
+              les champs modifiés sont signalés en doré.
             </>
           ) : (
             'Un fournisseur de matières premières auquel NBM pourra demander des devis.'
@@ -95,15 +108,39 @@ function Formulaire({ fournisseur }) {
           )
         }
       />
-      <div className={modification ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]' : 'max-w-3xl'}>
+      <div
+        className={
+          modification
+            ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]'
+            : 'max-w-3xl'
+        }
+      >
         <Carte as="form" onSubmit={handleSubmit(soumettre)} noValidate>
-          <CarteEntete titre="Coordonnées" description="Seule la raison sociale est obligatoire. L'e-mail et le téléphone sont vérifiés." />
-          <Champ libelle="Raison sociale" obligatoire erreur={errors.raison_sociale?.message} modifie={dirtyFields.raison_sociale}>
+          <CarteEntete
+            titre="Coordonnées"
+            description="Seule la raison sociale est obligatoire. L'e-mail et le téléphone sont vérifiés."
+          />
+          <Champ
+            libelle="Raison sociale"
+            obligatoire
+            erreur={errors.raison_sociale?.message}
+            modifie={dirtyFields.raison_sociale}
+          >
             <Input autoFocus={!modification} {...register('raison_sociale')} />
           </Champ>
           <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-            <Champ libelle="Téléphone" aide="8 chiffres" erreur={errors.telephone?.message} modifie={dirtyFields.telephone}>
-              <Input type="tel" inputMode="numeric" placeholder="72 000 000" {...register('telephone')} />
+            <Champ
+              libelle="Téléphone"
+              aide="8 chiffres"
+              erreur={errors.telephone?.message}
+              modifie={dirtyFields.telephone}
+            >
+              <Input
+                type="tel"
+                inputMode="numeric"
+                placeholder="72 000 000"
+                {...register('telephone')}
+              />
             </Champ>
             <Champ libelle="E-mail" erreur={errors.email?.message} modifie={dirtyFields.email}>
               <Input type="email" placeholder="contact@fournisseur.tn" {...register('email')} />
@@ -148,12 +185,17 @@ function Formulaire({ fournisseur }) {
               <ZoneDanger
                 titre="Fournisseur désactivé"
                 action={
-                  <Button variant="outline" onClick={() => reactivation.mutate(fournisseur.id_fournisseur)} disabled={reactivation.isPending}>
+                  <Button
+                    variant="outline"
+                    onClick={() => reactivation.mutate(fournisseur.id_fournisseur)}
+                    disabled={reactivation.isPending}
+                  >
                     <RotateCcw /> Réactiver
                   </Button>
                 }
               >
-                Il n'apparaît plus dans les listes de choix des devis. Réactivez-le pour lui demander de nouveaux devis.
+                Il n'apparaît plus dans les listes de choix des devis. Réactivez-le pour lui
+                demander de nouveaux devis.
               </ZoneDanger>
             )}
           </div>
@@ -175,10 +217,19 @@ function Formulaire({ fournisseur }) {
 
 export default function FournisseurFormulaire() {
   const { id } = useParams()
-  const requete = useQuery({ queryKey: ['fournisseur', Number(id)], queryFn: () => lireFournisseur(Number(id)), enabled: Boolean(id) })
+  const requete = useQuery({
+    queryKey: ['fournisseur', Number(id)],
+    queryFn: () => lireFournisseur(Number(id)),
+    enabled: Boolean(id),
+  })
   useFilAriane(id ? requete.data?.raison_sociale && 'Modifier' : null)
   if (!id) return <Formulaire />
   if (requete.isPending) return <SqueletteFormulaire champs={4} />
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
   return <Formulaire key={requete.data.id_fournisseur} fournisseur={requete.data} />
 }

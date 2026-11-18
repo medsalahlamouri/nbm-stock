@@ -9,7 +9,15 @@
  */
 import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatNombre } from '@/lib/format'
 import { EtatErreur, SqueletteTableau } from '@/components/commun/Etats'
@@ -90,7 +98,7 @@ export function DataTable({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-[14px]">
           <thead>
-            <tr className="border-y border-line bg-surf2">
+            <tr className="border-line bg-surf2 border-y">
               {colonnes.map((colonne) => {
                 const actif = tri?.id === colonne.id
                 const Icone = actif ? (tri.sens === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown
@@ -98,9 +106,11 @@ export function DataTable({
                   <th
                     key={colonne.id}
                     scope="col"
-                    aria-sort={actif ? (tri.sens === 'asc' ? 'ascending' : 'descending') : undefined}
+                    aria-sort={
+                      actif ? (tri.sens === 'asc' ? 'ascending' : 'descending') : undefined
+                    }
                     className={cn(
-                      'h-[42px] px-3 text-[12px] font-semibold tracking-[0.04em] whitespace-nowrap text-mutedtxt uppercase first:pl-[22px] last:pr-[22px]',
+                      'text-mutedtxt h-[42px] px-3 text-[12px] font-semibold tracking-[0.04em] whitespace-nowrap uppercase first:pl-[22px] last:pr-[22px]',
                       ALIGNEMENTS[colonne.align ?? 'left'],
                       colonne.classeEntete,
                     )}
@@ -111,13 +121,16 @@ export function DataTable({
                         type="button"
                         onClick={() => basculerTri(colonne)}
                         className={cn(
-                          'inline-flex cursor-pointer items-center gap-1 uppercase hover:text-ink',
+                          'hover:text-ink inline-flex cursor-pointer items-center gap-1 uppercase',
                           colonne.align === 'right' && 'flex-row-reverse',
                           actif && 'text-ink',
                         )}
                       >
                         {colonne.entete}
-                        <Icone className={cn('size-3', !actif && 'opacity-40')} aria-hidden="true" />
+                        <Icone
+                          className={cn('size-3', !actif && 'opacity-40')}
+                          aria-hidden="true"
+                        />
                       </button>
                     ) : (
                       colonne.entete
@@ -142,8 +155,9 @@ export function DataTable({
                 }
                 tabIndex={onLigneClick ? 0 : undefined}
                 className={cn(
-                  'border-b border-line3 transition-colors last:border-b-0',
-                  onLigneClick && 'cursor-pointer outline-none hover:bg-surf2 focus-visible:bg-surf2',
+                  'border-line3 border-b transition-colors last:border-b-0',
+                  onLigneClick &&
+                    'hover:bg-surf2 focus-visible:bg-surf2 cursor-pointer outline-none',
                   classeLigne?.(ligne),
                 )}
               >
@@ -165,9 +179,10 @@ export function DataTable({
           </motion.tbody>
         </table>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-[22px] py-3.5">
-        <p className="text-[13px] text-mutedtxt">
-          {formatNombre(total)} {libelleElements} · lignes {formatNombre(debut)} à {formatNombre(fin)} sur {formatNombre(total)}
+      <div className="border-line flex flex-wrap items-center justify-between gap-3 border-t px-[22px] py-3.5">
+        <p className="text-mutedtxt text-[13px]">
+          {formatNombre(total)} {libelleElements} · lignes {formatNombre(debut)} à{' '}
+          {formatNombre(fin)} sur {formatNombre(total)}
           {pied && <span className="ml-2">{pied}</span>}
         </p>
         <Pagination page={page} nbPages={nbPages} onPage={changerPage} />
@@ -178,7 +193,7 @@ export function DataTable({
 
 /** Pagination : « ‹ 1 2 3 › » + « Page p / P » */
 export function Pagination({ page, nbPages, onPage }) {
-  if (nbPages <= 1) return <span className="text-[13px] text-mutedtxt">Page 1 / 1</span>
+  if (nbPages <= 1) return <span className="text-mutedtxt text-[13px]">Page 1 / 1</span>
   const pages = []
   const debut = Math.max(1, Math.min(page - 2, nbPages - 4))
   for (let p = debut; p <= Math.min(nbPages, debut + 4); p += 1) pages.push(p)
@@ -186,10 +201,22 @@ export function Pagination({ page, nbPages, onPage }) {
     'inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40'
   return (
     <nav className="flex items-center gap-1.5" aria-label="Pagination">
-      <button type="button" className={cn(bouton, 'border-line bg-surf hover:bg-surf2')} onClick={() => onPage(1)} disabled={page === 1} aria-label="Première page">
+      <button
+        type="button"
+        className={cn(bouton, 'border-line bg-surf hover:bg-surf2')}
+        onClick={() => onPage(1)}
+        disabled={page === 1}
+        aria-label="Première page"
+      >
         <ChevronsLeft className="size-4" />
       </button>
-      <button type="button" className={cn(bouton, 'border-line bg-surf hover:bg-surf2')} onClick={() => onPage(page - 1)} disabled={page === 1} aria-label="Page précédente">
+      <button
+        type="button"
+        className={cn(bouton, 'border-line bg-surf hover:bg-surf2')}
+        onClick={() => onPage(page - 1)}
+        disabled={page === 1}
+        aria-label="Page précédente"
+      >
         <ChevronLeft className="size-4" />
       </button>
       {pages.map((p) => (
@@ -199,18 +226,35 @@ export function Pagination({ page, nbPages, onPage }) {
           onClick={() => onPage(p)}
           aria-current={p === page ? 'page' : undefined}
           aria-label={`Page ${p}`}
-          className={cn(bouton, p === page ? 'border-strong bg-strong text-bg' : 'border-line bg-surf text-ink hover:bg-surf2')}
+          className={cn(
+            bouton,
+            p === page
+              ? 'border-strong bg-strong text-bg'
+              : 'border-line bg-surf text-ink hover:bg-surf2',
+          )}
         >
           {p}
         </button>
       ))}
-      <button type="button" className={cn(bouton, 'border-line bg-surf hover:bg-surf2')} onClick={() => onPage(page + 1)} disabled={page === nbPages} aria-label="Page suivante">
+      <button
+        type="button"
+        className={cn(bouton, 'border-line bg-surf hover:bg-surf2')}
+        onClick={() => onPage(page + 1)}
+        disabled={page === nbPages}
+        aria-label="Page suivante"
+      >
         <ChevronRight className="size-4" />
       </button>
-      <button type="button" className={cn(bouton, 'border-line bg-surf hover:bg-surf2')} onClick={() => onPage(nbPages)} disabled={page === nbPages} aria-label="Dernière page">
+      <button
+        type="button"
+        className={cn(bouton, 'border-line bg-surf hover:bg-surf2')}
+        onClick={() => onPage(nbPages)}
+        disabled={page === nbPages}
+        aria-label="Dernière page"
+      >
         <ChevronsRight className="size-4" />
       </button>
-      <span className="ml-2 text-[13px] whitespace-nowrap text-mutedtxt">
+      <span className="text-mutedtxt ml-2 text-[13px] whitespace-nowrap">
         Page {page} / {nbPages}
       </span>
     </nav>
@@ -223,8 +267,8 @@ export function CellulePrincipale({ titre, sousTitre, avant, className }) {
     <div className={cn('flex min-w-0 items-center gap-3', className)}>
       {avant}
       <div className="min-w-0">
-        <div className="truncate font-semibold text-ink">{titre}</div>
-        {sousTitre && <div className="truncate text-[12px] text-mutedtxt">{sousTitre}</div>}
+        <div className="text-ink truncate font-semibold">{titre}</div>
+        {sousTitre && <div className="text-mutedtxt truncate text-[12px]">{sousTitre}</div>}
       </div>
     </div>
   )
@@ -232,5 +276,9 @@ export function CellulePrincipale({ titre, sousTitre, avant, className }) {
 
 /** Référence de document en police monospace (CMD-019, FC-2026-0001) */
 export function Reference({ children, className }) {
-  return <span className={cn('font-mono text-[13px] font-semibold text-ink', className)}>{children}</span>
+  return (
+    <span className={cn('text-ink font-mono text-[13px] font-semibold', className)}>
+      {children}
+    </span>
+  )
 }

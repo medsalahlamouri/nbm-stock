@@ -35,35 +35,76 @@ export default function Produits() {
   const tous = stock.data ?? []
   const duType = tous.filter((p) => p.type === type)
   const filtres = duType.filter(
-    (p) => (statut === 'tous' || (statut === 'actifs' ? p.actif : !p.actif)) && correspond(recherche, p.code, p.designation, p.unite),
+    (p) =>
+      (statut === 'tous' || (statut === 'actifs' ? p.actif : !p.actif)) &&
+      correspond(recherche, p.code, p.designation, p.unite),
   )
   const mp = type === 'MP'
 
   const colonnes = [
-    { id: 'code', entete: 'Code', tri: (p) => p.code, cellule: (p) => <Reference>{p.code}</Reference>, largeur: 110 },
-    { id: 'designation', entete: 'Désignation', tri: (p) => p.designation, cellule: (p) => <CellulePrincipale titre={p.designation} sousTitre={`unité : ${p.unite}`} /> },
+    {
+      id: 'code',
+      entete: 'Code',
+      tri: (p) => p.code,
+      cellule: (p) => <Reference>{p.code}</Reference>,
+      largeur: 110,
+    },
+    {
+      id: 'designation',
+      entete: 'Désignation',
+      tri: (p) => p.designation,
+      cellule: (p) => <CellulePrincipale titre={p.designation} sousTitre={`unité : ${p.unite}`} />,
+    },
     {
       id: 'stock',
       entete: 'Stock',
       align: 'right',
       tri: (p) => p.quantite_stock,
-      cellule: (p) => <span className={p.en_alerte && p.actif ? 'font-semibold text-dfg' : 'font-semibold'}>{formatNombre(p.quantite_stock)}</span>,
+      cellule: (p) => (
+        <span className={p.en_alerte && p.actif ? 'text-dfg font-semibold' : 'font-semibold'}>
+          {formatNombre(p.quantite_stock)}
+        </span>
+      ),
     },
     {
       id: 'seuil',
       entete: mp ? 'Point de commande' : 'Seuil minimum',
       align: 'right',
       tri: (p) => p.seuil,
-      cellule: (p) => (p.seuil === null ? <span className="text-muted2" title="Paramètres de calcul à régler par le gérant">—</span> : formatNombre(p.seuil)),
+      cellule: (p) =>
+        p.seuil === null ? (
+          <span className="text-muted2" title="Paramètres de calcul à régler par le gérant">
+            —
+          </span>
+        ) : (
+          formatNombre(p.seuil)
+        ),
     },
     ...(mp
-      ? [{ id: 'q', entete: 'Q*', align: 'right', tri: (p) => p.quantite_economique, cellule: (p) => (p.quantite_economique ? formatNombre(p.quantite_economique) : '—') }]
-      : [{ id: 'prix', entete: 'Prix de vente', align: 'right', tri: (p) => Number(p.prix_vente), cellule: (p) => formatMontant(p.prix_vente) }]),
+      ? [
+          {
+            id: 'q',
+            entete: 'Q*',
+            align: 'right',
+            tri: (p) => p.quantite_economique,
+            cellule: (p) => (p.quantite_economique ? formatNombre(p.quantite_economique) : '—'),
+          },
+        ]
+      : [
+          {
+            id: 'prix',
+            entete: 'Prix de vente',
+            align: 'right',
+            tri: (p) => Number(p.prix_vente),
+            cellule: (p) => formatMontant(p.prix_vente),
+          },
+        ]),
     {
       id: 'etat',
       entete: 'État',
       tri: (p) => p.etat,
-      cellule: (p) => (p.actif ? <BadgeEtat etat={etatStock(p.etat)} /> : <BadgeEtat etat={statutActif(false)} />),
+      cellule: (p) =>
+        p.actif ? <BadgeEtat etat={etatStock(p.etat)} /> : <BadgeEtat etat={statutActif(false)} />,
     },
     {
       id: 'actions',
@@ -71,11 +112,24 @@ export default function Produits() {
       align: 'right',
       cellule: (p) => (
         <div className="flex justify-end gap-1">
-          <ActionIcone libelle="Modifier" icone={Pencil} to={`/chef/produits/${p.id_produit}/modifier`} />
+          <ActionIcone
+            libelle="Modifier"
+            icone={Pencil}
+            to={`/chef/produits/${p.id_produit}/modifier`}
+          />
           {p.actif ? (
-            <ActionIcone libelle="Supprimer ou désactiver" icone={Trash2} ton="danger" onClick={() => confirmation.ouvrir(p)} />
+            <ActionIcone
+              libelle="Supprimer ou désactiver"
+              icone={Trash2}
+              ton="danger"
+              onClick={() => confirmation.ouvrir(p)}
+            />
           ) : (
-            <ActionIcone libelle="Réactiver" icone={RotateCcw} onClick={() => reactivation.mutate(p.id_produit)} />
+            <ActionIcone
+              libelle="Réactiver"
+              icone={RotateCcw}
+              onClick={() => reactivation.mutate(p.id_produit)}
+            />
           )}
         </div>
       ),
@@ -100,21 +154,43 @@ export default function Produits() {
         onChange={(v) => setParametres({ type: v }, { replace: true })}
         libelle="Type de produit"
         options={[
-          { valeur: 'MP', libelle: 'Matières premières', icone: Layers, compteur: tous.filter((p) => p.type === 'MP' && p.actif).length },
-          { valeur: 'ARTICLE', libelle: 'Articles', icone: Armchair, compteur: tous.filter((p) => p.type === 'ARTICLE' && p.actif).length },
+          {
+            valeur: 'MP',
+            libelle: 'Matières premières',
+            icone: Layers,
+            compteur: tous.filter((p) => p.type === 'MP' && p.actif).length,
+          },
+          {
+            valeur: 'ARTICLE',
+            libelle: 'Articles',
+            icone: Armchair,
+            compteur: tous.filter((p) => p.type === 'ARTICLE' && p.actif).length,
+          },
         ]}
         className="self-start"
       />
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="Code, désignation, unité" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="Code, désignation, unité"
+          />
           <Onglets
             valeur={statut}
             onChange={setStatut}
             libelle="Statut"
             options={[
-              { valeur: 'actifs', libelle: 'Actifs', compteur: duType.filter((p) => p.actif).length },
-              { valeur: 'inactifs', libelle: 'Inactifs', compteur: duType.filter((p) => !p.actif).length },
+              {
+                valeur: 'actifs',
+                libelle: 'Actifs',
+                compteur: duType.filter((p) => p.actif).length,
+              },
+              {
+                valeur: 'inactifs',
+                libelle: 'Inactifs',
+                compteur: duType.filter((p) => !p.actif).length,
+              },
               { valeur: 'tous', libelle: 'Tous', compteur: duType.length },
             ]}
           />
@@ -132,8 +208,18 @@ export default function Produits() {
           vide={
             <EtatVide
               icone={Package}
-              titre={duType.length ? 'Aucun produit ne correspond' : mp ? 'Aucune matière première' : 'Aucun article'}
-              message={duType.length ? 'Modifiez la recherche ou le filtre.' : 'Ajoutez un premier produit avec son stock initial.'}
+              titre={
+                duType.length
+                  ? 'Aucun produit ne correspond'
+                  : mp
+                    ? 'Aucune matière première'
+                    : 'Aucun article'
+              }
+              message={
+                duType.length
+                  ? 'Modifiez la recherche ou le filtre.'
+                  : 'Ajoutez un premier produit avec son stock initial.'
+              }
               action={
                 !duType.length && (
                   <Button asChild>

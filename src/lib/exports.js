@@ -24,7 +24,11 @@ function telecharger(blob, nom) {
 }
 
 // Les polices standard du PDF ne connaissent pas certains caractères typographiques
-const pourPdf = (v) => String(v ?? '').replace(/[  ]/g, ' ').replace(/[≥]/g, '>=').replace(/[≤]/g, '<=')
+const pourPdf = (v) =>
+  String(v ?? '')
+    .replace(/[  ]/g, ' ')
+    .replace(/[≥]/g, '>=')
+    .replace(/[≤]/g, '<=')
 
 export async function exporterPdf({ titre, sousTitre, sections }, base = 'statistiques-nbm') {
   const [{ jsPDF }, { autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')])
@@ -85,10 +89,17 @@ export async function exporterExcel({ titre, sousTitre, sections }, base = 'stat
     })
     for (const ligne of section.lignes) feuille.addRow(ligne)
     feuille.columns.forEach((colonne, i) => {
-      const largeurs = [section.colonnes[i], ...section.lignes.map((l) => l[i])].map((v) => String(v ?? '').length)
+      const largeurs = [section.colonnes[i], ...section.lignes.map((l) => l[i])].map(
+        (v) => String(v ?? '').length,
+      )
       colonne.width = Math.min(48, Math.max(12, ...largeurs) + 2)
     })
   }
   const tampon = await classeur.xlsx.writeBuffer()
-  telecharger(new Blob([tampon], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), nomFichier(base, 'xlsx'))
+  telecharger(
+    new Blob([tampon], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }),
+    nomFichier(base, 'xlsx'),
+  )
 }

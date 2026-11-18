@@ -6,24 +6,45 @@
  */
 
 const MESSAGES_TECHNIQUES = [
-  [/failed to fetch|networkerror|load failed|fetch failed/i, 'Connexion au serveur impossible. Vérifiez votre accès à Internet puis réessayez.'],
+  [
+    /failed to fetch|networkerror|load failed|fetch failed/i,
+    'Connexion au serveur impossible. Vérifiez votre accès à Internet puis réessayez.',
+  ],
   [/jwt expired|invalid jwt|refresh token/i, 'Votre session a expiré. Reconnectez-vous.'],
-  [/permission denied|row-level security|violates row-level/i, "Vous n'avez pas les droits nécessaires pour cette opération."],
+  [
+    /permission denied|row-level security|violates row-level/i,
+    "Vous n'avez pas les droits nécessaires pour cette opération.",
+  ],
   [/duplicate key value.*code/i, 'Ce code est déjà utilisé par un autre produit.'],
   [/duplicate key value.*numero/i, 'Ce numéro de facture existe déjà.'],
   [/duplicate key value/i, 'Cet élément existe déjà.'],
-  [/violates foreign key constraint/i, "Cet élément est utilisé par d'autres données : il ne peut pas être supprimé."],
-  [/violates check constraint/i, "Une valeur saisie n'est pas acceptée (vérifiez les montants et les quantités)."],
+  [
+    /violates foreign key constraint/i,
+    "Cet élément est utilisé par d'autres données : il ne peut pas être supprimé.",
+  ],
+  [
+    /violates check constraint/i,
+    "Une valeur saisie n'est pas acceptée (vérifiez les montants et les quantités).",
+  ],
   [/invalid login credentials/i, 'E-mail ou mot de passe incorrect.'],
-  [/password should be at least|weak password|password is known/i, 'Mot de passe trop faible : 8 caractères minimum, avec des lettres et des chiffres.'],
+  [
+    /password should be at least|weak password|password is known/i,
+    'Mot de passe trop faible : 8 caractères minimum, avec des lettres et des chiffres.',
+  ],
   [/new password should be different/i, "Le nouveau mot de passe doit être différent de l'ancien."],
-  [/email rate limit|over_request_rate_limit|too many requests/i, 'Trop de tentatives : patientez quelques instants avant de réessayer.'],
+  [
+    /email rate limit|over_request_rate_limit|too many requests/i,
+    'Trop de tentatives : patientez quelques instants avant de réessayer.',
+  ],
 ]
 
 /** Message lisible pour n'importe quelle erreur (Error, PostgrestError, AuthError…) */
 export function messageErreur(erreur, parDefaut = 'Une erreur est survenue. Réessayez.') {
   if (!erreur) return parDefaut
-  const brut = typeof erreur === 'string' ? erreur : erreur.message || erreur.erreur || erreur.error_description || ''
+  const brut =
+    typeof erreur === 'string'
+      ? erreur
+      : erreur.message || erreur.erreur || erreur.error_description || ''
   if (!brut) return parDefaut
   for (const [motif, message] of MESSAGES_TECHNIQUES) {
     if (motif.test(brut)) return message

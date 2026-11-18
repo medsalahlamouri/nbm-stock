@@ -26,12 +26,45 @@ import { EtatErreur, EtatVide, SqueletteBloc } from '@/components/commun/Etats'
 const PERIODES = [30, 60, 90, 180].map((v) => ({ valeur: v, libelle: `${v} j` }))
 
 const LIGNES = [
-  { cle: 'd', libelle: 'Demande moyenne d', formule: 'sorties / N', format: (v) => `${formatNombre(v, 2)} / j` },
-  { cle: 'D', libelle: 'Demande annuelle D', formule: 'd × 365', format: (v) => formatNombre(v, 2) },
-  { cle: 'Q', libelle: 'Quantité économique Q*', formule: '⌈√(2·D·S / H)⌉', format: (v) => formatNombre(v), fort: true },
-  { cle: 'SS', libelle: 'Stock de sécurité SS', formule: 'd × j', format: (v) => formatNombre(v, 2) },
-  { cle: 'PC', libelle: 'Point de commande PC', formule: '⌈d × L + SS⌉', format: (v) => formatNombre(v), fort: true },
-  { cle: 'N', libelle: 'Commandes par an', formule: 'D / Q*', format: (v) => formatNombre(v, 2), calcul: (r) => (r.Q ? r.D / r.Q : null) },
+  {
+    cle: 'd',
+    libelle: 'Demande moyenne d',
+    formule: 'sorties / N',
+    format: (v) => `${formatNombre(v, 2)} / j`,
+  },
+  {
+    cle: 'D',
+    libelle: 'Demande annuelle D',
+    formule: 'd × 365',
+    format: (v) => formatNombre(v, 2),
+  },
+  {
+    cle: 'Q',
+    libelle: 'Quantité économique Q*',
+    formule: '⌈√(2·D·S / H)⌉',
+    format: (v) => formatNombre(v),
+    fort: true,
+  },
+  {
+    cle: 'SS',
+    libelle: 'Stock de sécurité SS',
+    formule: 'd × j',
+    format: (v) => formatNombre(v, 2),
+  },
+  {
+    cle: 'PC',
+    libelle: 'Point de commande PC',
+    formule: '⌈d × L + SS⌉',
+    format: (v) => formatNombre(v),
+    fort: true,
+  },
+  {
+    cle: 'N',
+    libelle: 'Commandes par an',
+    formule: 'D / Q*',
+    format: (v) => formatNombre(v, 2),
+    calcul: (r) => (r.Q ? r.D / r.Q : null),
+  },
   { cle: 'cout_annuel', libelle: 'Coût annuel', formule: 'S·D/Q* + H·Q*/2', format: formatMontant },
 ]
 
@@ -46,8 +79,16 @@ export default function Calcul() {
   const matieres = (stock.data ?? []).filter((p) => p.type === 'MP' && p.actif)
   const matiere = matieres.find((p) => p.id_produit === idProduit)
 
-  const actuel = useQuery({ queryKey: ['simulation', idProduit], queryFn: () => simulerCalcul(idProduit), enabled: Boolean(idProduit) })
-  const simulation = useQuery({ queryKey: ['simulation', idProduit, periodeSimulee], queryFn: () => simulerCalcul(idProduit, periodeSimulee), enabled: Boolean(idProduit) })
+  const actuel = useQuery({
+    queryKey: ['simulation', idProduit],
+    queryFn: () => simulerCalcul(idProduit),
+    enabled: Boolean(idProduit),
+  })
+  const simulation = useQuery({
+    queryKey: ['simulation', idProduit, periodeSimulee],
+    queryFn: () => simulerCalcul(idProduit, periodeSimulee),
+    enabled: Boolean(idProduit),
+  })
   const r = actuel.data
   const s = simulation.data
 
@@ -80,21 +121,35 @@ export default function Calcul() {
             <Combobox
               valeur={idProduit}
               onChange={(v) => changer('produit', v)}
-              options={matieres.map((p) => ({ valeur: p.id_produit, libelle: p.designation, sousLibelle: p.code, droite: etatStock(p.etat).libelle }))}
+              options={matieres.map((p) => ({
+                valeur: p.id_produit,
+                libelle: p.designation,
+                sousLibelle: p.code,
+                droite: etatStock(p.etat).libelle,
+              }))}
               placeholder={stock.isPending ? 'Chargement…' : 'Rechercher une matière première'}
               recherchePlaceholder="Code ou désignation…"
               effacable
             />
           </Champ>
           <Champ libelle="Période simulée">
-            <Onglets options={PERIODES} valeur={periodeSimulee} onChange={(v) => changer('periode', v)} libelle="Période simulée" />
+            <Onglets
+              options={PERIODES}
+              valeur={periodeSimulee}
+              onChange={(v) => changer('periode', v)}
+              libelle="Période simulée"
+            />
           </Champ>
         </div>
       </Carte>
 
       {!idProduit ? (
         <Carte>
-          <EtatVide icone={Calculator} titre="Choisissez une matière première" message="Le détail du calcul de Q* et du point de commande s'affichera ici." />
+          <EtatVide
+            icone={Calculator}
+            titre="Choisissez une matière première"
+            message="Le détail du calcul de Q* et du point de commande s'affichera ici."
+          />
         </Carte>
       ) : actuel.isPending ? (
         <SqueletteBloc hauteur={300} />
@@ -111,7 +166,9 @@ export default function Calcul() {
             action={
               r?.message === 'Paramètres de calcul incomplets' && (
                 <Button size="sm" asChild>
-                  <Link to={`/gerant/parametres?produit=${idProduit}`}>Compléter les paramètres</Link>
+                  <Link to={`/gerant/parametres?produit=${idProduit}`}>
+                    Compléter les paramètres
+                  </Link>
                 </Button>
               )
             }
@@ -124,10 +181,34 @@ export default function Calcul() {
       ) : (
         <>
           <GrilleIndicateurs>
-            <StatCard libelle="Stock actuel" valeur={r.stock} sousTexte={`${matiere?.unite ?? ''} en stock`} />
-            <StatCard libelle="Point de commande" valeur={r.PC} sousTexte={calculable(s) ? `simulation ${periodeSimulee} j : ${formatNombre(s.PC)}` : `simulation ${periodeSimulee} j : —`} />
-            <StatCard libelle="Quantité économique Q*" valeur={r.Q} sousTexte={calculable(s) ? `simulation ${periodeSimulee} j : ${formatNombre(s.Q)}` : `simulation ${periodeSimulee} j : —`} />
-            <StatCard libelle="Couverture" valeur={r.d > 0 ? `${formatNombre(r.stock / r.d, 0)} j` : '—'} sousTexte="au rythme actuel" />
+            <StatCard
+              libelle="Stock actuel"
+              valeur={r.stock}
+              sousTexte={`${matiere?.unite ?? ''} en stock`}
+            />
+            <StatCard
+              libelle="Point de commande"
+              valeur={r.PC}
+              sousTexte={
+                calculable(s)
+                  ? `simulation ${periodeSimulee} j : ${formatNombre(s.PC)}`
+                  : `simulation ${periodeSimulee} j : —`
+              }
+            />
+            <StatCard
+              libelle="Quantité économique Q*"
+              valeur={r.Q}
+              sousTexte={
+                calculable(s)
+                  ? `simulation ${periodeSimulee} j : ${formatNombre(s.Q)}`
+                  : `simulation ${periodeSimulee} j : —`
+              }
+            />
+            <StatCard
+              libelle="Couverture"
+              valeur={r.d > 0 ? `${formatNombre(r.stock / r.d, 0)} j` : '—'}
+              sousTexte="au rythme actuel"
+            />
           </GrilleIndicateurs>
 
           {r.en_alerte ? (
@@ -143,16 +224,22 @@ export default function Calcul() {
                   </Button>
                 ) : (
                   <Button size="sm" asChild>
-                    <Link to={`/gerant/commander?produit=${idProduit}`}>Commander {formatNombre(r.Q)} unités</Link>
+                    <Link to={`/gerant/commander?produit=${idProduit}`}>
+                      Commander {formatNombre(r.Q)} unités
+                    </Link>
                   </Button>
                 )
               }
             >
-              Stock sous le point de commande{matiere?.commande_en_cours ? ' — une commande est déjà en cours.' : ' : il faut commander.'}
+              Stock sous le point de commande
+              {matiere?.commande_en_cours
+                ? ' — une commande est déjà en cours.'
+                : ' : il faut commander.'}
             </Encart>
           ) : (
             <Encart ton="ok">
-              Stock suffisant : {formatNombre(r.stock)} au-dessus du point de commande ({formatNombre(r.PC)}).
+              Stock suffisant : {formatNombre(r.stock)} au-dessus du point de commande (
+              {formatNombre(r.PC)}).
             </Encart>
           )}
 
@@ -165,7 +252,7 @@ export default function Calcul() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-[14px]">
-                <thead className="border-y border-line bg-surf2 text-[12px] font-semibold tracking-[0.04em] text-mutedtxt uppercase">
+                <thead className="border-line bg-surf2 text-mutedtxt border-y text-[12px] font-semibold tracking-[0.04em] uppercase">
                   <tr>
                     <th className="h-[42px] px-3 pl-[22px] text-left">Grandeur</th>
                     <th className="px-3 text-left">Formule</th>
@@ -179,12 +266,30 @@ export default function Calcul() {
                     const vs = calculable(s) ? valeur(ligne, s) : null
                     const different = vs !== null && va !== null && Math.abs(vs - va) > 1e-9
                     return (
-                      <tr key={ligne.cle} className="border-b border-line3 last:border-0">
-                        <td className="h-[52px] px-3 pl-[22px] font-semibold text-ink">{ligne.libelle}</td>
-                        <td className="px-3 font-mono text-[13px] text-mutedtxt">{ligne.formule}</td>
-                        <td className={cn('px-3 text-right tabular', ligne.fort && 'font-semibold')}>{va === null ? '—' : ligne.format(va)}</td>
-                        <td className={cn('px-3 pr-[22px] text-right tabular', different ? 'font-semibold text-ifg' : 'text-ink', ligne.fort && 'font-semibold')}>
-                          {simulation.isPending ? '…' : vs === null ? (s?.message ?? '—') : ligne.format(vs)}
+                      <tr key={ligne.cle} className="border-line3 border-b last:border-0">
+                        <td className="text-ink h-[52px] px-3 pl-[22px] font-semibold">
+                          {ligne.libelle}
+                        </td>
+                        <td className="text-mutedtxt px-3 font-mono text-[13px]">
+                          {ligne.formule}
+                        </td>
+                        <td
+                          className={cn('tabular px-3 text-right', ligne.fort && 'font-semibold')}
+                        >
+                          {va === null ? '—' : ligne.format(va)}
+                        </td>
+                        <td
+                          className={cn(
+                            'tabular px-3 pr-[22px] text-right',
+                            different ? 'text-ifg font-semibold' : 'text-ink',
+                            ligne.fort && 'font-semibold',
+                          )}
+                        >
+                          {simulation.isPending
+                            ? '…'
+                            : vs === null
+                              ? (s?.message ?? '—')
+                              : ligne.format(vs)}
                         </td>
                       </tr>
                     )

@@ -31,13 +31,28 @@ export default function Fournisseurs() {
   const confirmation = useConfirmation()
   const { suppression, reactivation } = useSuppression('fournisseur')
 
-  const retards = useMemo(() => Object.fromEntries((evaluations.data ?? []).map((e) => [e.id_fournisseur, e.retard_moyen])), [evaluations.data])
+  const retards = useMemo(
+    () =>
+      Object.fromEntries((evaluations.data ?? []).map((e) => [e.id_fournisseur, e.retard_moyen])),
+    [evaluations.data],
+  )
   const liste = fournisseurs.data ?? []
-  const compteurs = { actifs: liste.filter((f) => f.actif).length, inactifs: liste.filter((f) => !f.actif).length, tous: liste.length }
+  const compteurs = {
+    actifs: liste.filter((f) => f.actif).length,
+    inactifs: liste.filter((f) => !f.actif).length,
+    tous: liste.length,
+  }
   const filtres = liste.filter(
     (f) =>
       (statut === 'tous' || (statut === 'actifs' ? f.actif : !f.actif)) &&
-      correspond(recherche, reference('FRN', f.id_fournisseur), f.raison_sociale, f.adresse, f.email, f.telephone),
+      correspond(
+        recherche,
+        reference('FRN', f.id_fournisseur),
+        f.raison_sociale,
+        f.adresse,
+        f.email,
+        f.telephone,
+      ),
   )
 
   const colonnes = [
@@ -64,12 +79,24 @@ export default function Fournisseurs() {
       cellule: (f) => (
         <div className="min-w-0">
           <div className="text-ink tabular">{formatTelephone(f.telephone)}</div>
-          <div className="truncate text-[12px] text-mutedtxt">{f.email || '—'}</div>
+          <div className="text-mutedtxt truncate text-[12px]">{f.email || '—'}</div>
         </div>
       ),
     },
-    { id: 'devis', entete: 'Devis', align: 'right', tri: (f) => f.nb_devis, cellule: (f) => formatNombre(f.nb_devis) },
-    { id: 'commandes', entete: 'Commandes', align: 'right', tri: (f) => f.nb_commandes, cellule: (f) => formatNombre(f.nb_commandes) },
+    {
+      id: 'devis',
+      entete: 'Devis',
+      align: 'right',
+      tri: (f) => f.nb_devis,
+      cellule: (f) => formatNombre(f.nb_devis),
+    },
+    {
+      id: 'commandes',
+      entete: 'Commandes',
+      align: 'right',
+      tri: (f) => f.nb_commandes,
+      cellule: (f) => formatNombre(f.nb_commandes),
+    },
     {
       id: 'retard',
       entete: 'Retard moyen',
@@ -77,7 +104,11 @@ export default function Fournisseurs() {
       tri: (f) => retards[f.id_fournisseur],
       cellule: (f) => {
         const r = retards[f.id_fournisseur]
-        return r === null || r === undefined ? <span className="text-muted2">—</span> : <span className={r > 0 ? 'text-dfg' : ''}>{formatNombre(r, 0, 1)} j</span>
+        return r === null || r === undefined ? (
+          <span className="text-muted2">—</span>
+        ) : (
+          <span className={r > 0 ? 'text-dfg' : ''}>{formatNombre(r, 0, 1)} j</span>
+        )
       },
     },
     { id: 'statut', entete: 'Statut', cellule: (f) => <BadgeEtat etat={statutActif(f.actif)} /> },
@@ -87,11 +118,24 @@ export default function Fournisseurs() {
       align: 'right',
       cellule: (f) => (
         <div className="flex justify-end gap-1">
-          <ActionIcone libelle="Modifier" icone={Pencil} to={`/gerant/fournisseurs/${f.id_fournisseur}/modifier`} />
+          <ActionIcone
+            libelle="Modifier"
+            icone={Pencil}
+            to={`/gerant/fournisseurs/${f.id_fournisseur}/modifier`}
+          />
           {f.actif ? (
-            <ActionIcone libelle="Supprimer ou désactiver" icone={Trash2} ton="danger" onClick={() => confirmation.ouvrir(f)} />
+            <ActionIcone
+              libelle="Supprimer ou désactiver"
+              icone={Trash2}
+              ton="danger"
+              onClick={() => confirmation.ouvrir(f)}
+            />
           ) : (
-            <ActionIcone libelle="Réactiver" icone={RotateCcw} onClick={() => reactivation.mutate(f.id_fournisseur)} />
+            <ActionIcone
+              libelle="Réactiver"
+              icone={RotateCcw}
+              onClick={() => reactivation.mutate(f.id_fournisseur)}
+            />
           )}
         </div>
       ),
@@ -113,7 +157,11 @@ export default function Fournisseurs() {
       />
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="FRN-…, nom, adresse, e-mail" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="FRN-…, nom, adresse, e-mail"
+          />
           <Onglets
             valeur={statut}
             onChange={setStatut}
@@ -138,8 +186,14 @@ export default function Fournisseurs() {
           vide={
             <EtatVide
               icone={Truck}
-              titre={liste.length ? 'Aucun fournisseur ne correspond' : 'Aucun fournisseur enregistré'}
-              message={liste.length ? 'Modifiez la recherche ou le filtre.' : 'Ajoutez un premier fournisseur pour saisir ses devis.'}
+              titre={
+                liste.length ? 'Aucun fournisseur ne correspond' : 'Aucun fournisseur enregistré'
+              }
+              message={
+                liste.length
+                  ? 'Modifiez la recherche ou le filtre.'
+                  : 'Ajoutez un premier fournisseur pour saisir ses devis.'
+              }
               action={
                 !liste.length && (
                   <Button asChild>

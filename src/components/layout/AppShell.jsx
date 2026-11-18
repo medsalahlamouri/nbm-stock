@@ -37,19 +37,25 @@ export function AppShell() {
 
   return (
     <FilProvider>
-      <div className="min-h-svh bg-bg">
-        <a href="#contenu" className="sr-only z-[60] rounded-lg bg-strong px-3 py-2 text-bg focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
+      <div className="bg-bg min-h-svh">
+        <a
+          href="#contenu"
+          className="bg-strong text-bg sr-only z-[60] rounded-lg px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
           Aller au contenu
         </a>
 
         {/* Menu latéral fixe (ordinateur) */}
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[260px] border-r border-sideline lg:block">
+        <aside className="border-sideline fixed inset-y-0 left-0 z-40 hidden w-[260px] border-r lg:block">
           <Sidebar onDeconnexion={seDeconnecter} />
         </aside>
 
         {/* Menu latéral coulissant (tablette, moins de 1024 px) */}
         <Sheet open={menuOuvert} onOpenChange={setMenuOuvert}>
-          <SheetContent side="left" className="w-[280px] border-sideline bg-side p-0 sm:max-w-[280px] [&>button]:text-sidetxt">
+          <SheetContent
+            side="left"
+            className="border-sideline bg-side [&>button]:text-sidetxt w-[280px] p-0 sm:max-w-[280px]"
+          >
             <SheetTitle className="sr-only">Menu principal</SheetTitle>
             <SheetDescription className="sr-only">Navigation dans l'application</SheetDescription>
             <Sidebar onNaviguer={() => setMenuOuvert(false)} onDeconnexion={seDeconnecter} />
@@ -58,21 +64,25 @@ export function AppShell() {
 
         <div className="lg:pl-[260px]">
           {/* En-tête */}
-          <header className="sticky top-0 z-30 flex min-h-[64px] items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur-md sm:px-8">
+          <header className="border-line bg-bg/90 sticky top-0 z-30 flex min-h-[64px] items-center gap-3 border-b px-4 py-3 backdrop-blur-md sm:px-8">
             <button
               type="button"
               onClick={() => setMenuOuvert(true)}
               aria-label="Ouvrir le menu"
-              className="inline-flex size-[38px] cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surf text-ink hover:bg-surf2 lg:hidden"
+              className="border-line bg-surf text-ink hover:bg-surf2 inline-flex size-[38px] cursor-pointer items-center justify-center rounded-[10px] border lg:hidden"
             >
               <Menu className="size-[18px]" />
             </button>
             <FilAriane className="flex-1" />
             <div className="flex shrink-0 items-center gap-2.5">
-              <span className="mr-1 hidden text-[14px] text-mutedtxt md:inline">{aujourdHui}</span>
+              <span className="text-mutedtxt mr-1 hidden text-[14px] md:inline">{aujourdHui}</span>
               <ThemeToggle />
               <Alertes />
-              <Link to={compte} aria-label="Mon compte" className="rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+              <Link
+                to={compte}
+                aria-label="Mon compte"
+                className="focus-visible:outline-ink rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
                 <Avatar utilisateur={utilisateur} taille={42} />
               </Link>
             </div>

@@ -1,7 +1,7 @@
 # Maquette — index des captures
 
 Captures PNG de la maquette « Maquette NBM Stock », dans
-`docs/maquette/Maquette NBM Stock-png/`.
+`docs/maquette/captures/`.
 
 Les chiffres et les noms affichés sont des **exemples** : l'application lit toujours les données réelles de Supabase.
 **La maquette fait foi pour le visuel, `docs/BACKEND.md` pour les données et les règles.**
@@ -12,54 +12,54 @@ Les chiffres et les noms affichés sont des **exemples** : l'application lit tou
 
 | Capture | Fiche | Écran | Route | Lot |
 |---|---|---|---|---|
-| `1a · Connexion` | A1 | Connexion | `/connexion` | 1 |
-| `1b · Première connexion — mot de passe provisoire` | A2 | Changer le mot de passe provisoire | `/changer-mot-de-passe` | 1 |
-| `2a · Tableau de bord du gérant` | B1 | Tableau de bord gérant | `/gerant` | 7 |
-| `2b · Tableau de bord du chef magasin` | C1 | Tableau de bord chef | `/chef` | 7 |
-| `3a · Mon compte — gérant` | A3 | Mon compte (gérant) | `/gerant/compte` | 1 |
-| `3b · Mon compte — chef magasin` | A3 | Mon compte (chef) | `/chef/compte` | 1 |
-| `4a · Fournisseurs — liste, actifs inactifs, supprimer ou désactiver` | B4 | Fournisseurs | `/gerant/fournisseurs` | 2 |
-| `4b · Nouveau fournisseur` | B5bis | Ajouter un fournisseur | `/gerant/fournisseurs/nouveau` | 2 |
-| `4c · Fournisseur — fiche et évaluation` | B5 | Fiche fournisseur | `/gerant/fournisseurs/:id` | 2 |
-| `4d · Modifier un fournisseur (champs modifiés signalés, désactivation)` | B5bis | Modifier un fournisseur | `/gerant/fournisseurs/:id/modifier` | 2 |
-| `5a · Devis — liste et suppression` | B6 | Devis | `/gerant/devis` | 2 |
-| `5b · Nouveau devis` | B6bis | Ajouter un devis | `/gerant/devis/nouveau` | 2 |
-| `5c · Modifier un devis non utilisé (suppression)` | B6bis | Modifier un devis | `/gerant/devis/:id/modifier` | 2 |
-| `6a · Comparer les devis et commander` | B7 | Comparer et commander | `/gerant/commander` | 2 |
-| `6b · Commandes — liste, retards, annulation` | B8 | Commandes | `/gerant/commandes` | 2 |
-| `6c · Commande — détail et retard` | B8bis | Détail d'une commande | `/gerant/commandes/:id` | 2 |
-| `7a · Utilisateurs — liste, statut, réinitialisation` | B12 | Utilisateurs | `/gerant/utilisateurs` | 6 |
-| `7b · Nouveau compte chef magasin` | B12ter | Créer un chef magasin | `/gerant/utilisateurs/nouveau` | 6 |
-| `7c · Utilisateur — fiche et onglet Activité` | B12bis | Fiche utilisateur | `/gerant/utilisateurs/:id` | 6 |
-| `7d · Sauvegarde des données` | B14 | Sauvegarde | `/gerant/sauvegarde` | 6 |
-| `7e · Modifier un compte` | B12ter | Modifier un chef magasin | `/gerant/utilisateurs/:id/modifier` | 6 |
-| `7f · Activité des chefs magasin (consultation par le gérant)` | B13 | Activité des chefs | `/gerant/activite-chefs` | 6 |
-| `8a · Stock des matières premières` | B2 | Stock des MP | `/gerant/stock/matieres` | 5 |
-| `8b · Stock des articles` | B3 | Stock des articles | `/gerant/stock/articles` | 5 |
-| `8c · Mon activité — gérant` | A4 | Mon activité (gérant) | `/gerant/activite` | 1 |
-| `10a · Produits — onglets MP articles, actifs inactifs` | C2 | Produits | `/chef/produits` | 3 |
-| `10b · Nouveau produit` | C3bis | Ajouter un produit | `/chef/produits/nouveau` | 3 |
-| `10c · Produit — fiche et historique` | C3 | Fiche produit | `/chef/produits/:id` | 3 |
-| `10d · Modifier un produit (type et stock verrouillés)` | C3bis | Modifier un produit | `/chef/produits/:id/modifier` | 3 |
-| `11a · Mouvements — MP articles séparés, modifier, supprimer` | C4 | Mouvements | `/chef/mouvements` | 3 |
-| `11b · Nouveau mouvement — type, produit, motif, quantité` | C5 | Nouveau mouvement | `/chef/mouvements/nouveau` | 3 |
-| `11c · Inventaire — comptage et ajustement` | C6 | Inventaire | `/chef/inventaire` | 3 |
-| `11d · Mon activité — chef magasin` | A4 | Mon activité (chef) | `/chef/activite` | 1 |
-| `11e · Modifier un mouvement saisi (effet sur le stock, suppression)` | C5 | *(voir écarts)* | — | 3 |
-| `12a · Factures fournisseur — liste et commandes à réceptionner` | C7 | Factures fournisseur | `/chef/factures-fournisseur` | 4 |
-| `12b · Saisir une facture fournisseur (contrôle)` | C7bis | Saisir une facture fournisseur | `/chef/factures-fournisseur/nouvelle` | 4 |
-| `13a · Clients — liste, actifs inactifs` | C8 | Clients | `/chef/clients` | 4 |
-| `13b · Demandes — liste, modification, annulation` | C9 | Demandes | `/chef/demandes` | 4 |
-| `13c · Nouvelle demande client` | C9bis | Nouvelle demande | `/chef/demandes/nouvelle` | 4 |
-| `13d · Nouveau client` | C8 | Ajouter un client (fenêtre) | `/chef/clients` | 4 |
-| `13e · Modifier un client` | C8 | Modifier un client (fenêtre) | `/chef/clients` | 4 |
-| `13f · Modifier une demande en attente (annulation)` | C9bis | Modifier une demande | `/chef/demandes/:id/modifier` | 4 |
-| `14a · Factures client — liste` | C10 | Factures client | `/chef/factures-client` | 4 |
-| `14b · Établir une facture (vérification du stock)` | C10bis | Établir une facture | `/chef/factures-client/nouvelle` | 4 |
-| `14c · Facture imprimable (A4)` | C10ter | Facture imprimable | `/chef/factures-client/:id/imprimer` | 4 |
-| `15a · Paramètres de calcul (S, H, L, j, période)` | B9 | Paramètres de calcul | `/gerant/parametres` | 5 |
-| `15b · Quantité à commander — détail et simulation` | B10 | Quantité à commander | `/gerant/calcul` | 5 |
-| `15c · Statistiques — ABC, fournisseurs, export` | B11 | Statistiques | `/gerant/statistiques` | 5 |
+| [`01a-connexion.png`](captures/01a-connexion.png) | A1 | Connexion | `/connexion` | 1 |
+| [`01b-premiere-connexion-mot-de-passe-provisoire.png`](captures/01b-premiere-connexion-mot-de-passe-provisoire.png) | A2 | Changer le mot de passe provisoire | `/changer-mot-de-passe` | 1 |
+| [`02a-tableau-de-bord-du-gerant.png`](captures/02a-tableau-de-bord-du-gerant.png) | B1 | Tableau de bord gérant | `/gerant` | 7 |
+| [`02b-tableau-de-bord-du-chef-magasin.png`](captures/02b-tableau-de-bord-du-chef-magasin.png) | C1 | Tableau de bord chef | `/chef` | 7 |
+| [`03a-mon-compte-gerant.png`](captures/03a-mon-compte-gerant.png) | A3 | Mon compte (gérant) | `/gerant/compte` | 1 |
+| [`03b-mon-compte-chef-magasin.png`](captures/03b-mon-compte-chef-magasin.png) | A3 | Mon compte (chef) | `/chef/compte` | 1 |
+| [`04a-fournisseurs-liste-actifs-inactifs-supprimer-ou.png`](captures/04a-fournisseurs-liste-actifs-inactifs-supprimer-ou.png) | B4 | Fournisseurs | `/gerant/fournisseurs` | 2 |
+| [`04b-nouveau-fournisseur.png`](captures/04b-nouveau-fournisseur.png) | B5bis | Ajouter un fournisseur | `/gerant/fournisseurs/nouveau` | 2 |
+| [`04c-fournisseur-fiche-et-evaluation.png`](captures/04c-fournisseur-fiche-et-evaluation.png) | B5 | Fiche fournisseur | `/gerant/fournisseurs/:id` | 2 |
+| [`04d-modifier-un-fournisseur-champs-modifies-signales.png`](captures/04d-modifier-un-fournisseur-champs-modifies-signales.png) | B5bis | Modifier un fournisseur | `/gerant/fournisseurs/:id/modifier` | 2 |
+| [`05a-devis-liste-et-suppression.png`](captures/05a-devis-liste-et-suppression.png) | B6 | Devis | `/gerant/devis` | 2 |
+| [`05b-nouveau-devis.png`](captures/05b-nouveau-devis.png) | B6bis | Ajouter un devis | `/gerant/devis/nouveau` | 2 |
+| [`05c-modifier-un-devis-non-utilise-suppression.png`](captures/05c-modifier-un-devis-non-utilise-suppression.png) | B6bis | Modifier un devis | `/gerant/devis/:id/modifier` | 2 |
+| [`06a-comparer-les-devis-et-commander.png`](captures/06a-comparer-les-devis-et-commander.png) | B7 | Comparer et commander | `/gerant/commander` | 2 |
+| [`06b-commandes-liste-retards-annulation.png`](captures/06b-commandes-liste-retards-annulation.png) | B8 | Commandes | `/gerant/commandes` | 2 |
+| [`06c-commande-detail-et-retard.png`](captures/06c-commande-detail-et-retard.png) | B8bis | Détail d'une commande | `/gerant/commandes/:id` | 2 |
+| [`07a-utilisateurs-liste-statut-reinitialisation.png`](captures/07a-utilisateurs-liste-statut-reinitialisation.png) | B12 | Utilisateurs | `/gerant/utilisateurs` | 6 |
+| [`07b-nouveau-compte-chef-magasin.png`](captures/07b-nouveau-compte-chef-magasin.png) | B12ter | Créer un chef magasin | `/gerant/utilisateurs/nouveau` | 6 |
+| [`07c-utilisateur-fiche-et-onglet-activite.png`](captures/07c-utilisateur-fiche-et-onglet-activite.png) | B12bis | Fiche utilisateur | `/gerant/utilisateurs/:id` | 6 |
+| [`07d-sauvegarde-des-donnees.png`](captures/07d-sauvegarde-des-donnees.png) | B14 | Sauvegarde | `/gerant/sauvegarde` | 6 |
+| [`07e-modifier-un-compte.png`](captures/07e-modifier-un-compte.png) | B12ter | Modifier un chef magasin | `/gerant/utilisateurs/:id/modifier` | 6 |
+| [`07f-activite-des-chefs-magasin-consultation-par.png`](captures/07f-activite-des-chefs-magasin-consultation-par.png) | B13 | Activité des chefs | `/gerant/activite-chefs` | 6 |
+| [`08a-stock-des-matieres-premieres.png`](captures/08a-stock-des-matieres-premieres.png) | B2 | Stock des MP | `/gerant/stock/matieres` | 5 |
+| [`08b-stock-des-articles.png`](captures/08b-stock-des-articles.png) | B3 | Stock des articles | `/gerant/stock/articles` | 5 |
+| [`08c-mon-activite-gerant.png`](captures/08c-mon-activite-gerant.png) | A4 | Mon activité (gérant) | `/gerant/activite` | 1 |
+| [`10a-produits-onglets-mp-articles-actifs-inactifs.png`](captures/10a-produits-onglets-mp-articles-actifs-inactifs.png) | C2 | Produits | `/chef/produits` | 3 |
+| [`10b-nouveau-produit.png`](captures/10b-nouveau-produit.png) | C3bis | Ajouter un produit | `/chef/produits/nouveau` | 3 |
+| [`10c-produit-fiche-et-historique.png`](captures/10c-produit-fiche-et-historique.png) | C3 | Fiche produit | `/chef/produits/:id` | 3 |
+| [`10d-modifier-un-produit-type-et-stock.png`](captures/10d-modifier-un-produit-type-et-stock.png) | C3bis | Modifier un produit | `/chef/produits/:id/modifier` | 3 |
+| [`11a-mouvements-mp-articles-separes-modifier-supprimer.png`](captures/11a-mouvements-mp-articles-separes-modifier-supprimer.png) | C4 | Mouvements | `/chef/mouvements` | 3 |
+| [`11b-nouveau-mouvement-type-produit-motif-quantite.png`](captures/11b-nouveau-mouvement-type-produit-motif-quantite.png) | C5 | Nouveau mouvement | `/chef/mouvements/nouveau` | 3 |
+| [`11c-inventaire-comptage-et-ajustement.png`](captures/11c-inventaire-comptage-et-ajustement.png) | C6 | Inventaire | `/chef/inventaire` | 3 |
+| [`11d-mon-activite-chef-magasin.png`](captures/11d-mon-activite-chef-magasin.png) | A4 | Mon activité (chef) | `/chef/activite` | 1 |
+| [`11e-modifier-un-mouvement-saisi-effet-sur.png`](captures/11e-modifier-un-mouvement-saisi-effet-sur.png) | C5 | *(voir écarts)* | — | 3 |
+| [`12a-factures-fournisseur-liste-et-commandes-a.png`](captures/12a-factures-fournisseur-liste-et-commandes-a.png) | C7 | Factures fournisseur | `/chef/factures-fournisseur` | 4 |
+| [`12b-saisir-une-facture-fournisseur-controle.png`](captures/12b-saisir-une-facture-fournisseur-controle.png) | C7bis | Saisir une facture fournisseur | `/chef/factures-fournisseur/nouvelle` | 4 |
+| [`13a-clients-liste-actifs-inactifs.png`](captures/13a-clients-liste-actifs-inactifs.png) | C8 | Clients | `/chef/clients` | 4 |
+| [`13b-demandes-liste-modification-annulation.png`](captures/13b-demandes-liste-modification-annulation.png) | C9 | Demandes | `/chef/demandes` | 4 |
+| [`13c-nouvelle-demande-client.png`](captures/13c-nouvelle-demande-client.png) | C9bis | Nouvelle demande | `/chef/demandes/nouvelle` | 4 |
+| [`13d-nouveau-client.png`](captures/13d-nouveau-client.png) | C8 | Ajouter un client (fenêtre) | `/chef/clients` | 4 |
+| [`13e-modifier-un-client.png`](captures/13e-modifier-un-client.png) | C8 | Modifier un client (fenêtre) | `/chef/clients` | 4 |
+| [`13f-modifier-une-demande-en-attente-annulation.png`](captures/13f-modifier-une-demande-en-attente-annulation.png) | C9bis | Modifier une demande | `/chef/demandes/:id/modifier` | 4 |
+| [`14a-factures-client-liste.png`](captures/14a-factures-client-liste.png) | C10 | Factures client | `/chef/factures-client` | 4 |
+| [`14b-etablir-une-facture-verification-du-stock.png`](captures/14b-etablir-une-facture-verification-du-stock.png) | C10bis | Établir une facture | `/chef/factures-client/nouvelle` | 4 |
+| [`14c-facture-imprimable-a4.png`](captures/14c-facture-imprimable-a4.png) | C10ter | Facture imprimable | `/chef/factures-client/:id/imprimer` | 4 |
+| [`15a-parametres-de-calcul-s-h-l.png`](captures/15a-parametres-de-calcul-s-h-l.png) | B9 | Paramètres de calcul | `/gerant/parametres` | 5 |
+| [`15b-quantite-a-commander-detail-et-simulation.png`](captures/15b-quantite-a-commander-detail-et-simulation.png) | B10 | Quantité à commander | `/gerant/calcul` | 5 |
+| [`15c-statistiques-abc-fournisseurs-export.png`](captures/15c-statistiques-abc-fournisseurs-export.png) | B11 | Statistiques | `/gerant/statistiques` | 5 |
 
 La numérotation des captures saute de 8 à 10 (pas de série 9) : aucune fiche n'en dépend.
 

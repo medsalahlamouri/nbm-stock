@@ -40,7 +40,13 @@ export const MENU_GERANT = [
       { libelle: 'Fournisseurs', to: '/gerant/fournisseurs', icone: Truck },
       { libelle: 'Devis', to: '/gerant/devis', icone: FileText },
       { libelle: 'Comparer et commander', to: '/gerant/commander', icone: Scale },
-      { libelle: 'Commandes', to: '/gerant/commandes', icone: ClipboardList, compteur: 'retards', ton: 'rouge' },
+      {
+        libelle: 'Commandes',
+        to: '/gerant/commandes',
+        icone: ClipboardList,
+        compteur: 'retards',
+        ton: 'rouge',
+      },
     ],
   },
   {
@@ -75,14 +81,26 @@ export const MENU_CHEF = [
   {
     titre: 'Achats',
     liens: [
-      { libelle: 'Factures fournisseur', to: '/chef/factures-fournisseur', icone: Inbox, compteur: 'aReceptionner', ton: 'or' },
+      {
+        libelle: 'Factures fournisseur',
+        to: '/chef/factures-fournisseur',
+        icone: Inbox,
+        compteur: 'aReceptionner',
+        ton: 'or',
+      },
     ],
   },
   {
     titre: 'Ventes',
     liens: [
       { libelle: 'Clients', to: '/chef/clients', icone: Users },
-      { libelle: 'Demandes', to: '/chef/demandes', icone: FileText, compteur: 'demandesEnAttente', ton: 'or' },
+      {
+        libelle: 'Demandes',
+        to: '/chef/demandes',
+        icone: FileText,
+        compteur: 'demandesEnAttente',
+        ton: 'or',
+      },
       { libelle: 'Factures client', to: '/chef/factures-client', icone: Receipt },
     ],
   },

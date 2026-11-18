@@ -30,7 +30,12 @@ function Frise({ commande }) {
   const recue = commande.etat === 'RECUE'
   const retard = commande.etat === 'EN_ATTENTE' && commande.jours_restants < 0
   const etapes = [
-    { titre: 'Commande passée', detail: formatDate(commande.date_commande), icone: Check, statut: 'fait' },
+    {
+      titre: 'Commande passée',
+      detail: formatDate(commande.date_commande),
+      icone: Check,
+      statut: 'fait',
+    },
     {
       titre: 'Livraison prévue',
       detail: `${formatDate(commande.date_prevue)}${retard ? ` · retard de ${Math.abs(commande.jours_restants)} j` : ''}`,
@@ -38,10 +43,17 @@ function Frise({ commande }) {
       statut: annulee ? 'neutre' : recue ? 'fait' : retard ? 'retard' : 'encours',
     },
     annulee
-      ? { titre: 'Commande annulée', detail: 'Aucune livraison attendue', icone: X, statut: 'annule' }
+      ? {
+          titre: 'Commande annulée',
+          detail: 'Aucune livraison attendue',
+          icone: X,
+          statut: 'annule',
+        }
       : {
           titre: 'Facture reçue',
-          detail: recue ? `${commande.facture?.numero ?? ''} · ${formatDate(commande.facture?.date_facture)}` : 'En attente de la facture',
+          detail: recue
+            ? `${commande.facture?.numero ?? ''} · ${formatDate(commande.facture?.date_facture)}`
+            : 'En attente de la facture',
           icone: PackageCheck,
           statut: recue ? 'fait' : 'attente',
         },
@@ -64,13 +76,30 @@ function Frise({ commande }) {
           transition={{ delay: i * 0.08, duration: 0.2 }}
           className="relative flex items-start gap-3"
         >
-          {i < etapes.length - 1 && <span className="absolute top-[17px] left-[44px] hidden h-0.5 w-[calc(100%-36px)] bg-line sm:block" aria-hidden="true" />}
-          <span className={cn('relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full', styles[etape.statut])}>
+          {i < etapes.length - 1 && (
+            <span
+              className="bg-line absolute top-[17px] left-[44px] hidden h-0.5 w-[calc(100%-36px)] sm:block"
+              aria-hidden="true"
+            />
+          )}
+          <span
+            className={cn(
+              'relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full',
+              styles[etape.statut],
+            )}
+          >
             <etape.icone className="size-4" aria-hidden="true" />
           </span>
           <div className="min-w-0 pt-0.5">
-            <p className="text-[14px] font-semibold text-ink">{etape.titre}</p>
-            <p className={cn('text-[13px]', etape.statut === 'retard' ? 'font-medium text-dfg' : 'text-mutedtxt')}>{etape.detail}</p>
+            <p className="text-ink text-[14px] font-semibold">{etape.titre}</p>
+            <p
+              className={cn(
+                'text-[13px]',
+                etape.statut === 'retard' ? 'text-dfg font-medium' : 'text-mutedtxt',
+              )}
+            >
+              {etape.detail}
+            </p>
           </div>
         </motion.li>
       ))}
@@ -94,8 +123,19 @@ export default function CommandeDetail() {
     onError: (e) => toast.error(messageErreur(e)),
   })
 
-  if (requete.isPending) return <Page><SqueletteBloc hauteur={100} /><SqueletteBloc hauteur={220} /></Page>
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isPending)
+    return (
+      <Page>
+        <SqueletteBloc hauteur={100} />
+        <SqueletteBloc hauteur={220} />
+      </Page>
+    )
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
   const c = requete.data
   const p = c.devis?.produit
   const f = c.devis?.fournisseur
@@ -117,13 +157,20 @@ export default function CommandeDetail() {
       />
 
       <Carte>
-        <CarteEntete titre="Avancement" description="Livraison prévue = date de commande + délai du devis" />
+        <CarteEntete
+          titre="Avancement"
+          description="Livraison prévue = date de commande + délai du devis"
+        />
         <Frise commande={c} />
         {c.etat === 'EN_ATTENTE' && c.jours_restants < 0 && (
-          <Encart ton="danger" titre={`Livraison en retard de ${Math.abs(c.jours_restants)} jour(s)`}>
+          <Encart
+            ton="danger"
+            titre={`Livraison en retard de ${Math.abs(c.jours_restants)} jour(s)`}
+          >
             Relancez {f?.raison_sociale}
             {f?.telephone ? ` au ${formatTelephone(f.telephone)}` : ''}
-            {f?.email ? ` ou par e-mail (${f.email})` : ''}. La commande sera clôturée à la saisie de la facture par le chef magasin.
+            {f?.email ? ` ou par e-mail (${f.email})` : ''}. La commande sera clôturée à la saisie
+            de la facture par le chef magasin.
           </Encart>
         )}
       </Carte>
@@ -136,12 +183,18 @@ export default function CommandeDetail() {
               {p?.designation} <span className="text-mutedtxt">· {p?.code}</span>
             </LigneInfo>
             <LigneInfo libelle="Fournisseur">
-              <Link to={`/gerant/fournisseurs/${f?.id_fournisseur}`} className="underline underline-offset-2">
+              <Link
+                to={`/gerant/fournisseurs/${f?.id_fournisseur}`}
+                className="underline underline-offset-2"
+              >
                 {f?.raison_sociale}
               </Link>
             </LigneInfo>
             <LigneInfo libelle="Devis">
-              <Link to={`/gerant/devis/${c.devis?.id_devis}/modifier`} className="font-mono underline underline-offset-2">
+              <Link
+                to={`/gerant/devis/${c.devis?.id_devis}/modifier`}
+                className="font-mono underline underline-offset-2"
+              >
                 {reference('DEV', c.devis?.id_devis)}
               </Link>{' '}
               du {formatDate(c.devis?.date_devis)}
@@ -152,29 +205,41 @@ export default function CommandeDetail() {
             <LigneInfo libelle="Prix unitaire">{formatMontant(c.devis?.prix_unitaire)}</LigneInfo>
             <LigneInfo libelle="Délai annoncé">{c.devis?.delai_livraison} jour(s)</LigneInfo>
             <LigneInfo libelle="Date de commande">{formatDate(c.date_commande)}</LigneInfo>
-            <LigneInfo libelle="Livraison prévue">{c.etat === 'ANNULEE' ? '—' : formatDate(c.date_prevue)}</LigneInfo>
-            <LigneInfo libelle="Montant" fort className="mt-1 border-t border-line pt-3">
+            <LigneInfo libelle="Livraison prévue">
+              {c.etat === 'ANNULEE' ? '—' : formatDate(c.date_prevue)}
+            </LigneInfo>
+            <LigneInfo libelle="Montant" fort className="border-line mt-1 border-t pt-3">
               {formatMontant(c.montant)}
             </LigneInfo>
           </dl>
         </Carte>
 
         <Carte>
-          <CarteEntete titre="Facture fournisseur" description="Saisie et contrôlée par le chef magasin à la réception" />
+          <CarteEntete
+            titre="Facture fournisseur"
+            description="Saisie et contrôlée par le chef magasin à la réception"
+          />
           {c.facture ? (
             <dl>
               <LigneInfo libelle="Numéro">
                 <span className="font-mono font-semibold">{c.facture.numero}</span>
               </LigneInfo>
-              <LigneInfo libelle="Date de la facture">{formatDate(c.facture.date_facture)}</LigneInfo>
+              <LigneInfo libelle="Date de la facture">
+                {formatDate(c.facture.date_facture)}
+              </LigneInfo>
               <LigneInfo libelle="Délai réel">
-                {Math.round((new Date(c.facture.date_facture) - new Date(c.date_commande)) / 86_400_000)} jour(s)
+                {Math.round(
+                  (new Date(c.facture.date_facture) - new Date(c.date_commande)) / 86_400_000,
+                )}{' '}
+                jour(s)
               </LigneInfo>
               <LigneInfo libelle="Quantité reçue">
                 {formatNombre(c.facture.quantite)} {p?.unite}
               </LigneInfo>
-              <LigneInfo libelle="Prix unitaire">{formatMontant(c.facture.prix_unitaire)}</LigneInfo>
-              <LigneInfo libelle="Montant total" fort className="mt-1 border-t border-line pt-3">
+              <LigneInfo libelle="Prix unitaire">
+                {formatMontant(c.facture.prix_unitaire)}
+              </LigneInfo>
+              <LigneInfo libelle="Montant total" fort className="border-line mt-1 border-t pt-3">
                 {formatMontant(c.facture.montant_total)}
               </LigneInfo>
             </dl>

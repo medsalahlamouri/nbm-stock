@@ -8,7 +8,15 @@ import { Link } from 'react-router'
 import { motion } from 'motion/react'
 import { FileText, Printer, Receipt, Wallet } from 'lucide-react'
 import { useDemandes, useFacturesClient } from '@/hooks/useDonnees'
-import { correspond, formatDate, formatMontant, formatMontantArrondi, formatMois, formatNombre, reference } from '@/lib/format'
+import {
+  correspond,
+  formatDate,
+  formatMontant,
+  formatMontantArrondi,
+  formatMois,
+  formatNombre,
+  reference,
+} from '@/lib/format'
 import { CANAUX } from '@/api/ventes'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -42,9 +50,16 @@ export default function FacturesClient() {
     }
   }, [liste, maintenant])
 
-  const filtrees = liste.filter((f) => correspond(recherche, f.numero, f.demande_client?.client?.nom, reference('DEM', f.id_demande)))
+  const filtrees = liste.filter((f) =>
+    correspond(recherche, f.numero, f.demande_client?.client?.nom, reference('DEM', f.id_demande)),
+  )
   const colonnes = [
-    { id: 'numero', entete: 'Facture', tri: (f) => f.numero, cellule: (f) => <Reference>{f.numero}</Reference> },
+    {
+      id: 'numero',
+      entete: 'Facture',
+      tri: (f) => f.numero,
+      cellule: (f) => <Reference>{f.numero}</Reference>,
+    },
     {
       id: 'client',
       entete: 'Client',
@@ -56,22 +71,56 @@ export default function FacturesClient() {
         />
       ),
     },
-    { id: 'date', entete: 'Date', tri: (f) => f.date_facture, cellule: (f) => formatDate(f.date_facture) },
-    { id: 'montant', entete: 'Montant', align: 'right', tri: (f) => Number(f.montant_total), cellule: (f) => <strong>{formatMontant(f.montant_total)}</strong> },
+    {
+      id: 'date',
+      entete: 'Date',
+      tri: (f) => f.date_facture,
+      cellule: (f) => formatDate(f.date_facture),
+    },
+    {
+      id: 'montant',
+      entete: 'Montant',
+      align: 'right',
+      tri: (f) => Number(f.montant_total),
+      cellule: (f) => <strong>{formatMontant(f.montant_total)}</strong>,
+    },
     {
       id: 'actions',
       entete: 'Actions',
       align: 'right',
-      cellule: (f) => <ActionIcone libelle="Voir et imprimer" icone={Printer} to={`/chef/factures-client/${f.id_facture_c}/imprimer`} />,
+      cellule: (f) => (
+        <ActionIcone
+          libelle="Voir et imprimer"
+          icone={Printer}
+          to={`/chef/factures-client/${f.id_facture_c}/imprimer`}
+        />
+      ),
     },
   ]
 
   return (
     <Page>
-      <PageEntete titre="Factures client" description="Factures établies à partir des demandes. Paiement comptant : chaque facture est réputée payée." />
+      <PageEntete
+        titre="Factures client"
+        description="Factures établies à partir des demandes. Paiement comptant : chaque facture est réputée payée."
+      />
       <GrilleIndicateurs>
-        <StatCard libelle="Factures établies" valeur={liste.length} sousTexte="depuis le début" icone={Receipt} chargement={factures.isPending} />
-        <StatCard libelle="Total facturé" valeur={stats.total} formater={formatMontantArrondi} sousTexte="toutes factures" icone={Wallet} ton="ok" chargement={factures.isPending} />
+        <StatCard
+          libelle="Factures établies"
+          valeur={liste.length}
+          sousTexte="depuis le début"
+          icone={Receipt}
+          chargement={factures.isPending}
+        />
+        <StatCard
+          libelle="Total facturé"
+          valeur={stats.total}
+          formater={formatMontantArrondi}
+          sousTexte="toutes factures"
+          icone={Wallet}
+          ton="ok"
+          chargement={factures.isPending}
+        />
         <StatCard
           libelle={`Factures de ${formatMois(maintenant)}`}
           valeur={stats.nbMois}
@@ -80,11 +129,22 @@ export default function FacturesClient() {
           ton="info"
           chargement={factures.isPending}
         />
-        <StatCard libelle="Demandes à facturer" valeur={aFacturer.length} sousTexte="en attente" icone={FileText} ton="warn" to="/chef/demandes?etat=EN_ATTENTE" chargement={demandes.isPending} />
+        <StatCard
+          libelle="Demandes à facturer"
+          valeur={aFacturer.length}
+          sousTexte="en attente"
+          icone={FileText}
+          ton="warn"
+          to="/chef/demandes?etat=EN_ATTENTE"
+          chargement={demandes.isPending}
+        />
       </GrilleIndicateurs>
 
       <Carte>
-        <CarteEntete titre="Demandes à facturer" description="Cliquez sur une demande pour vérifier le stock et établir sa facture." />
+        <CarteEntete
+          titre="Demandes à facturer"
+          description="Cliquez sur une demande pour vérifier le stock et établir sa facture."
+        />
         {demandes.isPending ? (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {[0, 1, 2].map((i) => (
@@ -94,22 +154,32 @@ export default function FacturesClient() {
         ) : demandes.isError ? (
           <EtatErreur erreur={demandes.error} onReessayer={demandes.refetch} />
         ) : aFacturer.length === 0 ? (
-          <EtatVide icone={FileText} titre="Aucune demande en attente" message="Les nouvelles demandes des clients apparaîtront ici." compact />
+          <EtatVide
+            icone={FileText}
+            titre="Aucune demande en attente"
+            message="Les nouvelles demandes des clients apparaîtront ici."
+            compact
+          />
         ) : (
           <motion.div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" {...listeCascade}>
             {aFacturer.map((d) => (
               <motion.div key={d.id_demande} variants={elementCascade.variants}>
                 <Link
                   to={`/chef/factures-client/nouvelle?demande=${d.id_demande}`}
-                  className="block rounded-xl border border-line bg-surf2 px-4 py-3.5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-line2 hover:shadow-hover"
+                  className="border-line bg-surf2 hover:border-line2 hover:shadow-hover block rounded-xl border px-4 py-3.5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className="font-mono text-[14px] font-semibold text-ink">{reference('DEM', d.id_demande)}</span>
-                    <span className="text-[12px] text-mutedtxt">{formatDate(d.date_demande)}</span>
+                    <span className="text-ink font-mono text-[14px] font-semibold">
+                      {reference('DEM', d.id_demande)}
+                    </span>
+                    <span className="text-mutedtxt text-[12px]">{formatDate(d.date_demande)}</span>
                   </div>
-                  <p className="mt-1.5 truncate text-[15px] font-semibold text-ink">{d.client?.nom}</p>
-                  <p className="text-[13px] text-mutedtxt tabular">
-                    {formatNombre(d.nb_articles)} article(s) · <strong className="text-ink">{formatMontant(d.montant)}</strong>
+                  <p className="text-ink mt-1.5 truncate text-[15px] font-semibold">
+                    {d.client?.nom}
+                  </p>
+                  <p className="text-mutedtxt tabular text-[13px]">
+                    {formatNombre(d.nb_articles)} article(s) ·{' '}
+                    <strong className="text-ink">{formatMontant(d.montant)}</strong>
                   </p>
                 </Link>
               </motion.div>
@@ -121,7 +191,12 @@ export default function FacturesClient() {
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
           <CarteEntete titre="Factures" />
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="FC-…, client, demande" className="sm:w-[300px]" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="FC-…, client, demande"
+            className="sm:w-[300px]"
+          />
         </div>
         <DataTable
           colonnes={colonnes}
@@ -135,7 +210,11 @@ export default function FacturesClient() {
             <EtatVide
               icone={Receipt}
               titre={liste.length ? 'Aucune facture ne correspond' : 'Aucune facture établie'}
-              message={liste.length ? 'Modifiez la recherche.' : 'Établissez la facture d’une demande en attente.'}
+              message={
+                liste.length
+                  ? 'Modifiez la recherche.'
+                  : 'Établissez la facture d’une demande en attente.'
+              }
               action={
                 !liste.length && (
                   <Button variant="outline" asChild>

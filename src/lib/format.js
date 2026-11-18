@@ -26,7 +26,8 @@ function formateur(min, max) {
 
 /** Nombre au format français : 1 234 ou 1 234,5 */
 export function formatNombre(valeur, decimales = 0, decimalesMax = decimales) {
-  if (valeur === null || valeur === undefined || valeur === '' || Number.isNaN(Number(valeur))) return '—'
+  if (valeur === null || valeur === undefined || valeur === '' || Number.isNaN(Number(valeur)))
+    return '—'
   return nettoyer(formateur(decimales, decimalesMax).format(Number(valeur)))
 }
 
@@ -149,10 +150,39 @@ export function correspond(recherche, ...champs) {
 
 /* ---------- Montant en lettres (facture imprimable) ---------- */
 const UNITES = [
-  'zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix',
-  'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf',
+  'zéro',
+  'un',
+  'deux',
+  'trois',
+  'quatre',
+  'cinq',
+  'six',
+  'sept',
+  'huit',
+  'neuf',
+  'dix',
+  'onze',
+  'douze',
+  'treize',
+  'quatorze',
+  'quinze',
+  'seize',
+  'dix-sept',
+  'dix-huit',
+  'dix-neuf',
 ]
-const DIZAINES = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt']
+const DIZAINES = [
+  '',
+  '',
+  'vingt',
+  'trente',
+  'quarante',
+  'cinquante',
+  'soixante',
+  'soixante',
+  'quatre-vingt',
+  'quatre-vingt',
+]
 
 function moinsDeCent(n) {
   if (n < 20) return UNITES[n]
@@ -189,7 +219,8 @@ export function nombreEnLettres(nombre) {
   for (const [valeur, nom] of groupes) {
     const q = Math.floor(n / valeur)
     if (q > 0) {
-      if (nom === 'mille') morceaux.push(q === 1 ? 'mille' : `${moinsDeMille(q).replace(/cents$/, 'cent')} mille`)
+      if (nom === 'mille')
+        morceaux.push(q === 1 ? 'mille' : `${moinsDeMille(q).replace(/cents$/, 'cent')} mille`)
       else morceaux.push(`${moinsDeMille(q)} ${nom}${q > 1 ? 's' : ''}`)
       n %= valeur
     }

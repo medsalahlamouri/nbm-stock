@@ -23,7 +23,8 @@ export const ETATS_COMMANDE = {
  * « En retard · N j », « Prévue aujourd'hui », « Dans N jours », « Reçue », « Annulée ».
  */
 export function etatCommande(commande) {
-  if (commande.etat !== 'EN_ATTENTE') return ETATS_COMMANDE[commande.etat] ?? { libelle: commande.etat, ton: 'neutral' }
+  if (commande.etat !== 'EN_ATTENTE')
+    return ETATS_COMMANDE[commande.etat] ?? { libelle: commande.etat, ton: 'neutral' }
   const jours = commande.jours_restants
   if (jours === null || jours === undefined) return ETATS_COMMANDE.EN_ATTENTE
   if (jours < 0) return { libelle: `En retard · ${Math.abs(jours)} j`, ton: 'danger' }
@@ -38,7 +39,8 @@ export const ETATS_DEMANDE = {
 }
 export const etatDemande = (etat) => ETATS_DEMANDE[etat] ?? { libelle: etat ?? '—', ton: 'neutral' }
 
-export const statutActif = (actif) => (actif ? { libelle: 'Actif', ton: 'ok' } : { libelle: 'Inactif', ton: 'neutral' })
+export const statutActif = (actif) =>
+  actif ? { libelle: 'Actif', ton: 'ok' } : { libelle: 'Inactif', ton: 'neutral' }
 
 export const CLASSES_ABC = {
   A: { libelle: 'Classe A', ton: 'danger' },
@@ -52,4 +54,13 @@ export const PROFILS = {
 }
 
 /** Couleurs des séries de graphiques, dans l'ordre de la maquette */
-export const COULEURS = ['var(--red)', 'var(--gold)', 'var(--green)', 'var(--sand)', 'var(--strong)', 'var(--blue)', 'var(--gold2)', 'var(--muted2)']
+export const COULEURS = [
+  'var(--red)',
+  'var(--gold)',
+  'var(--green)',
+  'var(--sand)',
+  'var(--strong)',
+  'var(--blue)',
+  'var(--gold2)',
+  'var(--muted2)',
+]

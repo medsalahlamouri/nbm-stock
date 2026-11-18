@@ -45,7 +45,9 @@ export async function toutLire(construire, taille = 1000) {
 export async function appelerRpc(supabase, nom, parametres) {
   const resultat = deballer(await supabase.rpc(nom, parametres))
   // Une fonction qui renvoie un objet JSON peut arriver sous forme de tableau d'une ligne
-  return Array.isArray(resultat) && resultat.length === 1 && typeof resultat[0] === 'object' ? resultat[0] : resultat
+  return Array.isArray(resultat) && resultat.length === 1 && typeof resultat[0] === 'object'
+    ? resultat[0]
+    : resultat
 }
 
 /**
@@ -53,8 +55,23 @@ export async function appelerRpc(supabase, nom, parametres) {
  * Chaque mutation déclare les domaines qu'elle modifie ; tout ce qui en dépend est relu.
  */
 const DOMAINES = {
-  stock: [['etat-stock'], ['produits'], ['produit'], ['mouvements'], ['courbe-stock'], ['simulation']],
-  achats: [['fournisseurs'], ['fournisseur'], ['devis'], ['commandes'], ['commande'], ['retards'], ['evaluation']],
+  stock: [
+    ['etat-stock'],
+    ['produits'],
+    ['produit'],
+    ['mouvements'],
+    ['courbe-stock'],
+    ['simulation'],
+  ],
+  achats: [
+    ['fournisseurs'],
+    ['fournisseur'],
+    ['devis'],
+    ['commandes'],
+    ['commande'],
+    ['retards'],
+    ['evaluation'],
+  ],
   receptions: [['factures-fournisseur'], ['commandes'], ['commande'], ['retards'], ['evaluation']],
   ventes: [['clients'], ['demandes'], ['demande'], ['factures-client'], ['facture-client']],
   comptes: [['utilisateurs'], ['utilisateur'], ['moi']],
@@ -63,8 +80,18 @@ const DOMAINES = {
 
 export function invalider(...domaines) {
   const cles = new Set()
-  for (const domaine of domaines) for (const cle of DOMAINES[domaine] ?? [[domaine]]) cles.add(JSON.stringify(cle))
+  for (const domaine of domaines)
+    for (const cle of DOMAINES[domaine] ?? [[domaine]]) cles.add(JSON.stringify(cle))
   // Tableaux de bord, compteurs du menu, alertes et journal dépendent de presque tout
-  for (const cle of [['tableau-de-bord'], ['compteurs'], ['alertes'], ['journal'], ['statistiques']]) cles.add(JSON.stringify(cle))
-  return Promise.all([...cles].map((cle) => queryClient.invalidateQueries({ queryKey: JSON.parse(cle) })))
+  for (const cle of [
+    ['tableau-de-bord'],
+    ['compteurs'],
+    ['alertes'],
+    ['journal'],
+    ['statistiques'],
+  ])
+    cles.add(JSON.stringify(cle))
+  return Promise.all(
+    [...cles].map((cle) => queryClient.invalidateQueries({ queryKey: JSON.parse(cle) })),
+  )
 }

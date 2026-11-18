@@ -31,10 +31,12 @@ function Etape({ numero, titre, description, children }) {
   return (
     <Carte>
       <div className="flex items-start gap-3">
-        <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-strong text-[14px] font-semibold text-bg">{numero}</span>
+        <span className="bg-strong text-bg inline-flex size-8 shrink-0 items-center justify-center rounded-full text-[14px] font-semibold">
+          {numero}
+        </span>
         <div className="pt-1">
-          <h2 className="text-[17px] leading-tight font-semibold text-ink">{titre}</h2>
-          {description && <p className="mt-0.5 text-[13px] text-mutedtxt">{description}</p>}
+          <h2 className="text-ink text-[17px] leading-tight font-semibold">{titre}</h2>
+          {description && <p className="text-mutedtxt mt-0.5 text-[13px]">{description}</p>}
         </div>
       </div>
       {children}
@@ -43,8 +45,18 @@ function Etape({ numero, titre, description, children }) {
 }
 
 const TYPES = [
-  { valeur: 'MP', titre: 'Matière première', detail: 'Bois, panneaux, quincaillerie, colle, vernis', icone: Layers },
-  { valeur: 'ARTICLE', titre: 'Article (produit fini)', detail: 'Tables, chaises, armoires, bureaux', icone: Armchair },
+  {
+    valeur: 'MP',
+    titre: 'Matière première',
+    detail: 'Bois, panneaux, quincaillerie, colle, vernis',
+    icone: Layers,
+  },
+  {
+    valeur: 'ARTICLE',
+    titre: 'Article (produit fini)',
+    detail: 'Tables, chaises, armoires, bureaux',
+    icone: Armchair,
+  },
 ]
 
 export default function MouvementFormulaire() {
@@ -53,31 +65,45 @@ export default function MouvementFormulaire() {
   const stock = useEtatStock()
   const produits = (stock.data ?? []).filter((p) => p.actif)
   const initial = produits.find((p) => p.id_produit === Number(parametres.get('produit')))
-  const [type, setType] = useState(initial?.type ?? (parametres.get('type') === 'ARTICLE' ? 'ARTICLE' : 'MP'))
+  const [type, setType] = useState(
+    initial?.type ?? (parametres.get('type') === 'ARTICLE' ? 'ARTICLE' : 'MP'),
+  )
   const [idProduit, setIdProduit] = useState(initial?.id_produit ?? null)
   const [quantite, setQuantite] = useState('')
 
   const duType = produits.filter((p) => p.type === type)
-  const produit = duType.find((p) => p.id_produit === idProduit) ?? (initial?.type === type ? initial : null)
+  const produit =
+    duType.find((p) => p.id_produit === idProduit) ?? (initial?.type === type ? initial : null)
   const mp = type === 'MP'
   const qte = Number(quantite)
   const qteValide = quantite !== '' && Number.isInteger(qte) && qte > 0
   const apres = produit && qteValide ? produit.quantite_stock + (mp ? -qte : qte) : null
   const insuffisant = mp && produit && qteValide && qte > produit.quantite_stock
   const seuil = produit?.seuil
-  const alerte = apres !== null && !insuffisant && seuil !== null && seuil !== undefined && apres <= seuil
+  const alerte =
+    apres !== null && !insuffisant && seuil !== null && seuil !== undefined && apres <= seuil
 
   const mouvement = useMutation({
     mutationFn: () => enregistrerMouvement(produit.id_produit, qte),
     onSuccess: async (resultat) => {
       await invalider('stock')
-      toast.success(`Mouvement enregistré : nouveau stock ${formatNombre(resultat?.nouveau_stock)} ${produit.unite}.`, {
-        description: `${resultat?.motif ?? (mp ? 'Consommation atelier' : 'Production atelier')} · ${produit.designation}`,
-      })
+      toast.success(
+        `Mouvement enregistré : nouveau stock ${formatNombre(resultat?.nouveau_stock)} ${produit.unite}.`,
+        {
+          description: `${resultat?.motif ?? (mp ? 'Consommation atelier' : 'Production atelier')} · ${produit.designation}`,
+        },
+      )
       if (resultat?.en_alerte) {
-        toast.warning(mp ? `${produit.designation} a atteint son point de commande.` : `${produit.designation} est sous son seuil minimum.`, {
-          description: mp ? 'Le gérant est alerté pour commander.' : 'Pensez à lancer une production.',
-        })
+        toast.warning(
+          mp
+            ? `${produit.designation} a atteint son point de commande.`
+            : `${produit.designation} est sous son seuil minimum.`,
+          {
+            description: mp
+              ? 'Le gérant est alerté pour commander.'
+              : 'Pensez à lancer une production.',
+          },
+        )
       }
       naviguer('/chef/mouvements?type=' + type)
     },
@@ -114,15 +140,24 @@ export default function MouvementFormulaire() {
                 }}
                 className={cn(
                   'flex cursor-pointer items-center gap-4 rounded-xl border px-5 py-4 text-left transition-[background-color,border-color,color] duration-200 active:scale-[0.99]',
-                  actif ? 'border-strong bg-strong text-bg' : 'border-line bg-surf text-ink hover:border-line2',
+                  actif
+                    ? 'border-strong bg-strong text-bg'
+                    : 'border-line bg-surf text-ink hover:border-line2',
                 )}
               >
-                <span className={cn('inline-flex size-11 shrink-0 items-center justify-center rounded-[10px]', actif ? 'bg-bg/10' : 'bg-hl text-ink')}>
+                <span
+                  className={cn(
+                    'inline-flex size-11 shrink-0 items-center justify-center rounded-[10px]',
+                    actif ? 'bg-bg/10' : 'bg-hl text-ink',
+                  )}
+                >
                   <t.icone className="size-5" aria-hidden="true" />
                 </span>
                 <span>
                   <span className="block text-[16px] font-semibold">{t.titre}</span>
-                  <span className={cn('block text-[13px]', actif ? 'text-bg/75' : 'text-mutedtxt')}>{t.detail}</span>
+                  <span className={cn('block text-[13px]', actif ? 'text-bg/75' : 'text-mutedtxt')}>
+                    {t.detail}
+                  </span>
                 </span>
               </button>
             )
@@ -130,7 +165,11 @@ export default function MouvementFormulaire() {
         </div>
       </Etape>
 
-      <Etape numero={2} titre="Produit" description={`${formatNombre(duType.length)} ${mp ? 'matière(s) première(s)' : 'article(s)'} · recherche par code ou nom`}>
+      <Etape
+        numero={2}
+        titre="Produit"
+        description={`${formatNombre(duType.length)} ${mp ? 'matière(s) première(s)' : 'article(s)'} · recherche par code ou nom`}
+      >
         <Combobox
           libelle="Produit"
           valeur={produit?.id_produit ?? null}
@@ -141,22 +180,34 @@ export default function MouvementFormulaire() {
           effacable
         />
         {produit && produit.etat !== 'SUFFISANT' && (
-          <p className="text-[13px] text-mutedtxt">
-            État actuel : <Badge ton={etatStock(produit.etat).ton}>{etatStock(produit.etat).libelle}</Badge>
+          <p className="text-mutedtxt text-[13px]">
+            État actuel :{' '}
+            <Badge ton={etatStock(produit.etat).ton}>{etatStock(produit.etat).libelle}</Badge>
           </p>
         )}
       </Etape>
 
-      <Etape numero={3} titre="Motif" description="Déduit du type de produit. Réceptions, ventes, inventaires et stock initial sont créés automatiquement ailleurs.">
-        <div className="flex items-start justify-between gap-4 rounded-xl border border-ink bg-hl px-5 py-4">
+      <Etape
+        numero={3}
+        titre="Motif"
+        description="Déduit du type de produit. Réceptions, ventes, inventaires et stock initial sont créés automatiquement ailleurs."
+      >
+        <div className="border-ink bg-hl flex items-start justify-between gap-4 rounded-xl border px-5 py-4">
           <div>
-            <p className="text-[16px] font-semibold text-ink">{mp ? 'Consommation atelier' : 'Production atelier'}</p>
-            <p className="text-[13px] text-mutedtxt">{mp ? "Matière remise à l'atelier pour la fabrication" : "Articles terminés par l'atelier et entrés en stock"}</p>
+            <p className="text-ink text-[16px] font-semibold">
+              {mp ? 'Consommation atelier' : 'Production atelier'}
+            </p>
+            <p className="text-mutedtxt text-[13px]">
+              {mp
+                ? "Matière remise à l'atelier pour la fabrication"
+                : "Articles terminés par l'atelier et entrés en stock"}
+            </p>
           </div>
           <Badge ton={mp ? 'danger' : 'ok'}>{mp ? 'Sortie' : 'Entrée'}</Badge>
         </div>
         <Encart ton="info" icone={Info}>
-          Les réceptions et les ventes sont enregistrées automatiquement par les factures. Un mouvement enregistré n'est jamais modifiable : pour corriger un écart, utilisez l'
+          Les réceptions et les ventes sont enregistrées automatiquement par les factures. Un
+          mouvement enregistré n'est jamais modifiable : pour corriger un écart, utilisez l'
           <Link to="/chef/inventaire" className="font-semibold underline underline-offset-2">
             inventaire
           </Link>
@@ -169,17 +220,42 @@ export default function MouvementFormulaire() {
           libelle={`Quantité${produit ? ` (${produit.unite})` : ''}`}
           obligatoire
           className="max-w-[360px]"
-          erreur={quantite !== '' && !qteValide ? 'Saisissez un nombre entier supérieur à 0.' : insuffisant ? `Stock insuffisant : ${formatNombre(produit.quantite_stock)} ${produit.unite} disponible(s).` : undefined}
+          erreur={
+            quantite !== '' && !qteValide
+              ? 'Saisissez un nombre entier supérieur à 0.'
+              : insuffisant
+                ? `Stock insuffisant : ${formatNombre(produit.quantite_stock)} ${produit.unite} disponible(s).`
+                : undefined
+          }
         >
-          <Input inputMode="numeric" placeholder="0" value={quantite} onChange={(e) => setQuantite(e.target.value.replace(/[^\d]/g, ''))} disabled={!produit} />
+          <Input
+            inputMode="numeric"
+            placeholder="0"
+            value={quantite}
+            onChange={(e) => setQuantite(e.target.value.replace(/[^\d]/g, ''))}
+            disabled={!produit}
+          />
         </Champ>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Tuile libelle="Stock actuel" valeur={produit ? `${formatNombre(produit.quantite_stock)} ${produit.unite}` : '—'} />
-          <div className={cn('rounded-xl px-4 py-3.5', insuffisant ? 'bg-dbg text-dfg' : 'bg-strong text-bg')}>
+          <Tuile
+            libelle="Stock actuel"
+            valeur={produit ? `${formatNombre(produit.quantite_stock)} ${produit.unite}` : '—'}
+          />
+          <div
+            className={cn(
+              'rounded-xl px-4 py-3.5',
+              insuffisant ? 'bg-dbg text-dfg' : 'bg-strong text-bg',
+            )}
+          >
             <p className="text-[13px] opacity-75">Stock après le mouvement</p>
-            <p className="mt-1 text-[22px] leading-tight font-semibold tabular">{apres !== null ? `${formatNombre(apres)} ${produit.unite}` : '—'}</p>
+            <p className="tabular mt-1 text-[22px] leading-tight font-semibold">
+              {apres !== null ? `${formatNombre(apres)} ${produit.unite}` : '—'}
+            </p>
           </div>
-          <Tuile libelle={mp ? 'Point de commande' : 'Seuil minimum'} valeur={seuil !== null && seuil !== undefined ? formatNombre(seuil) : '—'} />
+          <Tuile
+            libelle={mp ? 'Point de commande' : 'Seuil minimum'}
+            valeur={seuil !== null && seuil !== undefined ? formatNombre(seuil) : '—'}
+          />
         </div>
         {alerte && (
           <Encart ton="warn" icone={TriangleAlert}>
@@ -188,12 +264,13 @@ export default function MouvementFormulaire() {
               : `Après ce mouvement, le stock restera sous le seuil minimum (${formatNombre(seuil)}).`}
           </Encart>
         )}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
-          <p className="text-[14px] text-mutedtxt">
+        <div className="border-line flex flex-wrap items-center justify-between gap-3 border-t pt-5">
+          <p className="text-mutedtxt text-[14px]">
             Récapitulatif :{' '}
             {produit && qteValide ? (
               <strong className="text-ink">
-                {mp ? 'Sortie' : 'Entrée'} de {formatNombre(qte)} {produit.unite} · {produit.designation} · {mp ? 'Consommation atelier' : 'Production atelier'}
+                {mp ? 'Sortie' : 'Entrée'} de {formatNombre(qte)} {produit.unite} ·{' '}
+                {produit.designation} · {mp ? 'Consommation atelier' : 'Production atelier'}
               </strong>
             ) : (
               'choisissez un produit et une quantité'
@@ -203,7 +280,10 @@ export default function MouvementFormulaire() {
             <Button variant="outline" onClick={() => naviguer('/chef/mouvements')}>
               Annuler
             </Button>
-            <Button onClick={() => mouvement.mutate()} disabled={!produit || !qteValide || insuffisant || mouvement.isPending}>
+            <Button
+              onClick={() => mouvement.mutate()}
+              disabled={!produit || !qteValide || insuffisant || mouvement.isPending}
+            >
               {mouvement.isPending ? <Loader2 className="animate-spin" /> : <Check />}
               Enregistrer le mouvement
             </Button>

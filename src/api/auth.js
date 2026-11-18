@@ -12,7 +12,10 @@ import { appelerRpc } from '@/lib/requetes'
  * @returns {{ profil: 'GERANT'|'CHEF_MAGASIN', nom, prenom, doit_changer_mdp }}
  */
 export async function seConnecter(email, motDePasse) {
-  const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: motDePasse })
+  const { error } = await supabase.auth.signInWithPassword({
+    email: email.trim(),
+    password: motDePasse,
+  })
   if (error) {
     // Message volontairement vague : on ne précise pas si l'e-mail ou le mot de passe est faux
     const reseau = /fetch|network/i.test(error.message)

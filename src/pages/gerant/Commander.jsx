@@ -39,12 +39,22 @@ function ajouterJours(jours) {
 /** Comparaison et commande pour une matière donnée (remonté à chaque changement de matière) */
 function Comparaison({ matiere, devis }) {
   const naviguer = useNavigate()
-  const tries = useMemo(() => [...devis].sort((a, b) => a.prix_unitaire - b.prix_unitaire || a.delai_livraison - b.delai_livraison), [devis])
+  const tries = useMemo(
+    () =>
+      [...devis].sort(
+        (a, b) => a.prix_unitaire - b.prix_unitaire || a.delai_livraison - b.delai_livraison,
+      ),
+    [devis],
+  )
   const moinsCher = tries[0]?.id_devis
   const delaiMin = Math.min(...tries.map((d) => d.delai_livraison))
-  const plusRapide = tries.filter((d) => d.delai_livraison === delaiMin).sort((a, b) => a.prix_unitaire - b.prix_unitaire)[0]?.id_devis
+  const plusRapide = tries
+    .filter((d) => d.delai_livraison === delaiMin)
+    .sort((a, b) => a.prix_unitaire - b.prix_unitaire)[0]?.id_devis
   const [choisi, setChoisi] = useState(moinsCher)
-  const [quantite, setQuantite] = useState(matiere.quantite_economique ? String(matiere.quantite_economique) : '')
+  const [quantite, setQuantite] = useState(
+    matiere.quantite_economique ? String(matiere.quantite_economique) : '',
+  )
   const [confirmee, setConfirmee] = useState(false)
   const [ouvert, setOuvert] = useState(false)
 
@@ -98,7 +108,12 @@ function Comparaison({ matiere, devis }) {
           </Button>
         }
       />
-      <motion.div role="radiogroup" aria-label="Devis" className="flex flex-col gap-3" {...listeCascade}>
+      <motion.div
+        role="radiogroup"
+        aria-label="Devis"
+        className="flex flex-col gap-3"
+        {...listeCascade}
+      >
         {tries.map((d) => {
           const actif = d.id_devis === choisi
           return (
@@ -107,7 +122,9 @@ function Comparaison({ matiere, devis }) {
               variants={elementCascade.variants}
               className={cn(
                 'grid cursor-pointer grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3 rounded-xl border px-5 py-4 transition-[border-color,background-color,box-shadow] md:grid-cols-[auto_minmax(0,1.6fr)_1fr_1.2fr_1fr]',
-                actif ? 'border-ink bg-surf shadow-card ring-1 ring-ink' : 'border-line bg-surf2 hover:border-line2',
+                actif
+                  ? 'border-ink bg-surf shadow-card ring-ink ring-1'
+                  : 'border-line bg-surf2 hover:border-line2',
               )}
             >
               <input
@@ -119,39 +136,49 @@ function Comparaison({ matiere, devis }) {
                 className="size-5 cursor-pointer accent-[var(--strong)]"
               />
               <div className="min-w-0">
-                <p className="truncate text-[16px] font-semibold text-ink">{d.fournisseur.raison_sociale}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-mutedtxt">
+                <p className="text-ink truncate text-[16px] font-semibold">
+                  {d.fournisseur.raison_sociale}
+                </p>
+                <div className="text-mutedtxt mt-1 flex flex-wrap items-center gap-2 text-[13px]">
                   {d.id_devis === moinsCher && <Badge ton="ok">Moins cher</Badge>}
-                  {d.id_devis === plusRapide && tries.length > 1 && <Badge ton="info">Plus rapide</Badge>}
+                  {d.id_devis === plusRapide && tries.length > 1 && (
+                    <Badge ton="info">Plus rapide</Badge>
+                  )}
                   <span>
                     Devis {reference('DEV', d.id_devis)} du {formatDate(d.date_devis)}
                   </span>
                 </div>
               </div>
               <div className="col-start-2 md:col-start-auto">
-                <p className="text-[12px] text-mutedtxt">Prix unitaire</p>
-                <p className="text-[15px] font-semibold text-ink tabular">{formatMontant(d.prix_unitaire)}</p>
+                <p className="text-mutedtxt text-[12px]">Prix unitaire</p>
+                <p className="text-ink tabular text-[15px] font-semibold">
+                  {formatMontant(d.prix_unitaire)}
+                </p>
               </div>
               <div className="col-start-2 md:col-start-auto">
-                <p className="text-[12px] text-mutedtxt">Livraison prévue</p>
-                <p className="text-[15px] font-semibold text-ink tabular">
+                <p className="text-mutedtxt text-[12px]">Livraison prévue</p>
+                <p className="text-ink tabular text-[15px] font-semibold">
                   {formatDate(ajouterJours(d.delai_livraison))} ({d.delai_livraison} j)
                 </p>
               </div>
               <div className="col-start-2 md:col-start-auto">
-                <p className="text-[12px] text-mutedtxt">Montant</p>
-                <p className="text-[15px] font-semibold text-ink tabular">{qteValide ? formatMontant(qte * d.prix_unitaire) : '—'}</p>
+                <p className="text-mutedtxt text-[12px]">Montant</p>
+                <p className="text-ink tabular text-[15px] font-semibold">
+                  {qteValide ? formatMontant(qte * d.prix_unitaire) : '—'}
+                </p>
               </div>
             </motion.label>
           )
         })}
       </motion.div>
 
-      <div className="grid gap-5 border-t border-line pt-5 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className="border-line grid gap-5 border-t pt-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="flex flex-col gap-3">
           <Champ
             libelle="Quantité convenue avec le fournisseur"
-            erreur={quantite && !qteValide ? 'Saisissez un nombre entier supérieur à 0.' : undefined}
+            erreur={
+              quantite && !qteValide ? 'Saisissez un nombre entier supérieur à 0.' : undefined
+            }
             aide={
               matiere.quantite_economique
                 ? `Point de départ : Q* = ${formatNombre(matiere.quantite_economique)}. La quantité se négocie avec le fournisseur (téléphone, e-mail) ; saisissez celle qu'il a acceptée.`
@@ -168,17 +195,27 @@ function Comparaison({ matiere, devis }) {
               }}
             />
           </Champ>
-          <label className="flex max-w-[620px] cursor-pointer items-center gap-3 rounded-xl border border-line2 px-4 py-3 text-[14px] text-ink">
-            <Checkbox checked={confirmee} onCheckedChange={(v) => setConfirmee(Boolean(v))} disabled={!qteValide} />
+          <label className="border-line2 text-ink flex max-w-[620px] cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-[14px]">
+            <Checkbox
+              checked={confirmee}
+              onCheckedChange={(v) => setConfirmee(Boolean(v))}
+              disabled={!qteValide}
+            />
             Quantité confirmée par le fournisseur
           </label>
         </div>
         <div className="flex flex-wrap items-end justify-end gap-5">
           <div className="text-right">
-            <p className="text-[13px] text-mutedtxt">Total de la commande</p>
-            <p className="font-serif text-[30px] leading-tight font-semibold text-strong tabular">{formatMontant(total)}</p>
+            <p className="text-mutedtxt text-[13px]">Total de la commande</p>
+            <p className="text-strong tabular font-serif text-[30px] leading-tight font-semibold">
+              {formatMontant(total)}
+            </p>
           </div>
-          <Button size="lg" disabled={!qteValide || !confirmee || !devisChoisi} onClick={() => setOuvert(true)}>
+          <Button
+            size="lg"
+            disabled={!qteValide || !confirmee || !devisChoisi}
+            onClick={() => setOuvert(true)}
+          >
             {commande.isPending && <Loader2 className="animate-spin" />}
             Passer la commande
           </Button>
@@ -194,14 +231,18 @@ function Comparaison({ matiere, devis }) {
         onConfirmer={() => commande.mutateAsync()}
       >
         {devisChoisi && (
-          <dl className="rounded-xl border border-line bg-surf2 px-4 py-2">
+          <dl className="border-line bg-surf2 rounded-xl border px-4 py-2">
             <LigneInfo libelle="Matière première">{matiere.designation}</LigneInfo>
             <LigneInfo libelle="Fournisseur">{devisChoisi.fournisseur.raison_sociale}</LigneInfo>
             <LigneInfo libelle="Quantité">
               {formatNombre(qte)} {matiere.unite}
             </LigneInfo>
-            <LigneInfo libelle="Prix unitaire">{formatMontant(devisChoisi.prix_unitaire)}</LigneInfo>
-            <LigneInfo libelle="Livraison prévue">{formatDate(ajouterJours(devisChoisi.delai_livraison))}</LigneInfo>
+            <LigneInfo libelle="Prix unitaire">
+              {formatMontant(devisChoisi.prix_unitaire)}
+            </LigneInfo>
+            <LigneInfo libelle="Livraison prévue">
+              {formatDate(ajouterJours(devisChoisi.delai_livraison))}
+            </LigneInfo>
             <LigneInfo libelle="Total" fort>
               {formatMontant(total)}
             </LigneInfo>
@@ -220,10 +261,17 @@ export default function Commander() {
 
   const matieres = (stock.data ?? []).filter((p) => p.type === 'MP' && p.actif)
   const matiere = matieres.find((p) => p.id_produit === idProduit)
-  const devisMatiere = (devis.data ?? []).filter((d) => d.produit.id_produit === idProduit && d.fournisseur.actif)
+  const devisMatiere = (devis.data ?? []).filter(
+    (d) => d.produit.id_produit === idProduit && d.fournisseur.actif,
+  )
   const options = matieres.map((p) => {
     const etat = etatStock(p.etat)
-    return { valeur: p.id_produit, libelle: p.designation, sousLibelle: p.code, droite: etat.libelle }
+    return {
+      valeur: p.id_produit,
+      libelle: p.designation,
+      sousLibelle: p.code,
+      droite: etat.libelle,
+    }
   })
 
   return (
@@ -247,9 +295,15 @@ export default function Commander() {
         {matiere && (
           <>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <Tuile libelle="Stock actuel" valeur={`${formatNombre(matiere.quantite_stock)} ${matiere.unite}`} />
+              <Tuile
+                libelle="Stock actuel"
+                valeur={`${formatNombre(matiere.quantite_stock)} ${matiere.unite}`}
+              />
               <Tuile libelle="Point de commande" valeur={formatNombre(matiere.seuil)} />
-              <Tuile libelle="Quantité économique Q*" valeur={formatNombre(matiere.quantite_economique)} />
+              <Tuile
+                libelle="Quantité économique Q*"
+                valeur={formatNombre(matiere.quantite_economique)}
+              />
               <Tuile
                 libelle={`État${matiere.couverture_jours !== null ? ` · couverture ${formatNombre(matiere.couverture_jours, 0, 1)} j` : ''}`}
                 valeur={etatStock(matiere.etat).libelle}
@@ -259,7 +313,10 @@ export default function Commander() {
             {matiere.commande_en_cours && (
               <Encart ton="warn" titre="Une commande est déjà en attente pour cette matière">
                 Vérifiez qu'une nouvelle commande est nécessaire avant de la passer.{' '}
-                <Link to="/gerant/commandes?etat=EN_ATTENTE" className="font-semibold underline underline-offset-2">
+                <Link
+                  to="/gerant/commandes?etat=EN_ATTENTE"
+                  className="font-semibold underline underline-offset-2"
+                >
                   Voir les commandes en attente
                 </Link>
               </Encart>
@@ -270,7 +327,11 @@ export default function Commander() {
 
       {!idProduit ? (
         <Carte>
-          <EtatVide icone={Info} titre="Choisissez une matière première" message="Ses devis s'afficheront ici, du moins cher au plus cher." />
+          <EtatVide
+            icone={Info}
+            titre="Choisissez une matière première"
+            message="Ses devis s'afficheront ici, du moins cher au plus cher."
+          />
         </Carte>
       ) : stock.isPending || devis.isPending ? (
         <SqueletteBloc hauteur={240} />
@@ -280,7 +341,10 @@ export default function Commander() {
         </Carte>
       ) : !matiere ? (
         <Carte>
-          <EtatVide titre="Matière première introuvable" message="Elle n'existe pas ou a été désactivée. Choisissez-en une autre." />
+          <EtatVide
+            titre="Matière première introuvable"
+            message="Elle n'existe pas ou a été désactivée. Choisissez-en une autre."
+          />
         </Carte>
       ) : (
         <Comparaison key={matiere.id_produit} matiere={matiere} devis={devisMatiere} />

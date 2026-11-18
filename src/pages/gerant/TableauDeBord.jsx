@@ -8,13 +8,39 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { motion } from 'motion/react'
-import { Armchair, Clock, Database, Layers, Loader2, Plus, Receipt, TriangleAlert, PackageCheck } from 'lucide-react'
+import {
+  Armchair,
+  Clock,
+  Database,
+  Layers,
+  Loader2,
+  Plus,
+  Receipt,
+  TriangleAlert,
+  PackageCheck,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
-import { useCommandes, useEtatStock, usePrixAchat, useRetards, periodique } from '@/hooks/useDonnees'
+import {
+  useCommandes,
+  useEtatStock,
+  usePrixAchat,
+  useRetards,
+  periodique,
+} from '@/hooks/useDonnees'
 import { listerFacturesClient } from '@/api/ventes'
 import { telechargerSauvegarde } from '@/api/journal'
-import { dateISO, formatDate, formatMilliers, formatMois, formatMoisCourt, formatMontant, formatMontantArrondi, formatNombre, reference } from '@/lib/format'
+import {
+  dateISO,
+  formatDate,
+  formatMilliers,
+  formatMois,
+  formatMoisCourt,
+  formatMontant,
+  formatMontantArrondi,
+  formatNombre,
+  reference,
+} from '@/lib/format'
 import { etatCommande, etatStock } from '@/lib/etats'
 import { messageErreur } from '@/lib/erreurs'
 import { invalider } from '@/lib/requetes'
@@ -39,7 +65,11 @@ function debutMois(decalage) {
 export default function TableauDeBordGerant() {
   const { utilisateur } = useAuth()
   const naviguer = useNavigate()
-  const [reperes] = useState(() => ({ debut6: debutMois(-5), debutPrecedent: debutMois(-1), debutCourant: debutMois(0) }))
+  const [reperes] = useState(() => ({
+    debut6: debutMois(-5),
+    debutPrecedent: debutMois(-1),
+    debutCourant: debutMois(0),
+  }))
   const stock = useEtatStock(periodique)
   const prix = usePrixAchat()
   const retards = useRetards(periodique)
@@ -60,9 +90,15 @@ export default function TableauDeBordGerant() {
   })
 
   const mp = (stock.data ?? []).filter((p) => p.type === 'MP' && p.actif)
-  const enAlerte = (stock.data ?? []).filter((p) => p.actif && p.en_alerte).sort((a, b) => (a.type === b.type ? a.quantite_stock - b.quantite_stock : a.type === 'MP' ? -1 : 1))
+  const enAlerte = (stock.data ?? [])
+    .filter((p) => p.actif && p.en_alerte)
+    .sort((a, b) =>
+      a.type === b.type ? a.quantite_stock - b.quantite_stock : a.type === 'MP' ? -1 : 1,
+    )
   const mpAlerte = enAlerte.filter((p) => p.type === 'MP')
-  const enAttente = (commandes.data ?? []).filter((c) => c.etat === 'EN_ATTENTE').sort((a, b) => a.jours_restants - b.jours_restants)
+  const enAttente = (commandes.data ?? [])
+    .filter((c) => c.etat === 'EN_ATTENTE')
+    .sort((a, b) => a.jours_restants - b.jours_restants)
   const valeurMP = mp.reduce((t, p) => t + p.quantite_stock * (prix.data?.[p.id_produit] ?? 0), 0)
 
   const ventes = useMemo(() => {
@@ -85,8 +121,25 @@ export default function TableauDeBordGerant() {
   const precedent = ventes.at(-2)
 
   const colonnes = [
-    { id: 'ref', entete: 'Commande', cellule: (c) => <Reference className="underline underline-offset-2">{reference('CMD', c.id_commande)}</Reference> },
-    { id: 'mp', entete: 'Matière · fournisseur', cellule: (c) => <CellulePrincipale titre={c.devis?.produit?.designation} sousTitre={c.devis?.fournisseur?.raison_sociale} /> },
+    {
+      id: 'ref',
+      entete: 'Commande',
+      cellule: (c) => (
+        <Reference className="underline underline-offset-2">
+          {reference('CMD', c.id_commande)}
+        </Reference>
+      ),
+    },
+    {
+      id: 'mp',
+      entete: 'Matière · fournisseur',
+      cellule: (c) => (
+        <CellulePrincipale
+          titre={c.devis?.produit?.designation}
+          sousTitre={c.devis?.fournisseur?.raison_sociale}
+        />
+      ),
+    },
     { id: 'qte', entete: 'Quantité', align: 'right', cellule: (c) => formatNombre(c.quantite) },
     { id: 'prevue', entete: 'Livraison prévue', cellule: (c) => formatDate(c.date_prevue) },
     { id: 'etat', entete: 'État', cellule: (c) => <BadgeEtat etat={etatCommande(c)} /> },
@@ -99,8 +152,13 @@ export default function TableauDeBordGerant() {
         description="Voici l'essentiel du jour : les alertes de stock, les commandes à suivre et l'activité commerciale."
         actions={
           <>
-            <Button variant="outline" onClick={() => sauvegarde.mutate()} disabled={sauvegarde.isPending}>
-              {sauvegarde.isPending ? <Loader2 className="animate-spin" /> : <Database />} Sauvegarder
+            <Button
+              variant="outline"
+              onClick={() => sauvegarde.mutate()}
+              disabled={sauvegarde.isPending}
+            >
+              {sauvegarde.isPending ? <Loader2 className="animate-spin" /> : <Database />}{' '}
+              Sauvegarder
             </Button>
             <Button asChild>
               <Link to="/gerant/commander">
@@ -157,7 +215,10 @@ export default function TableauDeBordGerant() {
             titre="À traiter"
             description="Produits ayant atteint leur point de commande ou leur seuil"
             action={
-              <Link to="/gerant/stock/matieres" className="text-[14px] font-medium underline underline-offset-4 hover:opacity-75">
+              <Link
+                to="/gerant/stock/matieres"
+                className="text-[14px] font-medium underline underline-offset-4 hover:opacity-75"
+              >
                 Tout le stock
               </Link>
             }
@@ -167,19 +228,36 @@ export default function TableauDeBordGerant() {
           ) : stock.isError ? (
             <EtatErreur erreur={stock.error} onReessayer={stock.refetch} />
           ) : enAlerte.length === 0 ? (
-            <EtatVide icone={PackageCheck} titre="Rien à traiter" message="Tous les produits sont au-dessus de leur point de commande ou de leur seuil." compact />
+            <EtatVide
+              icone={PackageCheck}
+              titre="Rien à traiter"
+              message="Tous les produits sont au-dessus de leur point de commande ou de leur seuil."
+              compact
+            />
           ) : (
             <motion.ul className="flex flex-col" {...listeCascade}>
               {enAlerte.slice(0, 6).map((p) => {
                 const etat = etatStock(p.etat)
-                const commande = enAttente.find((c) => c.devis?.produit?.id_produit === p.id_produit)
+                const commande = enAttente.find(
+                  (c) => c.devis?.produit?.id_produit === p.id_produit,
+                )
                 return (
-                  <motion.li key={p.id_produit} variants={elementCascade.variants} className="flex items-center gap-4 border-b border-line3 py-3.5 last:border-0">
-                    <Pastille icone={p.type === 'MP' ? Layers : Armchair} ton={etat.ton} taille={40} />
+                  <motion.li
+                    key={p.id_produit}
+                    variants={elementCascade.variants}
+                    className="border-line3 flex items-center gap-4 border-b py-3.5 last:border-0"
+                  >
+                    <Pastille
+                      icone={p.type === 'MP' ? Layers : Armchair}
+                      ton={etat.ton}
+                      taille={40}
+                    />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-semibold text-ink">{p.designation}</p>
-                      <p className="text-[13px] text-mutedtxt">
-                        Stock {formatNombre(p.quantite_stock)} · {p.type === 'MP' ? 'point de commande' : 'seuil minimum'} {formatNombre(p.seuil)}
+                      <p className="text-ink truncate text-[14px] font-semibold">{p.designation}</p>
+                      <p className="text-mutedtxt text-[13px]">
+                        Stock {formatNombre(p.quantite_stock)} ·{' '}
+                        {p.type === 'MP' ? 'point de commande' : 'seuil minimum'}{' '}
+                        {formatNombre(p.seuil)}
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-col items-end gap-1.5">
@@ -191,14 +269,20 @@ export default function TableauDeBordGerant() {
                       )}
                       {p.etat === 'COMMANDE_EN_COURS' && commande && (
                         <Button size="sm" variant="outline" asChild>
-                          <Link to={`/gerant/commandes/${commande.id_commande}`}>Voir la commande</Link>
+                          <Link to={`/gerant/commandes/${commande.id_commande}`}>
+                            Voir la commande
+                          </Link>
                         </Button>
                       )}
                     </div>
                   </motion.li>
                 )
               })}
-              {enAlerte.length > 6 && <li className="pt-3 text-[13px] text-mutedtxt">+ {enAlerte.length - 6} autre(s) produit(s) en alerte</li>}
+              {enAlerte.length > 6 && (
+                <li className="text-mutedtxt pt-3 text-[13px]">
+                  + {enAlerte.length - 6} autre(s) produit(s) en alerte
+                </li>
+              )}
             </motion.ul>
           )}
         </Carte>
@@ -208,7 +292,10 @@ export default function TableauDeBordGerant() {
             titre="Ventes des 6 derniers mois"
             description={`Montant facturé par mois, en milliers de dinars (k = 1 000 DT) · ${formatMois(reperes.debutCourant)} en cours`}
             action={
-              <Link to="/gerant/statistiques" className="text-[14px] font-medium underline underline-offset-4 hover:opacity-75">
+              <Link
+                to="/gerant/statistiques"
+                className="text-[14px] font-medium underline underline-offset-4 hover:opacity-75"
+              >
                 Statistiques
               </Link>
             }
@@ -218,7 +305,16 @@ export default function TableauDeBordGerant() {
           ) : factures.isError ? (
             <EtatErreur erreur={factures.error} onReessayer={factures.refetch} />
           ) : (
-            <Histogramme donnees={ventes} cleX="mois" cleY="montant" formaterAxe={formatMilliers} formaterValeur={formatMontant} libelleSerie="Ventes" miseEnAvant={(d) => d === ventes.at(-1)} hauteur={300} />
+            <Histogramme
+              donnees={ventes}
+              cleX="mois"
+              cleY="montant"
+              formaterAxe={formatMilliers}
+              formaterValeur={formatMontant}
+              libelleSerie="Ventes"
+              miseEnAvant={(d) => d === ventes.at(-1)}
+              hauteur={300}
+            />
           )}
         </Carte>
       </GrilleBlocs>
@@ -245,7 +341,14 @@ export default function TableauDeBordGerant() {
           onLigneClick={(c) => naviguer(`/gerant/commandes/${c.id_commande}`)}
           libelleElements="commande(s) en attente"
           taillePage={5}
-          vide={<EtatVide icone={PackageCheck} titre="Aucune commande en attente" message="Toutes les commandes passées ont été livrées." compact />}
+          vide={
+            <EtatVide
+              icone={PackageCheck}
+              titre="Aucune commande en attente"
+              message="Toutes les commandes passées ont été livrées."
+              compact
+            />
+          }
         />
       </Carte>
     </Page>

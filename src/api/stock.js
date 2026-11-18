@@ -31,7 +31,9 @@ export async function historiqueProduit(idProduit, stockActuel) {
   const mouvements = await toutLire(() =>
     supabase
       .from('mouvement_stock')
-      .select('id_mouvement, date_mouvement, type, quantite, motif, id_utilisateur, utilisateur(nom, prenom)')
+      .select(
+        'id_mouvement, date_mouvement, type, quantite, motif, id_utilisateur, utilisateur(nom, prenom)',
+      )
       .eq('id_produit', idProduit)
       .order('date_mouvement', { ascending: false })
       .order('id_mouvement', { ascending: false }),
@@ -63,7 +65,10 @@ export function serieStock(historique, stockActuel, jours = 90, pas = 1) {
       stock -= m.type === 'ENTREE' ? m.quantite : -m.quantite
       index += 1
     }
-    points.push({ date: new Date(jour.getFullYear(), jour.getMonth(), jour.getDate()).toISOString(), stock })
+    points.push({
+      date: new Date(jour.getFullYear(), jour.getMonth(), jour.getDate()).toISOString(),
+      stock,
+    })
   }
   return points.reverse()
 }
@@ -71,7 +76,15 @@ export function serieStock(historique, stockActuel, jours = 90, pas = 1) {
 /* ---------- Écritures (chef magasin) ---------- */
 
 /** Crée un produit et son mouvement « Stock initial » → id du produit */
-export async function creerProduit({ code, designation, type, unite, stockInitial, prixVente, seuilMinimum }) {
+export async function creerProduit({
+  code,
+  designation,
+  type,
+  unite,
+  stockInitial,
+  prixVente,
+  seuilMinimum,
+}) {
   return appelerRpc(supabase, 'creer_produit', {
     p_code: code.trim(),
     p_designation: designation.trim(),
@@ -90,12 +103,17 @@ export async function modifierProduit(id, { designation, unite, prixVente, seuil
     donnees.prix_vente = Number(prixVente)
     donnees.seuil_minimum = Number(seuilMinimum)
   }
-  return deballer(await supabase.from('produit').update(donnees).eq('id_produit', id).select('*').single())
+  return deballer(
+    await supabase.from('produit').update(donnees).eq('id_produit', id).select('*').single(),
+  )
 }
 
 /** Mouvement manuel : MP → sortie « Consommation atelier », article → entrée « Production atelier » */
 export async function enregistrerMouvement(idProduit, quantite) {
-  return appelerRpc(supabase, 'enregistrer_mouvement', { p_id_produit: idProduit, p_quantite: Number(quantite) })
+  return appelerRpc(supabase, 'enregistrer_mouvement', {
+    p_id_produit: idProduit,
+    p_quantite: Number(quantite),
+  })
 }
 
 /** Inventaire : lignes [{ id_produit, quantite_comptee }] → { ajustements } */
@@ -106,7 +124,10 @@ export async function enregistrerInventaire(lignes) {
 /* ---------- Paramètres de calcul (gérant) ---------- */
 
 /** Met à jour S, H, L, j et la période ; Q* et PC sont recalculés par le serveur */
-export async function modifierParametres(id, { coutCommande, coutDetention, delaiLivraison, joursSecurite, periodeAnalyse }) {
+export async function modifierParametres(
+  id,
+  { coutCommande, coutDetention, delaiLivraison, joursSecurite, periodeAnalyse },
+) {
   return deballer(
     await supabase
       .from('produit')
@@ -139,7 +160,10 @@ export async function simulerCalcul(idProduit, periode) {
  * @returns {'SUPPRIME'|'DESACTIVE'}
  */
 export async function supprimerOuDesactiver(objet, id) {
-  const resultat = await appelerRpc(supabase, 'supprimer_ou_desactiver', { p_objet: objet, p_id: id })
+  const resultat = await appelerRpc(supabase, 'supprimer_ou_desactiver', {
+    p_objet: objet,
+    p_id: id,
+  })
   return typeof resultat === 'string' ? resultat : Object.values(resultat ?? {})[0]
 }
 
@@ -147,5 +171,7 @@ const CLES = { fournisseur: 'id_fournisseur', client: 'id_client', produit: 'id_
 
 /** Réactivation : update ... set actif = true (autorisé par BACKEND.md §5) */
 export async function reactiver(objet, id) {
-  return deballer(await supabase.from(objet).update({ actif: true }).eq(CLES[objet], id).select().single())
+  return deballer(
+    await supabase.from(objet).update({ actif: true }).eq(CLES[objet], id).select().single(),
+  )
 }

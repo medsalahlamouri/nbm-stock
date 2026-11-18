@@ -14,13 +14,20 @@ export function CarteCommande({ commande, actif, to, onClick }) {
   const contenu = (
     <>
       <div className="flex items-start justify-between gap-3">
-        <p className="font-mono text-[14px] font-semibold text-ink">{reference('CMD', commande.id_commande)}</p>
+        <p className="text-ink font-mono text-[14px] font-semibold">
+          {reference('CMD', commande.id_commande)}
+        </p>
         <BadgeEtat etat={etatCommande(commande)} />
       </div>
-      <p className="mt-2 truncate text-[15px] font-semibold text-ink">{commande.devis?.produit?.designation}</p>
-      <p className="truncate text-[13px] text-mutedtxt">{commande.devis?.fournisseur?.raison_sociale}</p>
-      <p className="mt-2 text-[13px] text-ink3 tabular">
-        {formatNombre(commande.quantite)} {commande.devis?.produit?.unite} · {formatMontant(commande.montant)}
+      <p className="text-ink mt-2 truncate text-[15px] font-semibold">
+        {commande.devis?.produit?.designation}
+      </p>
+      <p className="text-mutedtxt truncate text-[13px]">
+        {commande.devis?.fournisseur?.raison_sociale}
+      </p>
+      <p className="text-ink3 tabular mt-2 text-[13px]">
+        {formatNombre(commande.quantite)} {commande.devis?.produit?.unite} ·{' '}
+        {formatMontant(commande.montant)}
       </p>
     </>
   )
@@ -32,7 +39,12 @@ export function CarteCommande({ commande, actif, to, onClick }) {
           {contenu}
         </Link>
       ) : (
-        <button type="button" onClick={onClick} aria-pressed={actif} className={`${classes} w-full cursor-pointer`}>
+        <button
+          type="button"
+          onClick={onClick}
+          aria-pressed={actif}
+          className={`${classes} w-full cursor-pointer`}
+        >
           {contenu}
         </button>
       )}

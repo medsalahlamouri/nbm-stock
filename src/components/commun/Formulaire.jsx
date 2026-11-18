@@ -11,10 +11,17 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/commun/Badge'
 import { Carte, CarteEntete, LigneInfo } from '@/components/commun/Carte'
 
-export function PiedFormulaire({ modification = false, nbModifies = 0, enCours, onAnnuler, libelle, desactive }) {
+export function PiedFormulaire({
+  modification = false,
+  nbModifies = 0,
+  enCours,
+  onAnnuler,
+  libelle,
+  desactive,
+}) {
   const texte = libelle ?? (modification ? 'Enregistrer les modifications' : 'Enregistrer')
   return (
-    <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+    <div className="border-line mt-2 flex flex-wrap items-center justify-between gap-3 border-t pt-5">
       <div>
         {modification && (
           <Badge ton={nbModifies > 0 ? 'gold' : 'neutral'}>
@@ -39,7 +46,7 @@ export function ZoneDanger({ titre, children, action, className }) {
   return (
     <Carte className={cn('border-dline', className)}>
       <CarteEntete titre={titre} />
-      <div className="text-[14px] leading-relaxed text-mutedtxt">{children}</div>
+      <div className="text-mutedtxt text-[14px] leading-relaxed">{children}</div>
       {action && <div>{action}</div>}
     </Carte>
   )

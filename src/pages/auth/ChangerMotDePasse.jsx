@@ -19,15 +19,20 @@ import { Champ } from '@/components/commun/Champ'
 import { Encart } from '@/components/commun/Encart'
 import { Badge } from '@/components/commun/Badge'
 import { CadreAuth } from '@/pages/auth/CadreAuth'
-import { ChampMotDePasse, ReglesMotDePasse } from '@/pages/auth/ChampMotDePasse'
+import { ChampMotDePasse, ReglesMotDePasse } from '@/components/commun/ChampMotDePasse'
 import { motDePasseValide } from '@/lib/schemas'
 
 const schema = z
   .object({
-    nouveau: z.string().refine(motDePasseValide, 'Le mot de passe ne respecte pas toutes les règles.'),
+    nouveau: z
+      .string()
+      .refine(motDePasseValide, 'Le mot de passe ne respecte pas toutes les règles.'),
     confirmation: z.string().min(1, 'Confirmez le mot de passe.'),
   })
-  .refine((v) => v.nouveau === v.confirmation, { path: ['confirmation'], message: 'Les deux mots de passe sont différents.' })
+  .refine((v) => v.nouveau === v.confirmation, {
+    path: ['confirmation'],
+    message: 'Les deux mots de passe sont différents.',
+  })
 
 export default function ChangerMotDePasse() {
   const { utilisateur, deconnexion } = useAuth()
@@ -42,7 +47,8 @@ export default function ChangerMotDePasse() {
   const nouveau = useWatch({ control, name: 'nouveau' })
 
   // Écran réservé au mot de passe provisoire
-  if (utilisateur && !utilisateur.doit_changer_mdp) return <Navigate to={accueilDuProfil(utilisateur.profil)} replace />
+  if (utilisateur && !utilisateur.doit_changer_mdp)
+    return <Navigate to={accueilDuProfil(utilisateur.profil)} replace />
 
   const soumettre = async ({ nouveau: motDePasse }) => {
     setErreur(null)
@@ -66,9 +72,12 @@ export default function ChangerMotDePasse() {
       <Badge ton="warn" className="mb-3 w-full justify-start rounded-full px-3 text-[13px]">
         Première connexion
       </Badge>
-      <h1 className="font-serif text-[26px] leading-tight font-semibold tracking-[-0.02em] text-strong">Choisissez votre mot de passe</h1>
-      <p className="mt-2 text-[15px] text-mutedtxt">
-        Bonjour {utilisateur?.prenom}. Votre mot de passe actuel est provisoire : remplacez-le pour accéder à l'application.
+      <h1 className="text-strong font-serif text-[26px] leading-tight font-semibold tracking-[-0.02em]">
+        Choisissez votre mot de passe
+      </h1>
+      <p className="text-mutedtxt mt-2 text-[15px]">
+        Bonjour {utilisateur?.prenom}. Votre mot de passe actuel est provisoire : remplacez-le pour
+        accéder à l'application.
       </p>
 
       <form onSubmit={handleSubmit(soumettre)} noValidate className="mt-6 flex flex-col gap-4">
@@ -87,7 +96,11 @@ export default function ChangerMotDePasse() {
       </form>
 
       <div className="mt-5 text-center">
-        <button type="button" onClick={quitter} className="cursor-pointer text-[14px] text-mutedtxt underline underline-offset-4 hover:text-ink">
+        <button
+          type="button"
+          onClick={quitter}
+          className="text-mutedtxt hover:text-ink cursor-pointer text-[14px] underline underline-offset-4"
+        >
           Se déconnecter
         </button>
       </div>

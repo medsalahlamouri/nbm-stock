@@ -46,23 +46,68 @@ export default function Demandes() {
   const liste = demandes.data ?? []
   const compte = (e) => liste.filter((d) => d.etat === e).length
   const filtrees = liste.filter(
-    (d) => (etat === 'TOUTES' || d.etat === etat) && correspond(recherche, reference('DEM', d.id_demande), d.client?.nom, d.facture?.numero, ...d.lignes.map((l) => l.produit?.designation)),
+    (d) =>
+      (etat === 'TOUTES' || d.etat === etat) &&
+      correspond(
+        recherche,
+        reference('DEM', d.id_demande),
+        d.client?.nom,
+        d.facture?.numero,
+        ...d.lignes.map((l) => l.produit?.designation),
+      ),
   )
 
   const colonnes = [
-    { id: 'ref', entete: 'Demande', tri: (d) => d.id_demande, cellule: (d) => <Reference>{reference('DEM', d.id_demande)}</Reference> },
+    {
+      id: 'ref',
+      entete: 'Demande',
+      tri: (d) => d.id_demande,
+      cellule: (d) => <Reference>{reference('DEM', d.id_demande)}</Reference>,
+    },
     {
       id: 'client',
       entete: 'Client',
       tri: (d) => d.client?.nom,
-      cellule: (d) => <CellulePrincipale titre={d.client?.nom} sousTitre={d.lignes.map((l) => l.produit?.designation).join(', ')} />,
+      cellule: (d) => (
+        <CellulePrincipale
+          titre={d.client?.nom}
+          sousTitre={d.lignes.map((l) => l.produit?.designation).join(', ')}
+        />
+      ),
       classe: 'max-w-[320px]',
     },
-    { id: 'canal', entete: 'Canal', tri: (d) => d.canal, cellule: (d) => CANAUX[d.canal] ?? d.canal },
-    { id: 'date', entete: 'Date', tri: (d) => d.date_demande, cellule: (d) => formatDate(d.date_demande) },
-    { id: 'articles', entete: 'Articles', align: 'right', tri: (d) => d.nb_articles, cellule: (d) => formatNombre(d.nb_articles) },
-    { id: 'montant', entete: 'Montant', align: 'right', tri: (d) => d.montant, cellule: (d) => <strong>{formatMontant(d.montant)}</strong> },
-    { id: 'etat', entete: 'État', tri: (d) => d.etat, cellule: (d) => <BadgeEtat etat={etatDemande(d.etat)} /> },
+    {
+      id: 'canal',
+      entete: 'Canal',
+      tri: (d) => d.canal,
+      cellule: (d) => CANAUX[d.canal] ?? d.canal,
+    },
+    {
+      id: 'date',
+      entete: 'Date',
+      tri: (d) => d.date_demande,
+      cellule: (d) => formatDate(d.date_demande),
+    },
+    {
+      id: 'articles',
+      entete: 'Articles',
+      align: 'right',
+      tri: (d) => d.nb_articles,
+      cellule: (d) => formatNombre(d.nb_articles),
+    },
+    {
+      id: 'montant',
+      entete: 'Montant',
+      align: 'right',
+      tri: (d) => d.montant,
+      cellule: (d) => <strong>{formatMontant(d.montant)}</strong>,
+    },
+    {
+      id: 'etat',
+      entete: 'État',
+      tri: (d) => d.etat,
+      cellule: (d) => <BadgeEtat etat={etatDemande(d.etat)} />,
+    },
     {
       id: 'actions',
       entete: 'Actions',
@@ -80,13 +125,25 @@ export default function Demandes() {
               >
                 <Receipt /> Établir la facture
               </Button>
-              <ActionIcone libelle="Modifier" icone={Pencil} to={`/chef/demandes/${d.id_demande}/modifier`} />
-              <ActionIcone libelle="Annuler la demande" icone={Ban} ton="danger" onClick={() => confirmation.ouvrir(d)} />
+              <ActionIcone
+                libelle="Modifier"
+                icone={Pencil}
+                to={`/chef/demandes/${d.id_demande}/modifier`}
+              />
+              <ActionIcone
+                libelle="Annuler la demande"
+                icone={Ban}
+                ton="danger"
+                onClick={() => confirmation.ouvrir(d)}
+              />
             </>
           )}
           {d.facture && (
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/chef/factures-client/${d.facture.id_facture_c}/imprimer`} onClick={(e) => e.stopPropagation()}>
+              <Link
+                to={`/chef/factures-client/${d.facture.id_facture_c}/imprimer`}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Printer /> {d.facture.numero}
               </Link>
             </Button>
@@ -122,7 +179,12 @@ export default function Demandes() {
               { valeur: 'ANNULEE', libelle: 'Annulées', compteur: compte('ANNULEE') },
             ]}
           />
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="DEM-…, client, article" className="sm:w-[300px]" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="DEM-…, client, article"
+            className="sm:w-[300px]"
+          />
         </div>
         <DataTable
           colonnes={colonnes}
@@ -131,13 +193,19 @@ export default function Demandes() {
           chargement={demandes.isPending}
           erreur={demandes.error}
           onReessayer={demandes.refetch}
-          onLigneClick={(d) => d.etat === 'EN_ATTENTE' && naviguer(`/chef/demandes/${d.id_demande}/modifier`)}
+          onLigneClick={(d) =>
+            d.etat === 'EN_ATTENTE' && naviguer(`/chef/demandes/${d.id_demande}/modifier`)
+          }
           libelleElements="demande(s)"
           vide={
             <EtatVide
               icone={FileText}
               titre={liste.length ? 'Aucune demande pour ce filtre' : 'Aucune demande enregistrée'}
-              message={liste.length ? 'Choisissez un autre état ou modifiez la recherche.' : 'Enregistrez la première demande d’un client.'}
+              message={
+                liste.length
+                  ? 'Choisissez un autre état ou modifiez la recherche.'
+                  : 'Enregistrez la première demande d’un client.'
+              }
               action={
                 <Button asChild>
                   <Link to="/chef/demandes/nouvelle">
@@ -152,7 +220,11 @@ export default function Demandes() {
       <ConfirmDialog
         {...confirmation.proprietes}
         titre={`Annuler la demande ${confirmation.cible ? reference('DEM', confirmation.cible.id_demande) : ''} ?`}
-        message={confirmation.cible ? `${confirmation.cible.client?.nom} · ${formatMontant(confirmation.cible.montant)}. L'annulation est définitive.` : ''}
+        message={
+          confirmation.cible
+            ? `${confirmation.cible.client?.nom} · ${formatMontant(confirmation.cible.montant)}. L'annulation est définitive.`
+            : ''
+        }
         libelleConfirmer="Annuler la demande"
         onConfirmer={() => annulation.mutateAsync(confirmation.cible.id_demande)}
       />

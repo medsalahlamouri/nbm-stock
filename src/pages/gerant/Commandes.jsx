@@ -47,22 +47,69 @@ export default function Commandes() {
   const filtrees = liste.filter(
     (c) =>
       (etat === 'TOUTES' || c.etat === etat) &&
-      correspond(recherche, reference('CMD', c.id_commande), c.devis?.produit?.designation, c.devis?.produit?.code, c.devis?.fournisseur?.raison_sociale),
+      correspond(
+        recherche,
+        reference('CMD', c.id_commande),
+        c.devis?.produit?.designation,
+        c.devis?.produit?.code,
+        c.devis?.fournisseur?.raison_sociale,
+      ),
   )
 
   const colonnes = [
-    { id: 'ref', entete: 'Commande', tri: (c) => c.id_commande, cellule: (c) => <Reference className="underline underline-offset-2">{reference('CMD', c.id_commande)}</Reference> },
+    {
+      id: 'ref',
+      entete: 'Commande',
+      tri: (c) => c.id_commande,
+      cellule: (c) => (
+        <Reference className="underline underline-offset-2">
+          {reference('CMD', c.id_commande)}
+        </Reference>
+      ),
+    },
     {
       id: 'mp',
       entete: 'Matière · fournisseur',
       tri: (c) => c.devis?.produit?.designation,
-      cellule: (c) => <CellulePrincipale titre={c.devis?.produit?.designation} sousTitre={c.devis?.fournisseur?.raison_sociale} />,
+      cellule: (c) => (
+        <CellulePrincipale
+          titre={c.devis?.produit?.designation}
+          sousTitre={c.devis?.fournisseur?.raison_sociale}
+        />
+      ),
     },
-    { id: 'qte', entete: 'Quantité', align: 'right', tri: (c) => c.quantite, cellule: (c) => formatNombre(c.quantite) },
-    { id: 'montant', entete: 'Montant', align: 'right', tri: (c) => c.montant, cellule: (c) => formatMontant(c.montant) },
-    { id: 'date', entete: 'Date', tri: (c) => c.date_commande, cellule: (c) => formatDate(c.date_commande) },
-    { id: 'prevue', entete: 'Livraison prévue', tri: (c) => c.date_prevue, cellule: (c) => (c.etat === 'ANNULEE' ? '—' : formatDate(c.date_prevue)) },
-    { id: 'etat', entete: 'État', tri: (c) => c.jours_restants ?? 999, cellule: (c) => <BadgeEtat etat={etatCommande(c)} /> },
+    {
+      id: 'qte',
+      entete: 'Quantité',
+      align: 'right',
+      tri: (c) => c.quantite,
+      cellule: (c) => formatNombre(c.quantite),
+    },
+    {
+      id: 'montant',
+      entete: 'Montant',
+      align: 'right',
+      tri: (c) => c.montant,
+      cellule: (c) => formatMontant(c.montant),
+    },
+    {
+      id: 'date',
+      entete: 'Date',
+      tri: (c) => c.date_commande,
+      cellule: (c) => formatDate(c.date_commande),
+    },
+    {
+      id: 'prevue',
+      entete: 'Livraison prévue',
+      tri: (c) => c.date_prevue,
+      cellule: (c) => (c.etat === 'ANNULEE' ? '—' : formatDate(c.date_prevue)),
+    },
+    {
+      id: 'etat',
+      entete: 'État',
+      tri: (c) => c.jours_restants ?? 999,
+      cellule: (c) => <BadgeEtat etat={etatCommande(c)} />,
+    },
     {
       id: 'actions',
       entete: 'Actions',
@@ -109,7 +156,12 @@ export default function Commandes() {
               { valeur: 'ANNULEE', libelle: 'Annulées', compteur: compte('ANNULEE') },
             ]}
           />
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="CMD-…, matière, fournisseur" className="sm:w-[320px]" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="CMD-…, matière, fournisseur"
+            className="sm:w-[320px]"
+          />
         </div>
         <DataTable
           colonnes={colonnes}
@@ -124,7 +176,11 @@ export default function Commandes() {
             <EtatVide
               icone={ClipboardList}
               titre={liste.length ? 'Aucune commande pour ce filtre' : 'Aucune commande passée'}
-              message={liste.length ? 'Choisissez un autre état ou modifiez la recherche.' : 'Comparez les devis d’une matière première pour passer la première commande.'}
+              message={
+                liste.length
+                  ? 'Choisissez un autre état ou modifiez la recherche.'
+                  : 'Comparez les devis d’une matière première pour passer la première commande.'
+              }
               action={
                 <Button asChild>
                   <Link to="/gerant/commander">

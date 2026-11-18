@@ -56,7 +56,11 @@ export function ConfirmDialog({
               {libelleAnnuler}
             </Button>
           </AlertDialogCancel>
-          <Button variant={ton === 'danger' ? 'destructive' : 'default'} onClick={confirmer} disabled={enCours}>
+          <Button
+            variant={ton === 'danger' ? 'destructive' : 'default'}
+            onClick={confirmer}
+            disabled={enCours}
+          >
             {enCours && <Loader2 className="animate-spin" />}
             {libelleConfirmer}
           </Button>

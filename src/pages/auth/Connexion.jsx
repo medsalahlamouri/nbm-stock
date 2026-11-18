@@ -17,10 +17,14 @@ import { Input } from '@/components/ui/input'
 import { Champ } from '@/components/commun/Champ'
 import { Encart } from '@/components/commun/Encart'
 import { CadreAuth } from '@/pages/auth/CadreAuth'
-import { ChampMotDePasse } from '@/pages/auth/ChampMotDePasse'
+import { ChampMotDePasse } from '@/components/commun/ChampMotDePasse'
 
 const schema = z.object({
-  email: z.string().trim().min(1, "Saisissez votre adresse e-mail.").pipe(z.email('Adresse e-mail invalide.')),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Saisissez votre adresse e-mail.')
+    .pipe(z.email('Adresse e-mail invalide.')),
   motDePasse: z.string().min(1, 'Saisissez votre mot de passe.'),
 })
 
@@ -54,14 +58,25 @@ export default function Connexion() {
 
   return (
     <CadreAuth>
-      <h1 className="font-serif text-[26px] leading-tight font-semibold tracking-[-0.02em] text-strong">Connexion</h1>
-      <p className="mt-2 text-[15px] text-mutedtxt">Utilisez l'adresse e-mail et le mot de passe fournis par le gérant.</p>
+      <h1 className="text-strong font-serif text-[26px] leading-tight font-semibold tracking-[-0.02em]">
+        Connexion
+      </h1>
+      <p className="text-mutedtxt mt-2 text-[15px]">
+        Utilisez l'adresse e-mail et le mot de passe fournis par le gérant.
+      </p>
 
       <form onSubmit={handleSubmit(soumettre)} noValidate className="mt-6 flex flex-col gap-4">
         {erreur && <Encart ton="danger">{erreur}</Encart>}
 
         <Champ libelle="Adresse e-mail" erreur={errors.email?.message}>
-          <Input type="email" autoComplete="username" autoFocus className="h-[46px]" placeholder="prenom.nom@exemple.com" {...register('email')} />
+          <Input
+            type="email"
+            autoComplete="username"
+            autoFocus
+            className="h-[46px]"
+            placeholder="prenom.nom@exemple.com"
+            {...register('email')}
+          />
         </Champ>
         <Champ libelle="Mot de passe" erreur={errors.motDePasse?.message}>
           <ChampMotDePasse autoComplete="current-password" {...register('motDePasse')} />
@@ -73,9 +88,12 @@ export default function Connexion() {
         </Button>
       </form>
 
-      <div className="mt-6 flex items-start gap-2.5 border-t border-line pt-5 text-[14px] text-mutedtxt">
+      <div className="border-line text-mutedtxt mt-6 flex items-start gap-2.5 border-t pt-5 text-[14px]">
         <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-        <p>Mot de passe oublié ? Adressez-vous au gérant, qui vous remettra un mot de passe provisoire.</p>
+        <p>
+          Mot de passe oublié ? Adressez-vous au gérant, qui vous remettra un mot de passe
+          provisoire.
+        </p>
       </div>
     </CadreAuth>
   )

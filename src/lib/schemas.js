@@ -17,13 +17,19 @@ export const emailFacultatif = z
   .trim()
   .refine((v) => v === '' || z.email().safeParse(v).success, 'Adresse e-mail invalide.')
 
-export const emailObligatoire = z.string().trim().min(1, "L'adresse e-mail est obligatoire.").pipe(z.email('Adresse e-mail invalide.'))
+export const emailObligatoire = z
+  .string()
+  .trim()
+  .min(1, "L'adresse e-mail est obligatoire.")
+  .pipe(z.email('Adresse e-mail invalide.'))
 
 /** Nombre saisi dans un champ texte (virgule acceptée) */
 export const nombre = (message = 'Saisissez un nombre.') =>
   z
     .union([z.string(), z.number()])
-    .transform((v) => (typeof v === 'number' ? v : Number(String(v).replace(',', '.').replace(/\s/g, ''))))
+    .transform((v) =>
+      typeof v === 'number' ? v : Number(String(v).replace(',', '.').replace(/\s/g, '')),
+    )
     .refine((v) => !Number.isNaN(v) && String(v) !== '', message)
 
 /** Identité et coordonnées d'un utilisateur (Mon compte, création et modification d'un chef) */
@@ -32,7 +38,9 @@ export const schemaIdentite = z.object({
   nom: z.string().trim().min(1, 'Le nom est obligatoire.').max(60),
   email: emailObligatoire,
   telephone,
-  date_naissance: z.string().refine((v) => v === '' || new Date(v) < new Date(), 'La date de naissance doit être passée.'),
+  date_naissance: z
+    .string()
+    .refine((v) => v === '' || new Date(v) < new Date(), 'La date de naissance doit être passée.'),
   adresse: z.string().trim().max(200),
   ville: z.string().trim().max(80),
   code_postal: z

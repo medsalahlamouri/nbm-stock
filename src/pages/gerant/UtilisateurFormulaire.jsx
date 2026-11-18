@@ -34,7 +34,10 @@ function Formulaire({ utilisateur }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, dirtyFields },
-  } = useForm({ resolver: zodResolver(schemaIdentite), defaultValues: valeursIdentite(utilisateur) })
+  } = useForm({
+    resolver: zodResolver(schemaIdentite),
+    defaultValues: valeursIdentite(utilisateur),
+  })
 
   const soumettre = async (v) => {
     try {
@@ -45,11 +48,17 @@ function Formulaire({ utilisateur }) {
         toast.success('Compte modifié.')
         naviguer(`/gerant/utilisateurs/${utilisateur.id_utilisateur}`)
       } else {
-        const champs = Object.fromEntries(Object.entries(v).map(([k, val]) => [k, val === '' ? null : val]))
+        const champs = Object.fromEntries(
+          Object.entries(v).map(([k, val]) => [k, val === '' ? null : val]),
+        )
         const r = await creerChef(champs)
         await invalider('comptes')
         toast.success(`Compte de ${v.prenom} ${v.nom} créé.`)
-        setCree({ id: r.id_utilisateur, motDePasse: r.mot_de_passe_provisoire, personne: `${v.prenom} ${v.nom}` })
+        setCree({
+          id: r.id_utilisateur,
+          motDePasse: r.mot_de_passe_provisoire,
+          personne: `${v.prenom} ${v.nom}`,
+        })
       }
     } catch (e) {
       toast.error(messageErreur(e))
@@ -57,7 +66,14 @@ function Formulaire({ utilisateur }) {
   }
 
   const champ = (nom, libelle, props = {}, options = {}) => (
-    <Champ libelle={libelle} obligatoire={options.obligatoire} erreur={errors[nom]?.message} aide={options.aide} modifie={modification && dirtyFields[nom]} className={options.className}>
+    <Champ
+      libelle={libelle}
+      obligatoire={options.obligatoire}
+      erreur={errors[nom]?.message}
+      aide={options.aide}
+      modifie={modification && dirtyFields[nom]}
+      className={options.className}
+    >
       <Input {...props} {...register(nom)} />
     </Champ>
   )
@@ -73,7 +89,13 @@ function Formulaire({ utilisateur }) {
         }
         badges={modification && <Badge ton="dark">Modification</Badge>}
       />
-      <div className={modification ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]' : 'max-w-4xl'}>
+      <div
+        className={
+          modification
+            ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]'
+            : 'max-w-4xl'
+        }
+      >
         <Carte as="form" onSubmit={handleSubmit(soumettre)} noValidate>
           <CarteEntete titre="Identité" />
           <div className="grid gap-x-5 gap-y-4 sm:grid-cols-3">
@@ -83,22 +105,38 @@ function Formulaire({ utilisateur }) {
           </div>
           <CarteEntete titre="Coordonnées" className="mt-2" />
           <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-            {champ('email', 'Adresse e-mail', { type: 'email', autoComplete: 'off' }, { obligatoire: true, aide: "Identifiant de connexion de la personne" })}
-            {champ('telephone', 'Téléphone', { type: 'tel', inputMode: 'numeric', placeholder: '8 chiffres' })}
+            {champ(
+              'email',
+              'Adresse e-mail',
+              { type: 'email', autoComplete: 'off' },
+              { obligatoire: true, aide: 'Identifiant de connexion de la personne' },
+            )}
+            {champ('telephone', 'Téléphone', {
+              type: 'tel',
+              inputMode: 'numeric',
+              placeholder: '8 chiffres',
+            })}
             {champ('adresse', 'Adresse', {}, { className: 'sm:col-span-2' })}
             {champ('ville', 'Ville')}
             {champ('code_postal', 'Code postal', { inputMode: 'numeric' })}
           </div>
           {!modification && (
             <Encart ton="info" icone={Info}>
-              Profil attribué : <strong>Chef magasin</strong>. Le mot de passe provisoire s'affichera une seule fois après la création, avec un bouton « Copier ».
+              Profil attribué : <strong>Chef magasin</strong>. Le mot de passe provisoire
+              s'affichera une seule fois après la création, avec un bouton « Copier ».
             </Encart>
           )}
           <PiedFormulaire
             modification={modification}
             nbModifies={compterModifies(dirtyFields)}
             enCours={isSubmitting}
-            onAnnuler={() => naviguer(modification ? `/gerant/utilisateurs/${utilisateur.id_utilisateur}` : '/gerant/utilisateurs')}
+            onAnnuler={() =>
+              naviguer(
+                modification
+                  ? `/gerant/utilisateurs/${utilisateur.id_utilisateur}`
+                  : '/gerant/utilisateurs',
+              )
+            }
             libelle={modification ? undefined : 'Créer le compte'}
           />
         </Carte>
@@ -109,7 +147,12 @@ function Formulaire({ utilisateur }) {
               ['Profil', 'Chef magasin'],
               ['Statut', utilisateur.actif ? 'Actif' : 'Désactivé'],
               ['Créé le', formatDate(utilisateur.date_creation)],
-              ['Dernière connexion', utilisateur.derniere_connexion ? formatDateHeure(utilisateur.derniere_connexion) : 'Jamais'],
+              [
+                'Dernière connexion',
+                utilisateur.derniere_connexion
+                  ? formatDateHeure(utilisateur.derniere_connexion)
+                  : 'Jamais',
+              ],
             ]}
           />
         )}
@@ -127,9 +170,18 @@ function Formulaire({ utilisateur }) {
 
 export default function UtilisateurFormulaire() {
   const { id } = useParams()
-  const requete = useQuery({ queryKey: ['utilisateur', id], queryFn: () => lireUtilisateur(id), enabled: Boolean(id) })
+  const requete = useQuery({
+    queryKey: ['utilisateur', id],
+    queryFn: () => lireUtilisateur(id),
+    enabled: Boolean(id),
+  })
   if (!id) return <Formulaire />
   if (requete.isPending) return <SqueletteFormulaire champs={8} />
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
   return <Formulaire key={requete.data.id_utilisateur} utilisateur={requete.data} />
 }

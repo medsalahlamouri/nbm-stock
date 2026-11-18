@@ -39,13 +39,21 @@ export default function Mouvements() {
   const [page, setPage] = useState(1)
   const stock = useEtatStock()
 
-  const filtres = { type, idProduit, motif: motif === 'tous' ? null : motif, depuis: debutPeriode(periode) }
+  const filtres = {
+    type,
+    idProduit,
+    motif: motif === 'tous' ? null : motif,
+    depuis: debutPeriode(periode),
+  }
   const mouvements = useQuery({
     queryKey: ['mouvements', 'liste', type, idProduit, motif, periode, page],
     queryFn: () => listerMouvements({ ...filtres, page }),
     placeholderData: (precedent) => precedent,
   })
-  const resume = useQuery({ queryKey: ['mouvements', 'resume', type], queryFn: () => resumerMouvements({ type, depuis: debutPeriode(30) }) })
+  const resume = useQuery({
+    queryKey: ['mouvements', 'resume', type],
+    queryFn: () => resumerMouvements({ type, depuis: debutPeriode(30) }),
+  })
 
   const changer = (cle, valeur) => {
     setPage(1)
@@ -60,7 +68,9 @@ export default function Mouvements() {
     )
   }
 
-  const options = (stock.data ?? []).filter((p) => p.type === type).map((p) => ({ valeur: p.id_produit, libelle: p.designation, sousLibelle: p.code }))
+  const options = (stock.data ?? [])
+    .filter((p) => p.type === type)
+    .map((p) => ({ valeur: p.id_produit, libelle: p.designation, sousLibelle: p.code }))
   const motifs = MOTIFS_PAR_TYPE[type]
   const r = resume.data
   const principal = type === 'MP' ? 'Consommation atelier' : 'Production atelier'
@@ -72,7 +82,7 @@ export default function Mouvements() {
       cellule: (m) => (
         <div className="tabular">
           <div>{formatDate(m.date_mouvement)}</div>
-          <div className="text-[12px] text-mutedtxt">{formatHeure(m.date_mouvement)}</div>
+          <div className="text-mutedtxt text-[12px]">{formatHeure(m.date_mouvement)}</div>
         </div>
       ),
     },
@@ -80,7 +90,11 @@ export default function Mouvements() {
       id: 'produit',
       entete: 'Produit',
       cellule: (m) => (
-        <Link to={`/chef/produits/${m.produit.id_produit}`} onClick={(e) => e.stopPropagation()} className="block hover:underline">
+        <Link
+          to={`/chef/produits/${m.produit.id_produit}`}
+          onClick={(e) => e.stopPropagation()}
+          className="block hover:underline"
+        >
           <CellulePrincipale titre={m.produit.designation} sousTitre={m.produit.code} />
         </Link>
       ),
@@ -90,11 +104,11 @@ export default function Mouvements() {
       entete: 'Type',
       cellule: (m) =>
         m.type === 'ENTREE' ? (
-          <span className="inline-flex items-center gap-1 text-[13px] font-medium text-okfg">
+          <span className="text-okfg inline-flex items-center gap-1 text-[13px] font-medium">
             <ArrowDownLeft className="size-4" aria-hidden="true" /> Entrée
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-[13px] font-medium text-dfg">
+          <span className="text-dfg inline-flex items-center gap-1 text-[13px] font-medium">
             <ArrowUpRight className="size-4" aria-hidden="true" /> Sortie
           </span>
         ),
@@ -106,7 +120,8 @@ export default function Mouvements() {
       cellule: (m) => (
         <span className={cn('font-semibold', m.type === 'ENTREE' ? 'text-okfg' : 'text-dfg')}>
           {m.type === 'ENTREE' ? '+' : '−'}
-          {formatNombre(m.quantite)} <span className="font-normal text-mutedtxt">{m.produit.unite}</span>
+          {formatNombre(m.quantite)}{' '}
+          <span className="text-mutedtxt font-normal">{m.produit.unite}</span>
         </span>
       ),
     },
@@ -120,7 +135,15 @@ export default function Mouvements() {
         </span>
       ),
     },
-    { id: 'par', entete: 'Utilisateur', cellule: (m) => <span className="text-ink3">{m.utilisateur ? `${m.utilisateur.prenom} ${m.utilisateur.nom}` : '—'}</span> },
+    {
+      id: 'par',
+      entete: 'Utilisateur',
+      cellule: (m) => (
+        <span className="text-ink3">
+          {m.utilisateur ? `${m.utilisateur.prenom} ${m.utilisateur.nom}` : '—'}
+        </span>
+      ),
+    },
   ]
 
   return (
@@ -151,9 +174,29 @@ export default function Mouvements() {
       />
 
       <GrilleIndicateurs>
-        <StatCard libelle="Mouvements sur 30 jours" valeur={r?.nombre ?? 0} sousTexte={`${formatNombre(r?.nbEntrees ?? 0)} entrées, ${formatNombre(r?.nbSorties ?? 0)} sorties`} icone={ArrowLeftRight} chargement={resume.isPending} />
-        <StatCard libelle="Quantités entrées" valeur={r?.entrees ?? 0} sousTexte="unités entrées en stock" icone={ArrowDownLeft} ton="ok" chargement={resume.isPending} />
-        <StatCard libelle="Quantités sorties" valeur={r?.sorties ?? 0} sousTexte="unités sorties du stock" icone={ArrowUpRight} ton="danger" chargement={resume.isPending} />
+        <StatCard
+          libelle="Mouvements sur 30 jours"
+          valeur={r?.nombre ?? 0}
+          sousTexte={`${formatNombre(r?.nbEntrees ?? 0)} entrées, ${formatNombre(r?.nbSorties ?? 0)} sorties`}
+          icone={ArrowLeftRight}
+          chargement={resume.isPending}
+        />
+        <StatCard
+          libelle="Quantités entrées"
+          valeur={r?.entrees ?? 0}
+          sousTexte="unités entrées en stock"
+          icone={ArrowDownLeft}
+          ton="ok"
+          chargement={resume.isPending}
+        />
+        <StatCard
+          libelle="Quantités sorties"
+          valeur={r?.sorties ?? 0}
+          sousTexte="unités sorties du stock"
+          icone={ArrowUpRight}
+          ton="danger"
+          chargement={resume.isPending}
+        />
         <StatCard
           libelle={principal}
           valeur={(r?.parMotif[principal]?.entrees ?? 0) + (r?.parMotif[principal]?.sorties ?? 0)}
@@ -196,7 +239,10 @@ export default function Mouvements() {
             }}
             libelle="Motif"
             taille="sm"
-            options={[{ valeur: 'tous', libelle: 'Tous les motifs' }, ...motifs.map((m) => ({ valeur: m, libelle: m }))]}
+            options={[
+              { valeur: 'tous', libelle: 'Tous les motifs' },
+              ...motifs.map((m) => ({ valeur: m, libelle: m })),
+            ]}
             className="self-start"
           />
         </div>

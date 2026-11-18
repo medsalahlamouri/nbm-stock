@@ -19,7 +19,7 @@ export function ThemeToggle({ className }) {
           aria-label={libelle}
           className={
             className ??
-            'inline-flex size-[38px] cursor-pointer items-center justify-center overflow-hidden rounded-[10px] border border-line bg-surf text-ink transition-colors hover:bg-surf2 active:scale-95'
+            'border-line bg-surf text-ink hover:bg-surf2 inline-flex size-[38px] cursor-pointer items-center justify-center overflow-hidden rounded-[10px] border transition-colors active:scale-95'
           }
         >
           <AnimatePresence mode="wait" initial={false}>

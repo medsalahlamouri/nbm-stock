@@ -6,7 +6,13 @@ export function Logo({ taille = 34, inverse = false, className }) {
   const fond = inverse ? 'var(--strong)' : 'var(--bg)'
   const trait = inverse ? 'var(--bg)' : 'var(--strong)'
   return (
-    <svg width={taille} height={taille} viewBox="0 0 48 48" aria-hidden="true" className={className}>
+    <svg
+      width={taille}
+      height={taille}
+      viewBox="0 0 48 48"
+      aria-hidden="true"
+      className={className}
+    >
       <rect width="48" height="48" rx="12" fill={fond} />
       <rect x="11" y="11" width="7" height="26" rx="2" fill={trait} />
       <rect x="30" y="11" width="7" height="26" rx="2" fill={trait} />

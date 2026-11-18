@@ -7,10 +7,25 @@
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeftRight, Calculator, Pencil, Receipt, Tag, Timer, TriangleAlert, Wallet } from 'lucide-react'
+import {
+  ArrowLeftRight,
+  Calculator,
+  Pencil,
+  Receipt,
+  Tag,
+  Timer,
+  TriangleAlert,
+  Wallet,
+} from 'lucide-react'
 import { lireProduit } from '@/api/stock'
 import { useEtatStock, usePrixAchat } from '@/hooks/useDonnees'
-import { formatDate, formatDateHeure, formatMontant, formatMontantArrondi, formatNombre } from '@/lib/format'
+import {
+  formatDate,
+  formatDateHeure,
+  formatMontant,
+  formatMontantArrondi,
+  formatNombre,
+} from '@/lib/format'
 import { etatStock } from '@/lib/etats'
 import { MOTIFS } from '@/api/mouvements'
 import { cn } from '@/lib/utils'
@@ -37,7 +52,13 @@ const COULEURS_MOTIFS = {
 function JournalMouvements({ produit }) {
   const historique = useHistoriqueProduit(produit)
   const colonnes = [
-    { id: 'date', entete: 'Date', cellule: (m) => <span className="tabular">{formatDateHeure(m.date_mouvement).replace(' à ', ' · ')}</span> },
+    {
+      id: 'date',
+      entete: 'Date',
+      cellule: (m) => (
+        <span className="tabular">{formatDateHeure(m.date_mouvement).replace(' à ', ' · ')}</span>
+      ),
+    },
     {
       id: 'motif',
       entete: 'Motif',
@@ -59,8 +80,21 @@ function JournalMouvements({ produit }) {
         </span>
       ),
     },
-    { id: 'apres', entete: 'Stock après', align: 'right', cellule: (m) => formatNombre(m.stock_apres) },
-    { id: 'par', entete: 'Par', cellule: (m) => <span className="text-ink3">{m.utilisateur ? `${m.utilisateur.prenom} ${m.utilisateur.nom}` : '—'}</span> },
+    {
+      id: 'apres',
+      entete: 'Stock après',
+      align: 'right',
+      cellule: (m) => formatNombre(m.stock_apres),
+    },
+    {
+      id: 'par',
+      entete: 'Par',
+      cellule: (m) => (
+        <span className="text-ink3">
+          {m.utilisateur ? `${m.utilisateur.prenom} ${m.utilisateur.nom}` : '—'}
+        </span>
+      ),
+    },
   ]
   return (
     <DataTable
@@ -71,7 +105,14 @@ function JournalMouvements({ produit }) {
       erreur={historique.error}
       onReessayer={historique.refetch}
       libelleElements="mouvement(s)"
-      vide={<EtatVide icone={ArrowLeftRight} titre="Aucun mouvement" message="Ce produit n'a encore aucun mouvement enregistré." compact />}
+      vide={
+        <EtatVide
+          icone={ArrowLeftRight}
+          titre="Aucun mouvement"
+          message="Ce produit n'a encore aucun mouvement enregistré."
+          compact
+        />
+      }
     />
   )
 }
@@ -88,8 +129,15 @@ function BilanMotifs({ produit }) {
   const premier = historique.data?.at(-1)?.date_mouvement
   return (
     <Carte>
-      <CarteEntete titre="Bilan par motif" description={premier ? `Quantités depuis le ${formatDate(premier)}` : 'Aucun mouvement'} />
-      {historique.isPending ? <SqueletteBloc hauteur={160} className="border-0 p-0" /> : <Anneau donnees={donnees} libelleTotal={produit.unite} className="sm:flex-col" />}
+      <CarteEntete
+        titre="Bilan par motif"
+        description={premier ? `Quantités depuis le ${formatDate(premier)}` : 'Aucun mouvement'}
+      />
+      {historique.isPending ? (
+        <SqueletteBloc hauteur={160} className="border-0 p-0" />
+      ) : (
+        <Anneau donnees={donnees} libelleTotal={produit.unite} className="sm:flex-col" />
+      )}
     </Carte>
   )
 }
@@ -102,8 +150,19 @@ export default function ProduitFiche() {
   const prix = usePrixAchat()
   useFilAriane(produit.data?.designation)
 
-  if (produit.isPending) return <Page><SqueletteBloc hauteur={110} /><SqueletteBloc hauteur={300} /></Page>
-  if (produit.isError) return <Carte><EtatErreur erreur={produit.error} onReessayer={produit.refetch} /></Carte>
+  if (produit.isPending)
+    return (
+      <Page>
+        <SqueletteBloc hauteur={110} />
+        <SqueletteBloc hauteur={300} />
+      </Page>
+    )
+  if (produit.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={produit.error} onReessayer={produit.refetch} />
+      </Carte>
+    )
 
   const p = produit.data
   const etat = (stock.data ?? []).find((e) => e.id_produit === idP)
@@ -115,7 +174,9 @@ export default function ProduitFiche() {
       <PageEntete
         titre={p.designation}
         description={`${p.code} · ${mp ? 'matière première' : 'article'} · unité : ${p.unite}`}
-        badges={p.actif ? etat && <BadgeEtat etat={etatStock(etat.etat)} /> : <Badge>Inactif</Badge>}
+        badges={
+          p.actif ? etat && <BadgeEtat etat={etatStock(etat.etat)} /> : <Badge>Inactif</Badge>
+        }
         actions={
           <Button variant="outline" asChild>
             <Link to={`/chef/produits/${idP}/modifier`}>
@@ -131,15 +192,28 @@ export default function ProduitFiche() {
             <StatCard
               libelle="Point de commande"
               valeur={p.point_commande ?? '—'}
-              sousTexte={p.point_commande !== null ? "commander quand le stock l'atteint" : 'paramètres à régler par le gérant'}
+              sousTexte={
+                p.point_commande !== null
+                  ? "commander quand le stock l'atteint"
+                  : 'paramètres à régler par le gérant'
+              }
               icone={TriangleAlert}
               ton="danger"
             />
-            <StatCard libelle="Quantité économique Q*" valeur={p.quantite_economique ?? '—'} sousTexte="quantité conseillée par commande" icone={Calculator} />
+            <StatCard
+              libelle="Quantité économique Q*"
+              valeur={p.quantite_economique ?? '—'}
+              sousTexte="quantité conseillée par commande"
+              icone={Calculator}
+            />
             <StatCard
               libelle="Délai de livraison L"
               valeur={p.delai_livraison !== null ? `${formatNombre(p.delai_livraison)} jours` : '—'}
-              sousTexte={p.jours_securite !== null ? `+ ${formatNombre(p.jours_securite)} jours de sécurité` : 'non renseigné'}
+              sousTexte={
+                p.jours_securite !== null
+                  ? `+ ${formatNombre(p.jours_securite)} jours de sécurité`
+                  : 'non renseigné'
+              }
               icone={Timer}
             />
             <StatCard
@@ -152,9 +226,27 @@ export default function ProduitFiche() {
           </>
         ) : (
           <>
-            <StatCard libelle="Seuil minimum" valeur={p.seuil_minimum ?? '—'} sousTexte="produire quand le stock l'atteint" icone={TriangleAlert} ton="warn" />
-            <StatCard libelle="Prix de vente" valeur={formatMontant(p.prix_vente)} sousTexte={`par ${p.unite}`} icone={Tag} />
-            <StatCard libelle="Valeur du stock" valeur={Number(p.quantite_stock) * Number(p.prix_vente ?? 0)} formater={formatMontantArrondi} sousTexte="au prix de vente" icone={Wallet} ton="ok" />
+            <StatCard
+              libelle="Seuil minimum"
+              valeur={p.seuil_minimum ?? '—'}
+              sousTexte="produire quand le stock l'atteint"
+              icone={TriangleAlert}
+              ton="warn"
+            />
+            <StatCard
+              libelle="Prix de vente"
+              valeur={formatMontant(p.prix_vente)}
+              sousTexte={`par ${p.unite}`}
+              icone={Tag}
+            />
+            <StatCard
+              libelle="Valeur du stock"
+              valeur={Number(p.quantite_stock) * Number(p.prix_vente ?? 0)}
+              formater={formatMontantArrondi}
+              sousTexte="au prix de vente"
+              icone={Wallet}
+              ton="ok"
+            />
             <StatCard
               libelle="Vendus sur 90 jours"
               valeur={etat?.ventes_90j ?? 0}

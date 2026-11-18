@@ -52,28 +52,79 @@ export default function Devis() {
 
   const liste = useMemo(() => devis.data ?? [], [devis.data])
   const optionsMP = useMemo(
-    () => [...new Map(liste.map((d) => [d.produit.id_produit, { valeur: d.produit.id_produit, libelle: d.produit.designation, sousLibelle: d.produit.code }])).values()],
+    () => [
+      ...new Map(
+        liste.map((d) => [
+          d.produit.id_produit,
+          {
+            valeur: d.produit.id_produit,
+            libelle: d.produit.designation,
+            sousLibelle: d.produit.code,
+          },
+        ]),
+      ).values(),
+    ],
     [liste],
   )
   const optionsFournisseurs = useMemo(
-    () => [...new Map(liste.map((d) => [d.fournisseur.id_fournisseur, { valeur: d.fournisseur.id_fournisseur, libelle: d.fournisseur.raison_sociale, sousLibelle: reference('FRN', d.fournisseur.id_fournisseur) }])).values()],
+    () => [
+      ...new Map(
+        liste.map((d) => [
+          d.fournisseur.id_fournisseur,
+          {
+            valeur: d.fournisseur.id_fournisseur,
+            libelle: d.fournisseur.raison_sociale,
+            sousLibelle: reference('FRN', d.fournisseur.id_fournisseur),
+          },
+        ]),
+      ).values(),
+    ],
     [liste],
   )
   const filtres = liste.filter(
-    (d) => (!idProduit || String(d.produit.id_produit) === idProduit) && (!idFournisseur || String(d.fournisseur.id_fournisseur) === idFournisseur),
+    (d) =>
+      (!idProduit || String(d.produit.id_produit) === idProduit) &&
+      (!idFournisseur || String(d.fournisseur.id_fournisseur) === idFournisseur),
   )
 
   const colonnes = [
-    { id: 'ref', entete: 'Devis', tri: (d) => d.id_devis, cellule: (d) => <Reference>{reference('DEV', d.id_devis)}</Reference> },
+    {
+      id: 'ref',
+      entete: 'Devis',
+      tri: (d) => d.id_devis,
+      cellule: (d) => <Reference>{reference('DEV', d.id_devis)}</Reference>,
+    },
     {
       id: 'mp',
       entete: 'Matière · fournisseur',
       tri: (d) => d.produit.designation,
-      cellule: (d) => <CellulePrincipale titre={d.produit.designation} sousTitre={d.fournisseur.raison_sociale + (d.fournisseur.actif ? '' : ' (inactif)')} />,
+      cellule: (d) => (
+        <CellulePrincipale
+          titre={d.produit.designation}
+          sousTitre={d.fournisseur.raison_sociale + (d.fournisseur.actif ? '' : ' (inactif)')}
+        />
+      ),
     },
-    { id: 'date', entete: 'Date', tri: (d) => d.date_devis, cellule: (d) => formatDate(d.date_devis) },
-    { id: 'prix', entete: 'Prix unitaire', align: 'right', tri: (d) => Number(d.prix_unitaire), cellule: (d) => formatMontant(d.prix_unitaire) },
-    { id: 'delai', entete: 'Délai', align: 'right', tri: (d) => d.delai_livraison, cellule: (d) => `${d.delai_livraison} j` },
+    {
+      id: 'date',
+      entete: 'Date',
+      tri: (d) => d.date_devis,
+      cellule: (d) => formatDate(d.date_devis),
+    },
+    {
+      id: 'prix',
+      entete: 'Prix unitaire',
+      align: 'right',
+      tri: (d) => Number(d.prix_unitaire),
+      cellule: (d) => formatMontant(d.prix_unitaire),
+    },
+    {
+      id: 'delai',
+      entete: 'Délai',
+      align: 'right',
+      tri: (d) => d.delai_livraison,
+      cellule: (d) => `${d.delai_livraison} j`,
+    },
     {
       id: 'montant',
       entete: 'Montant pour Q*',
@@ -82,11 +133,17 @@ export default function Devis() {
       cellule: (d) =>
         d.produit.quantite_economique ? (
           <div>
-            <div className="font-semibold">{formatMontant(d.produit.quantite_economique * d.prix_unitaire)}</div>
-            <div className="text-[12px] text-mutedtxt">Q* = {formatNombre(d.produit.quantite_economique)}</div>
+            <div className="font-semibold">
+              {formatMontant(d.produit.quantite_economique * d.prix_unitaire)}
+            </div>
+            <div className="text-mutedtxt text-[12px]">
+              Q* = {formatNombre(d.produit.quantite_economique)}
+            </div>
           </div>
         ) : (
-          <span className="text-muted2" title="Paramètres de calcul incomplets">—</span>
+          <span className="text-muted2" title="Paramètres de calcul incomplets">
+            —
+          </span>
         ),
     },
     {
@@ -107,8 +164,19 @@ export default function Devis() {
       align: 'right',
       cellule: (d) => (
         <div className="flex justify-end gap-1">
-          <ActionIcone libelle={d.utilise ? 'Consulter' : 'Modifier'} icone={Pencil} to={`/gerant/devis/${d.id_devis}/modifier`} />
-          {!d.utilise && <ActionIcone libelle="Supprimer" icone={Trash2} ton="danger" onClick={() => confirmation.ouvrir(d)} />}
+          <ActionIcone
+            libelle={d.utilise ? 'Consulter' : 'Modifier'}
+            icone={Pencil}
+            to={`/gerant/devis/${d.id_devis}/modifier`}
+          />
+          {!d.utilise && (
+            <ActionIcone
+              libelle="Supprimer"
+              icone={Trash2}
+              ton="danger"
+              onClick={() => confirmation.ouvrir(d)}
+            />
+          )}
         </div>
       ),
     },
@@ -121,7 +189,9 @@ export default function Devis() {
         description="Les prix et délais proposés par les fournisseurs pour chaque matière première. Un devis utilisé dans une commande est verrouillé."
         actions={
           <Button asChild>
-            <Link to={`/gerant/devis/nouveau${idProduit ? `?produit=${idProduit}` : idFournisseur ? `?fournisseur=${idFournisseur}` : ''}`}>
+            <Link
+              to={`/gerant/devis/nouveau${idProduit ? `?produit=${idProduit}` : idFournisseur ? `?fournisseur=${idFournisseur}` : ''}`}
+            >
               <Plus /> Nouveau devis
             </Link>
           </Button>
@@ -162,7 +232,11 @@ export default function Devis() {
             <EtatVide
               icone={FileText}
               titre={liste.length ? 'Aucun devis pour ces filtres' : 'Aucun devis enregistré'}
-              message={liste.length ? 'Choisissez une autre matière ou un autre fournisseur.' : 'Saisissez les devis reçus des fournisseurs pour pouvoir commander.'}
+              message={
+                liste.length
+                  ? 'Choisissez une autre matière ou un autre fournisseur.'
+                  : 'Saisissez les devis reçus des fournisseurs pour pouvoir commander.'
+              }
               action={
                 <Button asChild>
                   <Link to="/gerant/devis/nouveau">
@@ -177,7 +251,11 @@ export default function Devis() {
       <ConfirmDialog
         {...confirmation.proprietes}
         titre={`Supprimer le devis ${confirmation.cible ? reference('DEV', confirmation.cible.id_devis) : ''} ?`}
-        message={confirmation.cible ? `${confirmation.cible.produit.designation} · ${confirmation.cible.fournisseur.raison_sociale} · ${formatMontant(confirmation.cible.prix_unitaire)}. Cette suppression est définitive.` : ''}
+        message={
+          confirmation.cible
+            ? `${confirmation.cible.produit.designation} · ${confirmation.cible.fournisseur.raison_sociale} · ${formatMontant(confirmation.cible.prix_unitaire)}. Cette suppression est définitive.`
+            : ''
+        }
         libelleConfirmer="Supprimer le devis"
         onConfirmer={() => suppression.mutateAsync(confirmation.cible.id_devis)}
       />

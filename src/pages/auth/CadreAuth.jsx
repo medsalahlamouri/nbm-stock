@@ -12,7 +12,7 @@ const ANNEE = new Date().getFullYear()
 
 export function CadreAuth({ children }) {
   return (
-    <div className="relative flex min-h-svh flex-col items-center overflow-hidden bg-bg px-4 py-10 sm:py-14">
+    <div className="bg-bg relative flex min-h-svh flex-col items-center overflow-hidden px-4 py-10 sm:py-14">
       {/* Halo et lignes verticales décoratifs */}
       <div
         aria-hidden="true"
@@ -33,16 +33,21 @@ export function CadreAuth({ children }) {
         className="relative flex w-full max-w-[440px] flex-col items-center"
       >
         <Logo taille={64} inverse />
-        <p className="mt-4 font-serif text-[30px] leading-none font-semibold tracking-[-0.01em] text-strong">NBM</p>
-        <p className="mt-2 text-[11px] font-semibold tracking-[0.28em] text-mutedtxt uppercase">Nabeul Bois et Meubles</p>
+        <p className="text-strong mt-4 font-serif text-[30px] leading-none font-semibold tracking-[-0.01em]">
+          NBM
+        </p>
+        <p className="text-mutedtxt mt-2 text-[11px] font-semibold tracking-[0.28em] uppercase">
+          Nabeul Bois et Meubles
+        </p>
 
-        <div className="mt-8 w-full rounded-[18px] border border-line bg-surf px-6 pt-8 pb-7 shadow-pop sm:px-[34px] sm:pt-[34px] sm:pb-7">
+        <div className="border-line bg-surf shadow-pop mt-8 w-full rounded-[18px] border px-6 pt-8 pb-7 sm:px-[34px] sm:pt-[34px] sm:pb-7">
           {children}
         </div>
 
-        <footer className="mt-6 flex flex-col items-center gap-1 text-center text-[13px] text-mutedtxt">
+        <footer className="text-mutedtxt mt-6 flex flex-col items-center gap-1 text-center text-[13px]">
           <p className="inline-flex items-center gap-1.5">
-            <Lock className="size-3.5" aria-hidden="true" /> Connexion sécurisée · accès réservé au personnel de NBM
+            <Lock className="size-3.5" aria-hidden="true" /> Connexion sécurisée · accès réservé au
+            personnel de NBM
           </p>
           <p>© {ANNEE} Nabeul Bois et Meubles · Gestion de stock, version 1.0</p>
         </footer>

@@ -31,17 +31,25 @@ import { Avatar } from '@/components/commun/Avatar'
 import { Badge } from '@/components/commun/Badge'
 import { ConfirmDialog } from '@/components/commun/Dialogues'
 import { SqueletteFormulaire } from '@/components/commun/Etats'
-import { ChampMotDePasse, ReglesMotDePasse } from '@/pages/auth/ChampMotDePasse'
+import { ChampMotDePasse, ReglesMotDePasse } from '@/components/commun/ChampMotDePasse'
 import { motDePasseValide } from '@/lib/schemas'
 
 const schemaMotDePasse = z
   .object({
     actuel: z.string().min(1, 'Saisissez votre mot de passe actuel.'),
-    nouveau: z.string().refine(motDePasseValide, 'Le mot de passe ne respecte pas toutes les règles.'),
+    nouveau: z
+      .string()
+      .refine(motDePasseValide, 'Le mot de passe ne respecte pas toutes les règles.'),
     confirmation: z.string().min(1, 'Confirmez le nouveau mot de passe.'),
   })
-  .refine((v) => v.nouveau === v.confirmation, { path: ['confirmation'], message: 'Les deux mots de passe sont différents.' })
-  .refine((v) => v.nouveau !== v.actuel, { path: ['nouveau'], message: "Le nouveau mot de passe doit être différent de l'actuel." })
+  .refine((v) => v.nouveau === v.confirmation, {
+    path: ['confirmation'],
+    message: 'Les deux mots de passe sont différents.',
+  })
+  .refine((v) => v.nouveau !== v.actuel, {
+    path: ['nouveau'],
+    message: "Le nouveau mot de passe doit être différent de l'actuel.",
+  })
 
 function CarteProfil({ utilisateur }) {
   const entree = useRef(null)
@@ -73,10 +81,10 @@ function CarteProfil({ utilisateur }) {
           </span>
         )}
       </div>
-      <p className="mt-4 text-[18px] font-semibold text-ink">
+      <p className="text-ink mt-4 text-[18px] font-semibold">
         {utilisateur.prenom} {utilisateur.nom}
       </p>
-      <p className="text-[14px] text-mutedtxt">{utilisateur.email}</p>
+      <p className="text-mutedtxt text-[14px]">{utilisateur.email}</p>
       <Badge ton="dark" className="mt-3">
         {PROFILS[utilisateur.profil]}
       </Badge>
@@ -93,17 +101,28 @@ function CarteProfil({ utilisateur }) {
         }}
       />
       <div className="mt-4 flex flex-wrap justify-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => entree.current?.click()} disabled={photo.isPending}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => entree.current?.click()}
+          disabled={photo.isPending}
+        >
           <Camera /> {utilisateur.photo ? 'Changer la photo' : 'Ajouter une photo'}
         </Button>
         {utilisateur.photo && (
-          <Button variant="danger" size="sm" onClick={() => setConfirmerRetrait(true)} disabled={retrait.isPending} aria-label="Retirer la photo">
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => setConfirmerRetrait(true)}
+            disabled={retrait.isPending}
+            aria-label="Retirer la photo"
+          >
             <Trash2 />
           </Button>
         )}
       </div>
-      <p className="mt-2 text-[12px] text-muted2">JPG, PNG ou WebP · 2 Mo maximum</p>
-      <dl className="mt-5 w-full border-t border-line pt-4 text-left">
+      <p className="text-muted2 mt-2 text-[12px]">JPG, PNG ou WebP · 2 Mo maximum</p>
+      <dl className="border-line mt-5 w-full border-t pt-4 text-left">
         <LigneInfo libelle="Compte créé le" fort>
           {formatDate(utilisateur.date_creation)}
         </LigneInfo>
@@ -164,7 +183,13 @@ function FormulaireInformations({ utilisateur }) {
           <Input type="email" autoComplete="email" readOnly={!gerant} {...register('email')} />
         </Champ>
         <Champ libelle="Téléphone" erreur={errors.telephone?.message}>
-          <Input type="tel" inputMode="numeric" autoComplete="tel" placeholder="8 chiffres" {...register('telephone')} />
+          <Input
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel"
+            placeholder="8 chiffres"
+            {...register('telephone')}
+          />
         </Champ>
         <Champ libelle="Date de naissance" erreur={errors.date_naissance?.message}>
           <Input type="date" {...register('date_naissance')} />
@@ -204,13 +229,19 @@ function FormulaireMotDePasse({ utilisateur }) {
     reset,
     control,
     formState: { errors, isSubmitting },
-  } = useForm({ resolver: zodResolver(schemaMotDePasse), defaultValues: { actuel: '', nouveau: '', confirmation: '' } })
+  } = useForm({
+    resolver: zodResolver(schemaMotDePasse),
+    defaultValues: { actuel: '', nouveau: '', confirmation: '' },
+  })
   const nouveau = useWatch({ control, name: 'nouveau' })
 
   const soumettre = async ({ actuel, nouveau: motDePasse }) => {
     try {
       // Vérifie le mot de passe actuel avant de le remplacer
-      const { error } = await supabase.auth.signInWithPassword({ email: utilisateur.email, password: actuel })
+      const { error } = await supabase.auth.signInWithPassword({
+        email: utilisateur.email,
+        password: actuel,
+      })
       if (error) throw new ErreurApplication('Mot de passe actuel incorrect.')
       await changerMotDePasse(motDePasse)
       reset()
@@ -222,16 +253,27 @@ function FormulaireMotDePasse({ utilisateur }) {
 
   return (
     <Carte as="form" onSubmit={handleSubmit(soumettre)} noValidate>
-      <CarteEntete titre="Mot de passe" description="8 caractères minimum, avec une majuscule, une minuscule et un chiffre" />
+      <CarteEntete
+        titre="Mot de passe"
+        description="8 caractères minimum, avec une majuscule, une minuscule et un chiffre"
+      />
       <div className="grid gap-x-5 gap-y-4 md:grid-cols-3">
         <Champ libelle="Mot de passe actuel" erreur={errors.actuel?.message}>
-          <ChampMotDePasse autoComplete="current-password" className="h-11" {...register('actuel')} />
+          <ChampMotDePasse
+            autoComplete="current-password"
+            className="h-11"
+            {...register('actuel')}
+          />
         </Champ>
         <Champ libelle="Nouveau mot de passe" erreur={errors.nouveau?.message}>
           <ChampMotDePasse autoComplete="new-password" className="h-11" {...register('nouveau')} />
         </Champ>
         <Champ libelle="Confirmation" erreur={errors.confirmation?.message}>
-          <ChampMotDePasse autoComplete="new-password" className="h-11" {...register('confirmation')} />
+          <ChampMotDePasse
+            autoComplete="new-password"
+            className="h-11"
+            {...register('confirmation')}
+          />
         </Champ>
       </div>
       {nouveau && <ReglesMotDePasse valeur={nouveau} />}
@@ -250,7 +292,10 @@ export default function MonCompte() {
 
   return (
     <Page>
-      <PageEntete titre="Mon compte" description="Vos informations personnelles et votre mot de passe." />
+      <PageEntete
+        titre="Mon compte"
+        description="Vos informations personnelles et votre mot de passe."
+      />
       {!utilisateur ? (
         <SqueletteFormulaire />
       ) : (

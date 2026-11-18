@@ -9,14 +9,19 @@ import { deballer } from '@/lib/erreurs'
 import { RAFRAICHISSEMENT_PERIODIQUE } from '@/lib/requetes'
 
 async function compter(table, colonne, valeur) {
-  const { count, error } = await supabase.from(table).select('*', { count: 'exact', head: true }).eq(colonne, valeur)
+  const { count, error } = await supabase
+    .from(table)
+    .select('*', { count: 'exact', head: true })
+    .eq(colonne, valeur)
   deballer({ data: null, error })
   return count ?? 0
 }
 
 async function lireCompteurs(profil) {
   if (profil === 'GERANT') {
-    const retards = await supabase.from('v_commandes_retard').select('id_commande', { count: 'exact', head: true })
+    const retards = await supabase
+      .from('v_commandes_retard')
+      .select('id_commande', { count: 'exact', head: true })
     deballer({ data: null, error: retards.error })
     return { retards: retards.count ?? 0 }
   }
@@ -39,13 +44,31 @@ export function useCompteursMenu(profil) {
 /** Alertes de l'en-tête (cloche) */
 async function lireAlertes(profil) {
   const [stock, retards, aReceptionner] = await Promise.all([
-    supabase.from('v_etat_stock').select('id_produit, code, designation, type, unite, quantite_stock, seuil, etat').eq('en_alerte', true).eq('actif', true).order('type').order('quantite_stock'),
-    profil === 'GERANT' ? supabase.from('v_commandes_retard').select('*').order('jours_retard', { ascending: false }) : { data: [], error: null },
+    supabase
+      .from('v_etat_stock')
+      .select('id_produit, code, designation, type, unite, quantite_stock, seuil, etat')
+      .eq('en_alerte', true)
+      .eq('actif', true)
+      .order('type')
+      .order('quantite_stock'),
+    profil === 'GERANT'
+      ? supabase.from('v_commandes_retard').select('*').order('jours_retard', { ascending: false })
+      : { data: [], error: null },
     profil === 'CHEF_MAGASIN'
-      ? supabase.from('commande_fournisseur').select('id_commande, date_commande, quantite, devis(delai_livraison, fournisseur(raison_sociale), produit(designation))').eq('etat', 'EN_ATTENTE').order('date_commande')
+      ? supabase
+          .from('commande_fournisseur')
+          .select(
+            'id_commande, date_commande, quantite, devis(delai_livraison, fournisseur(raison_sociale), produit(designation))',
+          )
+          .eq('etat', 'EN_ATTENTE')
+          .order('date_commande')
       : { data: [], error: null },
   ])
-  return { stock: deballer(stock), retards: deballer(retards), aReceptionner: deballer(aReceptionner) }
+  return {
+    stock: deballer(stock),
+    retards: deballer(retards),
+    aReceptionner: deballer(aReceptionner),
+  }
 }
 
 export function useAlertes(profil) {

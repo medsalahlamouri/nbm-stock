@@ -15,9 +15,22 @@ import { z } from 'zod'
 import { AnimatePresence, motion } from 'motion/react'
 import { Ban, Check, Info, Loader2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { CANAUX, annulerDemande, enregistrerDemande, lireDemande, modifierDemande } from '@/api/ventes'
+import {
+  CANAUX,
+  annulerDemande,
+  enregistrerDemande,
+  lireDemande,
+  modifierDemande,
+} from '@/api/ventes'
 import { useClients, useEtatStock } from '@/hooks/useDonnees'
-import { dateISO, formatDate, formatMontant, formatNombre, formatTelephone, reference } from '@/lib/format'
+import {
+  dateISO,
+  formatDate,
+  formatMontant,
+  formatNombre,
+  formatTelephone,
+  reference,
+} from '@/lib/format'
 import { messageErreur } from '@/lib/erreurs'
 import { invalider } from '@/lib/requetes'
 import { cn } from '@/lib/utils'
@@ -35,18 +48,30 @@ import { ZoneDanger } from '@/components/commun/Formulaire'
 import { ConfirmDialog } from '@/components/commun/Dialogues'
 
 const schema = z.object({
-  id_client: z.coerce.number({ message: 'Choisissez un client.' }).int().positive('Choisissez un client.'),
+  id_client: z.coerce
+    .number({ message: 'Choisissez un client.' })
+    .int()
+    .positive('Choisissez un client.'),
   canal: z.enum(['TELEPHONE', 'FAX', 'SUR_PLACE']),
   date: z.string().min(1, 'Saisissez la date.'),
   lignes: z
     .array(
       z.object({
-        id_produit: z.coerce.number({ message: 'Choisissez un article.' }).int().positive('Choisissez un article.'),
-        quantite: z.coerce.number({ message: 'Quantité invalide.' }).int('Nombre entier.').positive('Supérieure à 0.'),
+        id_produit: z.coerce
+          .number({ message: 'Choisissez un article.' })
+          .int()
+          .positive('Choisissez un article.'),
+        quantite: z.coerce
+          .number({ message: 'Quantité invalide.' })
+          .int('Nombre entier.')
+          .positive('Supérieure à 0.'),
       }),
     )
     .min(1, 'Ajoutez au moins un article.')
-    .refine((l) => new Set(l.map((x) => x.id_produit)).size === l.length, 'Un article ne peut figurer qu’une fois.'),
+    .refine(
+      (l) => new Set(l.map((x) => x.id_produit)).size === l.length,
+      'Un article ne peut figurer qu’une fois.',
+    ),
 })
 
 function Formulaire({ demande }) {
@@ -67,10 +92,14 @@ function Formulaire({ demande }) {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      id_client: demande?.id_client ?? (parametres.get('client') ? Number(parametres.get('client')) : ''),
+      id_client:
+        demande?.id_client ?? (parametres.get('client') ? Number(parametres.get('client')) : ''),
       canal: demande?.canal ?? 'TELEPHONE',
       date: demande?.date_demande ?? dateISO(),
-      lignes: demande?.lignes.map((l) => ({ id_produit: l.id_produit, quantite: String(l.quantite) })) ?? [{ id_produit: '', quantite: '1' }],
+      lignes: demande?.lignes.map((l) => ({
+        id_produit: l.id_produit,
+        quantite: String(l.quantite),
+      })) ?? [{ id_produit: '', quantite: '1' }],
     },
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'lignes' })
@@ -82,7 +111,10 @@ function Formulaire({ demande }) {
     const existante = demande?.lignes.find((l) => l.id_produit === Number(id))
     return existante ? Number(existante.prix_unitaire) : Number(parId[id]?.prix_vente ?? 0)
   }
-  const total = (lignes ?? []).reduce((t, l) => t + (Number(l.quantite) > 0 ? Number(l.quantite) * prixLigne(l.id_produit) : 0), 0)
+  const total = (lignes ?? []).reduce(
+    (t, l) => t + (Number(l.quantite) > 0 ? Number(l.quantite) * prixLigne(l.id_produit) : 0),
+    0,
+  )
   const client = (clients.data ?? []).find((c) => c.id_client === Number(idClient))
 
   const annulation = useMutation({
@@ -102,11 +134,19 @@ function Formulaire({ demande }) {
         await invalider('ventes')
         toast.success(`Demande ${reference('DEM', demande.id_demande)} modifiée.`)
       } else {
-        const id = await enregistrerDemande({ idClient: v.id_client, canal: v.canal, date: v.date, lignes: v.lignes })
+        const id = await enregistrerDemande({
+          idClient: v.id_client,
+          canal: v.canal,
+          date: v.date,
+          lignes: v.lignes,
+        })
         await invalider('ventes')
         toast.success(`Demande ${reference('DEM', id)} enregistrée.`, {
           description: `${client?.nom ?? ''} · ${formatMontant(total)}`,
-          action: { label: 'Facturer', onClick: () => naviguer(`/chef/factures-client/nouvelle?demande=${id}`) },
+          action: {
+            label: 'Facturer',
+            onClick: () => naviguer(`/chef/factures-client/nouvelle?demande=${id}`),
+          },
         })
       }
       naviguer('/chef/demandes?etat=EN_ATTENTE')
@@ -117,12 +157,20 @@ function Formulaire({ demande }) {
 
   const optionsClients = (clients.data ?? [])
     .filter((c) => c.actif || c.id_client === demande?.id_client)
-    .map((c) => ({ valeur: c.id_client, libelle: c.nom, sousLibelle: c.telephone ? formatTelephone(c.telephone) : reference('CLI', c.id_client) }))
+    .map((c) => ({
+      valeur: c.id_client,
+      libelle: c.nom,
+      sousLibelle: c.telephone ? formatTelephone(c.telephone) : reference('CLI', c.id_client),
+    }))
 
   return (
     <Page>
       <PageEntete
-        titre={modification ? `Modifier la demande ${reference('DEM', demande.id_demande)}` : 'Nouvelle demande client'}
+        titre={
+          modification
+            ? `Modifier la demande ${reference('DEM', demande.id_demande)}`
+            : 'Nouvelle demande client'
+        }
         description={
           modification
             ? `${demande.client?.nom} · reçue le ${formatDate(demande.date_demande)}. Seuls le canal et les articles peuvent être modifiés tant que la demande est en attente.`
@@ -130,11 +178,21 @@ function Formulaire({ demande }) {
         }
         badges={modification && <Badge ton="warn">En attente</Badge>}
       />
-      <div className={modification ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]' : ''}>
+      <div
+        className={
+          modification ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]' : ''
+        }
+      >
         <Carte as="form" onSubmit={handleSubmit(soumettre)} noValidate>
           <CarteEntete titre="Demande" />
           <div className="grid gap-x-5 gap-y-4 md:grid-cols-[1.4fr_auto_180px]">
-            <Champ libelle="Client" obligatoire erreur={errors.id_client?.message} verrouille={modification} infoVerrou="Le client ne se modifie pas">
+            <Champ
+              libelle="Client"
+              obligatoire
+              erreur={errors.id_client?.message}
+              verrouille={modification}
+              infoVerrou="Le client ne se modifie pas"
+            >
               <Controller
                 control={control}
                 name="id_client"
@@ -160,19 +218,28 @@ function Formulaire({ demande }) {
                     libelle="Canal"
                     valeur={field.value}
                     onChange={field.onChange}
-                    options={Object.entries(CANAUX).map(([valeur, libelle]) => ({ valeur, libelle }))}
+                    options={Object.entries(CANAUX).map(([valeur, libelle]) => ({
+                      valeur,
+                      libelle,
+                    }))}
                     className="h-11"
                   />
                 )}
               />
             </Champ>
-            <Champ libelle="Date" obligatoire erreur={errors.date?.message} verrouille={modification} infoVerrou="La date ne se modifie pas">
+            <Champ
+              libelle="Date"
+              obligatoire
+              erreur={errors.date?.message}
+              verrouille={modification}
+              infoVerrou="La date ne se modifie pas"
+            >
               <Input type="date" max={dateISO()} readOnly={modification} {...register('date')} />
             </Champ>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-line">
-            <div className="hidden grid-cols-[minmax(0,2.4fr)_110px_130px_140px_40px] gap-3 bg-surf2 px-4 py-2.5 text-[12px] font-semibold tracking-[0.04em] text-mutedtxt uppercase md:grid">
+          <div className="border-line overflow-hidden rounded-xl border">
+            <div className="bg-surf2 text-mutedtxt hidden grid-cols-[minmax(0,2.4fr)_110px_130px_140px_40px] gap-3 px-4 py-2.5 text-[12px] font-semibold tracking-[0.04em] uppercase md:grid">
               <span>Article</span>
               <span className="text-right">Quantité</span>
               <span className="text-right">Prix unitaire</span>
@@ -185,10 +252,21 @@ function Formulaire({ demande }) {
                 const article = parId[ligne.id_produit]
                 const qte = Number(ligne.quantite)
                 const dispo = article?.quantite_stock
-                const choisis = (lignes ?? []).map((l, i) => i !== index && Number(l.id_produit)).filter(Boolean)
+                const choisis = (lignes ?? [])
+                  .map((l, i) => i !== index && Number(l.id_produit))
+                  .filter(Boolean)
                 const options = articles
-                  .filter((a) => (a.actif || a.id_produit === Number(ligne.id_produit)) && !choisis.includes(a.id_produit))
-                  .map((a) => ({ valeur: a.id_produit, libelle: a.designation, sousLibelle: a.code, droite: formatMontant(a.prix_vente) }))
+                  .filter(
+                    (a) =>
+                      (a.actif || a.id_produit === Number(ligne.id_produit)) &&
+                      !choisis.includes(a.id_produit),
+                  )
+                  .map((a) => ({
+                    valeur: a.id_produit,
+                    libelle: a.designation,
+                    sousLibelle: a.code,
+                    droite: formatMontant(a.prix_vente),
+                  }))
                 const erreurLigne = errors.lignes?.[index]
                 return (
                   <motion.div
@@ -197,7 +275,7 @@ function Formulaire({ demande }) {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.18 }}
-                    className="border-t border-line3 first:border-t-0 md:first:border-t"
+                    className="border-line3 border-t first:border-t-0 md:first:border-t"
                   >
                     <div className="grid grid-cols-[1fr_auto] items-start gap-3 px-4 py-3 md:grid-cols-[minmax(0,2.4fr)_110px_130px_140px_40px]">
                       <div className="col-span-2 md:col-span-1">
@@ -217,27 +295,51 @@ function Formulaire({ demande }) {
                           )}
                         />
                         {article && (
-                          <p className={cn('mt-1 text-[12px]', qte > dispo ? 'text-wfg' : 'text-mutedtxt')}>
+                          <p
+                            className={cn(
+                              'mt-1 text-[12px]',
+                              qte > dispo ? 'text-wfg' : 'text-mutedtxt',
+                            )}
+                          >
                             Stock disponible : {formatNombre(dispo)} {article.unite}
-                            {qte > dispo && ' · insuffisant pour l’instant (vérifié à la facturation)'}
+                            {qte > dispo &&
+                              ' · insuffisant pour l’instant (vérifié à la facturation)'}
                           </p>
                         )}
-                        {erreurLigne?.id_produit && <p className="mt-1 text-[12px] text-dfg">{erreurLigne.id_produit.message}</p>}
+                        {erreurLigne?.id_produit && (
+                          <p className="text-dfg mt-1 text-[12px]">
+                            {erreurLigne.id_produit.message}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <Input inputMode="numeric" aria-label={`Quantité de la ligne ${index + 1}`} className="text-right" aria-invalid={Boolean(erreurLigne?.quantite) || undefined} {...register(`lignes.${index}.quantite`)} />
-                        {erreurLigne?.quantite && <p className="mt-1 text-right text-[12px] text-dfg">{erreurLigne.quantite.message}</p>}
+                        <Input
+                          inputMode="numeric"
+                          aria-label={`Quantité de la ligne ${index + 1}`}
+                          className="text-right"
+                          aria-invalid={Boolean(erreurLigne?.quantite) || undefined}
+                          {...register(`lignes.${index}.quantite`)}
+                        />
+                        {erreurLigne?.quantite && (
+                          <p className="text-dfg mt-1 text-right text-[12px]">
+                            {erreurLigne.quantite.message}
+                          </p>
+                        )}
                       </div>
-                      <p className="flex h-11 items-center justify-end text-[14px] text-ink3 tabular">{article ? formatMontant(prixLigne(ligne.id_produit)) : '—'}</p>
-                      <p className="flex h-11 items-center justify-end text-[14px] font-semibold text-ink tabular">
-                        {article && qte > 0 ? formatMontant(qte * prixLigne(ligne.id_produit)) : '—'}
+                      <p className="text-ink3 tabular flex h-11 items-center justify-end text-[14px]">
+                        {article ? formatMontant(prixLigne(ligne.id_produit)) : '—'}
+                      </p>
+                      <p className="text-ink tabular flex h-11 items-center justify-end text-[14px] font-semibold">
+                        {article && qte > 0
+                          ? formatMontant(qte * prixLigne(ligne.id_produit))
+                          : '—'}
                       </p>
                       <button
                         type="button"
                         onClick={() => remove(index)}
                         disabled={fields.length === 1}
                         aria-label={`Retirer la ligne ${index + 1}`}
-                        className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-red transition-colors hover:bg-dbg disabled:cursor-not-allowed disabled:opacity-30"
+                        className="text-red hover:bg-dbg inline-flex size-11 cursor-pointer items-center justify-center rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <Trash2 className="size-4" />
                       </button>
@@ -246,20 +348,30 @@ function Formulaire({ demande }) {
                 )
               })}
             </AnimatePresence>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-surf2 px-4 py-3">
-              <Button type="button" variant="outline" size="sm" onClick={() => append({ id_produit: '', quantite: '1' })} disabled={fields.length >= articles.filter((a) => a.actif).length}>
+            <div className="border-line bg-surf2 flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => append({ id_produit: '', quantite: '1' })}
+                disabled={fields.length >= articles.filter((a) => a.actif).length}
+              >
                 <Plus /> Ajouter un article
               </Button>
-              <p className="text-[15px] text-mutedtxt">
-                Total : <strong className="text-[18px] text-ink tabular">{formatMontant(total)}</strong>
+              <p className="text-mutedtxt text-[15px]">
+                Total :{' '}
+                <strong className="text-ink tabular text-[18px]">{formatMontant(total)}</strong>
               </p>
             </div>
           </div>
-          {errors.lignes?.root?.message || errors.lignes?.message ? <Encart ton="danger">{errors.lignes?.root?.message ?? errors.lignes?.message}</Encart> : null}
+          {errors.lignes?.root?.message || errors.lignes?.message ? (
+            <Encart ton="danger">{errors.lignes?.root?.message ?? errors.lignes?.message}</Encart>
+          ) : null}
           <Encart ton="info" icone={Info}>
-            Paiement comptant : la facture est réputée payée dès son établissement. Le stock de chaque article est vérifié à ce moment-là.
+            Paiement comptant : la facture est réputée payée dès son établissement. Le stock de
+            chaque article est vérifié à ce moment-là.
           </Encart>
-          <div className="flex flex-wrap justify-end gap-2.5 border-t border-line pt-5">
+          <div className="border-line flex flex-wrap justify-end gap-2.5 border-t pt-5">
             <Button type="button" variant="outline" onClick={() => naviguer('/chef/demandes')}>
               Annuler
             </Button>
@@ -279,7 +391,8 @@ function Formulaire({ demande }) {
               </Button>
             }
           >
-            La demande passera à l'état « Annulée » et ne pourra plus être facturée. Cette action est définitive.
+            La demande passera à l'état « Annulée » et ne pourra plus être facturée. Cette action
+            est définitive.
           </ZoneDanger>
         )}
       </div>
@@ -299,15 +412,26 @@ function Formulaire({ demande }) {
 
 export default function DemandeFormulaire() {
   const { id } = useParams()
-  const requete = useQuery({ queryKey: ['demande', Number(id)], queryFn: () => lireDemande(Number(id)), enabled: Boolean(id) })
+  const requete = useQuery({
+    queryKey: ['demande', Number(id)],
+    queryFn: () => lireDemande(Number(id)),
+    enabled: Boolean(id),
+  })
   if (!id) return <Formulaire />
   if (requete.isPending) return <SqueletteFormulaire champs={4} />
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
   if (requete.data.etat !== 'EN_ATTENTE') {
     return (
       <Carte>
         <Encart ton="warn" titre="Demande non modifiable">
-          La demande {reference('DEM', requete.data.id_demande)} est {requete.data.etat === 'FACTUREE' ? 'déjà facturée' : 'annulée'} : elle ne peut plus être modifiée.
+          La demande {reference('DEM', requete.data.id_demande)} est{' '}
+          {requete.data.etat === 'FACTUREE' ? 'déjà facturée' : 'annulée'} : elle ne peut plus être
+          modifiée.
         </Encart>
       </Carte>
     )

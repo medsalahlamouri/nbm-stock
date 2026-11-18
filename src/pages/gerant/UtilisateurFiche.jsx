@@ -7,7 +7,18 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeftRight, Ban, History, Inbox, KeyRound, LogIn, Pencil, Receipt, RotateCcw, User } from 'lucide-react'
+import {
+  ArrowLeftRight,
+  Ban,
+  History,
+  Inbox,
+  KeyRound,
+  LogIn,
+  Pencil,
+  Receipt,
+  RotateCcw,
+  User,
+} from 'lucide-react'
 import { lireUtilisateur } from '@/api/utilisateurs'
 import { lireJournalPeriode } from '@/api/journal'
 import { useComptes } from '@/hooks/useComptes'
@@ -31,7 +42,11 @@ function Activite({ utilisateur }) {
   const [periode, setPeriode] = useState(90)
   const journal = useQuery({
     queryKey: ['journal', 'utilisateur', utilisateur.id_utilisateur, periode],
-    queryFn: () => lireJournalPeriode({ idUtilisateur: utilisateur.id_utilisateur, depuis: debutPeriode(periode) }),
+    queryFn: () =>
+      lireJournalPeriode({
+        idUtilisateur: utilisateur.id_utilisateur,
+        depuis: debutPeriode(periode),
+      }),
   })
   const compte = useMemo(() => {
     const c = {}
@@ -41,13 +56,45 @@ function Activite({ utilisateur }) {
   return (
     <>
       <div className="flex justify-end">
-        <Onglets options={PERIODES} valeur={periode} onChange={setPeriode} libelle="Période" taille="sm" />
+        <Onglets
+          options={PERIODES}
+          valeur={periode}
+          onChange={setPeriode}
+          libelle="Période"
+          taille="sm"
+        />
       </div>
       <GrilleIndicateurs>
-        <StatCard libelle="Mouvements" valeur={(compte.MOUVEMENT ?? 0) + (compte.INVENTAIRE ?? 0)} sousTexte={`dont ${compte.INVENTAIRE ?? 0} inventaire(s)`} icone={ArrowLeftRight} chargement={journal.isPending} />
-        <StatCard libelle="Factures client" valeur={compte.FACTURE_CLIENT ?? 0} sousTexte="établies" icone={Receipt} ton="ok" chargement={journal.isPending} />
-        <StatCard libelle="Factures fournisseur" valeur={compte.FACTURE_FOURNISSEUR ?? 0} sousTexte="saisies et contrôlées" icone={Inbox} ton="info" chargement={journal.isPending} />
-        <StatCard libelle="Connexions" valeur={compte.CONNEXION ?? 0} sousTexte="sur la période" icone={LogIn} chargement={journal.isPending} />
+        <StatCard
+          libelle="Mouvements"
+          valeur={(compte.MOUVEMENT ?? 0) + (compte.INVENTAIRE ?? 0)}
+          sousTexte={`dont ${compte.INVENTAIRE ?? 0} inventaire(s)`}
+          icone={ArrowLeftRight}
+          chargement={journal.isPending}
+        />
+        <StatCard
+          libelle="Factures client"
+          valeur={compte.FACTURE_CLIENT ?? 0}
+          sousTexte="établies"
+          icone={Receipt}
+          ton="ok"
+          chargement={journal.isPending}
+        />
+        <StatCard
+          libelle="Factures fournisseur"
+          valeur={compte.FACTURE_FOURNISSEUR ?? 0}
+          sousTexte="saisies et contrôlées"
+          icone={Inbox}
+          ton="info"
+          chargement={journal.isPending}
+        />
+        <StatCard
+          libelle="Connexions"
+          valeur={compte.CONNEXION ?? 0}
+          sousTexte="sur la période"
+          icone={LogIn}
+          chargement={journal.isPending}
+        />
       </GrilleIndicateurs>
       <Carte sansPadding className="gap-0 overflow-hidden">
         <JournalActivite
@@ -70,19 +117,35 @@ export default function UtilisateurFiche() {
   const onglet = parametres.get('onglet') === 'activite' ? 'activite' : 'informations'
   const [confirmer, setConfirmer] = useState(null) // 'reinit' | 'desactiver'
   const requete = useQuery({ queryKey: ['utilisateur', id], queryFn: () => lireUtilisateur(id) })
-  const { reinitialisation, suppression, reactivation, provisoire, fermerProvisoire } = useComptes({ onSupprime: () => naviguer('/gerant/utilisateurs') })
+  const { reinitialisation, suppression, reactivation, provisoire, fermerProvisoire } = useComptes({
+    onSupprime: () => naviguer('/gerant/utilisateurs'),
+  })
   const u = requete.data
   useFilAriane(u ? `${u.prenom} ${u.nom}` : null)
 
-  if (requete.isPending) return <Page><SqueletteBloc hauteur={120} /><SqueletteBloc hauteur={260} /></Page>
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isPending)
+    return (
+      <Page>
+        <SqueletteBloc hauteur={120} />
+        <SqueletteBloc hauteur={260} />
+      </Page>
+    )
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
 
   return (
     <Page>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-4">
           <Avatar utilisateur={u} taille={64} />
-          <PageEntete titre={`${u.prenom} ${u.nom}`} description={`${PROFILS[u.profil]} · ${u.email}`} />
+          <PageEntete
+            titre={`${u.prenom} ${u.nom}`}
+            description={`${PROFILS[u.profil]} · ${u.email}`}
+          />
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           {u.actif ? <Badge ton="ok">Actif</Badge> : <Badge>Désactivé</Badge>}
@@ -138,7 +201,9 @@ export default function UtilisateurFiche() {
               <LigneInfo libelle="E-mail">{u.email}</LigneInfo>
               <LigneInfo libelle="Téléphone">{formatTelephone(u.telephone)}</LigneInfo>
               <LigneInfo libelle="Adresse">{u.adresse || '—'}</LigneInfo>
-              <LigneInfo libelle="Ville">{[u.code_postal, u.ville].filter(Boolean).join(' ') || '—'}</LigneInfo>
+              <LigneInfo libelle="Ville">
+                {[u.code_postal, u.ville].filter(Boolean).join(' ') || '—'}
+              </LigneInfo>
             </dl>
           </Carte>
           <Carte>
@@ -146,8 +211,12 @@ export default function UtilisateurFiche() {
             <dl>
               <LigneInfo libelle="Profil">{PROFILS[u.profil]}</LigneInfo>
               <LigneInfo libelle="Créé le">{formatDate(u.date_creation)}</LigneInfo>
-              <LigneInfo libelle="Dernière connexion">{u.derniere_connexion ? formatDateHeure(u.derniere_connexion) : 'Jamais'}</LigneInfo>
-              <LigneInfo libelle="Mot de passe">{u.doit_changer_mdp ? 'Provisoire (à changer)' : 'Personnel'}</LigneInfo>
+              <LigneInfo libelle="Dernière connexion">
+                {u.derniere_connexion ? formatDateHeure(u.derniere_connexion) : 'Jamais'}
+              </LigneInfo>
+              <LigneInfo libelle="Mot de passe">
+                {u.doit_changer_mdp ? 'Provisoire (à changer)' : 'Personnel'}
+              </LigneInfo>
             </dl>
           </Carte>
         </div>
@@ -170,7 +239,13 @@ export default function UtilisateurFiche() {
         libelleConfirmer="Désactiver"
         onConfirmer={() => suppression.mutateAsync(u)}
       />
-      <MotDePasseProvisoire ouvert={Boolean(provisoire)} onFermer={fermerProvisoire} motDePasse={provisoire?.motDePasse} personne={provisoire?.personne} titre="Nouveau mot de passe provisoire" />
+      <MotDePasseProvisoire
+        ouvert={Boolean(provisoire)}
+        onFermer={fermerProvisoire}
+        motDePasse={provisoire?.motDePasse}
+        personne={provisoire?.personne}
+        titre="Nouveau mot de passe provisoire"
+      />
     </Page>
   )
 }

@@ -34,7 +34,10 @@ export function Avatar({ utilisateur, taille = 38, clair = false, className }) {
 export function InitialesCarre({ texte, className }) {
   return (
     <span
-      className={cn('inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-nbg text-[12px] font-semibold text-nfg', className)}
+      className={cn(
+        'bg-nbg text-nfg inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] text-[12px] font-semibold',
+        className,
+      )}
       aria-hidden="true"
     >
       {initiales(texte)}

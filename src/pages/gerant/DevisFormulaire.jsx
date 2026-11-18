@@ -27,15 +27,35 @@ import { Champ } from '@/components/commun/Champ'
 import { Combobox } from '@/components/commun/Combobox'
 import { Encart } from '@/components/commun/Encart'
 import { EtatErreur, SqueletteFormulaire } from '@/components/commun/Etats'
-import { FicheResume, PiedFormulaire, ZoneDanger, compterModifies } from '@/components/commun/Formulaire'
+import {
+  FicheResume,
+  PiedFormulaire,
+  ZoneDanger,
+  compterModifies,
+} from '@/components/commun/Formulaire'
 import { ConfirmDialog } from '@/components/commun/Dialogues'
 
 const schema = z.object({
-  id_fournisseur: z.coerce.number({ message: 'Choisissez un fournisseur.' }).int().positive('Choisissez un fournisseur.'),
-  id_produit: z.coerce.number({ message: 'Choisissez une matière première.' }).int().positive('Choisissez une matière première.'),
-  date_devis: z.string().min(1, 'Saisissez la date du devis.').refine((v) => new Date(v) <= new Date(), 'La date ne peut pas être dans le futur.'),
-  prix_unitaire: nombre('Saisissez le prix unitaire.').refine((v) => v > 0, 'Le prix unitaire doit être supérieur à 0.'),
-  delai_livraison: nombre('Saisissez le délai.').refine((v) => Number.isInteger(v) && v >= 0, 'Le délai est un nombre entier de jours, 0 ou plus.'),
+  id_fournisseur: z.coerce
+    .number({ message: 'Choisissez un fournisseur.' })
+    .int()
+    .positive('Choisissez un fournisseur.'),
+  id_produit: z.coerce
+    .number({ message: 'Choisissez une matière première.' })
+    .int()
+    .positive('Choisissez une matière première.'),
+  date_devis: z
+    .string()
+    .min(1, 'Saisissez la date du devis.')
+    .refine((v) => new Date(v) <= new Date(), 'La date ne peut pas être dans le futur.'),
+  prix_unitaire: nombre('Saisissez le prix unitaire.').refine(
+    (v) => v > 0,
+    'Le prix unitaire doit être supérieur à 0.',
+  ),
+  delai_livraison: nombre('Saisissez le délai.').refine(
+    (v) => Number.isInteger(v) && v >= 0,
+    'Le délai est un nombre entier de jours, 0 ou plus.',
+  ),
 })
 
 function Formulaire({ devis }) {
@@ -55,8 +75,11 @@ function Formulaire({ devis }) {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      id_fournisseur: devis?.id_fournisseur ?? (parametres.get('fournisseur') ? Number(parametres.get('fournisseur')) : ''),
-      id_produit: devis?.id_produit ?? (parametres.get('produit') ? Number(parametres.get('produit')) : ''),
+      id_fournisseur:
+        devis?.id_fournisseur ??
+        (parametres.get('fournisseur') ? Number(parametres.get('fournisseur')) : ''),
+      id_produit:
+        devis?.id_produit ?? (parametres.get('produit') ? Number(parametres.get('produit')) : ''),
       date_devis: devis?.date_devis ?? dateISO(),
       prix_unitaire: devis ? String(devis.prix_unitaire) : '',
       delai_livraison: devis ? String(devis.delai_livraison) : '',
@@ -65,14 +88,24 @@ function Formulaire({ devis }) {
   const [idProduit, prix] = useWatch({ control, name: ['id_produit', 'prix_unitaire'] })
   const matiere = (stock.data ?? []).find((p) => p.id_produit === Number(idProduit))
   const prixNombre = Number(String(prix ?? '').replace(',', '.'))
-  const montantQ = matiere?.quantite_economique && prixNombre > 0 ? matiere.quantite_economique * prixNombre : null
+  const montantQ =
+    matiere?.quantite_economique && prixNombre > 0 ? matiere.quantite_economique * prixNombre : null
 
   const optionsFournisseurs = (fournisseurs.data ?? [])
     .filter((f) => f.actif || f.id_fournisseur === devis?.id_fournisseur)
-    .map((f) => ({ valeur: f.id_fournisseur, libelle: f.raison_sociale, sousLibelle: reference('FRN', f.id_fournisseur) }))
+    .map((f) => ({
+      valeur: f.id_fournisseur,
+      libelle: f.raison_sociale,
+      sousLibelle: reference('FRN', f.id_fournisseur),
+    }))
   const optionsMP = (stock.data ?? [])
     .filter((p) => p.type === 'MP' && (p.actif || p.id_produit === devis?.id_produit))
-    .map((p) => ({ valeur: p.id_produit, libelle: p.designation, sousLibelle: p.code, droite: p.quantite_economique ? `Q* ${formatNombre(p.quantite_economique)}` : null }))
+    .map((p) => ({
+      valeur: p.id_produit,
+      libelle: p.designation,
+      sousLibelle: p.code,
+      droite: p.quantite_economique ? `Q* ${formatNombre(p.quantite_economique)}` : null,
+    }))
 
   const suppression = useMutation({
     mutationFn: () => supprimerDevis(devis.id_devis),
@@ -106,25 +139,45 @@ function Formulaire({ devis }) {
           modification ? (
             <>
               <span className="font-mono">{reference('DEV', devis.id_devis)}</span>
-              {verrouille ? ' · consultation seule' : ' · les champs modifiés sont signalés en doré.'}
+              {verrouille
+                ? ' · consultation seule'
+                : ' · les champs modifiés sont signalés en doré.'}
             </>
           ) : (
             'Prix et délai proposés par un fournisseur pour une matière première.'
           )
         }
-        badges={modification && <Badge ton={verrouille ? 'neutral' : 'dark'} icone={verrouille ? Lock : undefined}>{verrouille ? 'Verrouillé' : 'Modification'}</Badge>}
+        badges={
+          modification && (
+            <Badge ton={verrouille ? 'neutral' : 'dark'} icone={verrouille ? Lock : undefined}>
+              {verrouille ? 'Verrouillé' : 'Modification'}
+            </Badge>
+          )
+        }
       />
-      <div className={modification ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]' : 'max-w-3xl'}>
+      <div
+        className={
+          modification
+            ? 'grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(280px,1fr)]'
+            : 'max-w-3xl'
+        }
+      >
         <Carte as="form" onSubmit={handleSubmit(soumettre)} noValidate>
           <CarteEntete titre="Devis" description="Tous les champs sont obligatoires." />
           {verrouille && (
             <Encart ton="info" icone={Lock} titre="Devis utilisé dans une commande">
-              Il ne peut plus être modifié ni supprimé, afin que la commande reste cohérente avec le devis accepté (règle RG09).
+              Il ne peut plus être modifié ni supprimé, afin que la commande reste cohérente avec le
+              devis accepté (règle RG09).
             </Encart>
           )}
           <fieldset disabled={verrouille} className="flex flex-col gap-4">
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-              <Champ libelle="Fournisseur" obligatoire erreur={errors.id_fournisseur?.message} modifie={dirtyFields.id_fournisseur}>
+              <Champ
+                libelle="Fournisseur"
+                obligatoire
+                erreur={errors.id_fournisseur?.message}
+                modifie={dirtyFields.id_fournisseur}
+              >
                 <Controller
                   control={control}
                   name="id_fournisseur"
@@ -141,7 +194,12 @@ function Formulaire({ devis }) {
                   )}
                 />
               </Champ>
-              <Champ libelle="Matière première" obligatoire erreur={errors.id_produit?.message} modifie={dirtyFields.id_produit}>
+              <Champ
+                libelle="Matière première"
+                obligatoire
+                erreur={errors.id_produit?.message}
+                modifie={dirtyFields.id_produit}
+              >
                 <Controller
                   control={control}
                   name="id_produit"
@@ -160,13 +218,28 @@ function Formulaire({ devis }) {
               </Champ>
             </div>
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-3">
-              <Champ libelle="Date du devis" obligatoire erreur={errors.date_devis?.message} modifie={dirtyFields.date_devis}>
+              <Champ
+                libelle="Date du devis"
+                obligatoire
+                erreur={errors.date_devis?.message}
+                modifie={dirtyFields.date_devis}
+              >
                 <Input type="date" max={dateISO()} {...register('date_devis')} />
               </Champ>
-              <Champ libelle="Prix unitaire (DT)" obligatoire erreur={errors.prix_unitaire?.message} modifie={dirtyFields.prix_unitaire}>
+              <Champ
+                libelle="Prix unitaire (DT)"
+                obligatoire
+                erreur={errors.prix_unitaire?.message}
+                modifie={dirtyFields.prix_unitaire}
+              >
                 <Input inputMode="decimal" placeholder="0,000" {...register('prix_unitaire')} />
               </Champ>
-              <Champ libelle="Délai de livraison (jours)" obligatoire erreur={errors.delai_livraison?.message} modifie={dirtyFields.delai_livraison}>
+              <Champ
+                libelle="Délai de livraison (jours)"
+                obligatoire
+                erreur={errors.delai_livraison?.message}
+                modifie={dirtyFields.delai_livraison}
+              >
                 <Input inputMode="numeric" placeholder="0" {...register('delai_livraison')} />
               </Champ>
             </div>
@@ -174,8 +247,8 @@ function Formulaire({ devis }) {
           <Encart ton="neutral" icone={Calculator}>
             {montantQ !== null ? (
               <>
-                Montant estimé pour Q* ({formatNombre(matiere.quantite_economique)} {matiere.unite}) ={' '}
-                <strong className="text-ink tabular">{formatMontant(montantQ)}</strong>
+                Montant estimé pour Q* ({formatNombre(matiere.quantite_economique)} {matiere.unite})
+                = <strong className="text-ink tabular">{formatMontant(montantQ)}</strong>
               </>
             ) : matiere && !matiere.quantite_economique ? (
               'Montant estimé indisponible : les paramètres de calcul de cette matière sont incomplets (Q* non calculée).'
@@ -184,7 +257,7 @@ function Formulaire({ devis }) {
             )}
           </Encart>
           {verrouille ? (
-            <div className="flex justify-end border-t border-line pt-5">
+            <div className="border-line flex justify-end border-t pt-5">
               <Button type="button" variant="outline" onClick={() => naviguer('/gerant/devis')}>
                 Retour aux devis
               </Button>
@@ -242,9 +315,18 @@ function Formulaire({ devis }) {
 
 export default function DevisFormulaire() {
   const { id } = useParams()
-  const requete = useQuery({ queryKey: ['devis', Number(id)], queryFn: () => lireDevis(Number(id)), enabled: Boolean(id) })
+  const requete = useQuery({
+    queryKey: ['devis', Number(id)],
+    queryFn: () => lireDevis(Number(id)),
+    enabled: Boolean(id),
+  })
   if (!id) return <Formulaire />
   if (requete.isPending) return <SqueletteFormulaire champs={5} />
-  if (requete.isError) return <Carte><EtatErreur erreur={requete.error} onReessayer={requete.refetch} /></Carte>
+  if (requete.isError)
+    return (
+      <Carte>
+        <EtatErreur erreur={requete.error} onReessayer={requete.refetch} />
+      </Carte>
+    )
   return <Formulaire key={requete.data.id_devis} devis={requete.data} />
 }

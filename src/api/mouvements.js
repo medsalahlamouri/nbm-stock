@@ -46,12 +46,21 @@ export async function listerMouvements({ type, idProduit, motif, depuis, page = 
 /** Résumé des mouvements depuis une date : entrées, sorties, totaux par motif */
 export async function resumerMouvements({ type, depuis }) {
   const lignes = await toutLire(() => {
-    let requete = supabase.from('mouvement_stock').select('type, quantite, motif, produit!inner(type)')
+    let requete = supabase
+      .from('mouvement_stock')
+      .select('type, quantite, motif, produit!inner(type)')
     if (type) requete = requete.eq('produit.type', type)
     if (depuis) requete = requete.gte('date_mouvement', depuis)
     return requete.order('id_mouvement')
   })
-  const resume = { entrees: 0, sorties: 0, nbEntrees: 0, nbSorties: 0, parMotif: {}, nombre: lignes.length }
+  const resume = {
+    entrees: 0,
+    sorties: 0,
+    nbEntrees: 0,
+    nbSorties: 0,
+    parMotif: {},
+    nombre: lignes.length,
+  }
   for (const l of lignes) {
     if (l.type === 'ENTREE') {
       resume.entrees += l.quantite
@@ -73,7 +82,9 @@ export async function derniersMouvements(nombre = 6) {
   return deballer(
     await supabase
       .from('mouvement_stock')
-      .select('id_mouvement, date_mouvement, type, quantite, motif, produit(id_produit, code, designation, unite, type)')
+      .select(
+        'id_mouvement, date_mouvement, type, quantite, motif, produit(id_produit, code, designation, unite, type)',
+      )
       .order('date_mouvement', { ascending: false })
       .order('id_mouvement', { ascending: false })
       .limit(nombre),

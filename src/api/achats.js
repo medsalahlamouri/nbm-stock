@@ -34,7 +34,12 @@ export async function creerFournisseur({ raison_sociale, adresse, telephone, ema
   return deballer(
     await supabase
       .from('fournisseur')
-      .insert({ raison_sociale: raison_sociale.trim(), adresse: vide(adresse), telephone: vide(telephone), email: vide(email) })
+      .insert({
+        raison_sociale: raison_sociale.trim(),
+        adresse: vide(adresse),
+        telephone: vide(telephone),
+        email: vide(email),
+      })
       .select()
       .single(),
   )
@@ -44,7 +49,12 @@ export async function modifierFournisseur(id, { raison_sociale, adresse, telepho
   return deballer(
     await supabase
       .from('fournisseur')
-      .update({ raison_sociale: raison_sociale.trim(), adresse: vide(adresse), telephone: vide(telephone), email: vide(email) })
+      .update({
+        raison_sociale: raison_sociale.trim(),
+        adresse: vide(adresse),
+        telephone: vide(telephone),
+        email: vide(email),
+      })
       .eq('id_fournisseur', id)
       .select()
       .single(),
@@ -53,7 +63,9 @@ export async function modifierFournisseur(id, { raison_sociale, adresse, telepho
 
 /** Évaluation des fournisseurs (délais annoncés / réels, retard moyen) */
 export async function listerEvaluations() {
-  return deballer(await supabase.from('v_evaluation_fournisseurs').select('*').order('raison_sociale'))
+  return deballer(
+    await supabase.from('v_evaluation_fournisseurs').select('*').order('raison_sociale'),
+  )
 }
 
 /* ---------- Devis ---------- */
@@ -63,10 +75,16 @@ const SELECT_DEVIS =
 
 /** Devis avec fournisseur, matière première et indicateur « utilisé dans une commande » */
 export async function listerDevis(filtres = {}) {
-  let requete = supabase.from('devis').select(SELECT_DEVIS).order('date_devis', { ascending: false })
+  let requete = supabase
+    .from('devis')
+    .select(SELECT_DEVIS)
+    .order('date_devis', { ascending: false })
   if (filtres.idFournisseur) requete = requete.eq('id_fournisseur', filtres.idFournisseur)
   if (filtres.idProduit) requete = requete.eq('id_produit', filtres.idProduit)
-  return deballer(await requete).map((d) => ({ ...d, utilise: (d.commande_fournisseur?.length ?? 0) > 0 }))
+  return deballer(await requete).map((d) => ({
+    ...d,
+    utilise: (d.commande_fournisseur?.length ?? 0) > 0,
+  }))
 }
 
 export async function lireDevis(id) {
@@ -89,7 +107,9 @@ export async function creerDevis(champs) {
 }
 
 export async function modifierDevis(id, champs) {
-  return deballer(await supabase.from('devis').update(champsDevis(champs)).eq('id_devis', id).select().single())
+  return deballer(
+    await supabase.from('devis').update(champsDevis(champs)).eq('id_devis', id).select().single(),
+  )
 }
 
 /** Suppression directe : le serveur refuse si le devis est utilisé dans une commande */
@@ -117,7 +137,9 @@ export function joursAvantLivraison(commande) {
 }
 
 function enrichirCommande(c) {
-  const facture = Array.isArray(c.facture_fournisseur) ? c.facture_fournisseur[0] : c.facture_fournisseur
+  const facture = Array.isArray(c.facture_fournisseur)
+    ? c.facture_fournisseur[0]
+    : c.facture_fournisseur
   return {
     ...c,
     facture: facture ?? null,
@@ -128,23 +150,43 @@ function enrichirCommande(c) {
 }
 
 export async function listerCommandes({ etat } = {}) {
-  let requete = supabase.from('commande_fournisseur').select(SELECT_COMMANDE).order('date_commande', { ascending: false }).order('id_commande', { ascending: false })
+  let requete = supabase
+    .from('commande_fournisseur')
+    .select(SELECT_COMMANDE)
+    .order('date_commande', { ascending: false })
+    .order('id_commande', { ascending: false })
   if (etat) requete = requete.eq('etat', etat)
   return deballer(await requete).map(enrichirCommande)
 }
 
 export async function lireCommande(id) {
-  return enrichirCommande(deballer(await supabase.from('commande_fournisseur').select(SELECT_COMMANDE).eq('id_commande', id).single()))
+  return enrichirCommande(
+    deballer(
+      await supabase
+        .from('commande_fournisseur')
+        .select(SELECT_COMMANDE)
+        .eq('id_commande', id)
+        .single(),
+    ),
+  )
 }
 
 /** Commandes en retard (vue v_commandes_retard) */
 export async function listerRetards() {
-  return deballer(await supabase.from('v_commandes_retard').select('*').order('jours_retard', { ascending: false }))
+  return deballer(
+    await supabase
+      .from('v_commandes_retard')
+      .select('*')
+      .order('jours_retard', { ascending: false }),
+  )
 }
 
 /** Passe une commande à partir d'un devis → id de la commande créée */
 export async function passerCommande(idDevis, quantite) {
-  return appelerRpc(supabase, 'passer_commande', { p_id_devis: idDevis, p_quantite: Number(quantite) })
+  return appelerRpc(supabase, 'passer_commande', {
+    p_id_devis: idDevis,
+    p_quantite: Number(quantite),
+  })
 }
 
 export async function annulerCommande(id) {
@@ -157,7 +199,9 @@ export async function listerFacturesFournisseur() {
   return deballer(
     await supabase
       .from('facture_fournisseur')
-      .select('*, commande_fournisseur(id_commande, date_commande, quantite, devis(prix_unitaire, fournisseur(id_fournisseur, raison_sociale), produit(id_produit, code, designation, unite)))')
+      .select(
+        '*, commande_fournisseur(id_commande, date_commande, quantite, devis(prix_unitaire, fournisseur(id_fournisseur, raison_sociale), produit(id_produit, code, designation, unite)))',
+      )
       .order('date_facture', { ascending: false })
       .order('id_facture_f', { ascending: false }),
   )
@@ -167,7 +211,14 @@ export async function listerFacturesFournisseur() {
  * Saisie contrôlée d'une facture fournisseur.
  * → { conforme: true, id_facture, nouveau_stock } ou { conforme: false, ecarts: [{ champ, attendu, saisi }] }
  */
-export async function saisirFactureFournisseur({ idCommande, numero, date, quantite, prixUnitaire, montantTotal }) {
+export async function saisirFactureFournisseur({
+  idCommande,
+  numero,
+  date,
+  quantite,
+  prixUnitaire,
+  montantTotal,
+}) {
   return appelerRpc(supabase, 'saisir_facture_fournisseur', {
     p_id_commande: idCommande,
     p_numero: numero.trim(),
@@ -181,12 +232,16 @@ export async function saisirFactureFournisseur({ idCommande, numero, date, quant
 /** Dernier prix d'achat connu par matière première (facture la plus récente, sinon meilleur devis) */
 export async function prixAchatParMP() {
   const [factures, devis] = await Promise.all([
-    supabase.from('facture_fournisseur').select('prix_unitaire, date_facture, commande_fournisseur(devis(id_produit))').order('date_facture', { ascending: false }),
+    supabase
+      .from('facture_fournisseur')
+      .select('prix_unitaire, date_facture, commande_fournisseur(devis(id_produit))')
+      .order('date_facture', { ascending: false }),
     supabase.from('devis').select('id_produit, prix_unitaire'),
   ])
   const prix = {}
   for (const d of deballer(devis)) {
-    if (prix[d.id_produit] === undefined || d.prix_unitaire < prix[d.id_produit]) prix[d.id_produit] = Number(d.prix_unitaire)
+    if (prix[d.id_produit] === undefined || d.prix_unitaire < prix[d.id_produit])
+      prix[d.id_produit] = Number(d.prix_unitaire)
   }
   const factures_vues = new Set()
   for (const f of deballer(factures)) {

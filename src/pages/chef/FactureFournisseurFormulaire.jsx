@@ -28,8 +28,17 @@ import { EtatErreur, EtatVide, SqueletteBloc } from '@/components/commun/Etats'
 import { CarteCommande } from '@/components/commun/CarteCommande'
 import { listeCascade } from '@/components/commun/animations'
 
-const LIBELLES_CHAMPS = { quantite: 'Quantité', prix_unitaire: 'Prix unitaire', montant_total: 'Montant total', numero: 'Numéro', date: 'Date' }
-const versNombre = (v) => (v === '' || v === null || v === undefined ? NaN : Number(String(v).replace(/\s/g, '').replace(',', '.')))
+const LIBELLES_CHAMPS = {
+  quantite: 'Quantité',
+  prix_unitaire: 'Prix unitaire',
+  montant_total: 'Montant total',
+  numero: 'Numéro',
+  date: 'Date',
+}
+const versNombre = (v) =>
+  v === '' || v === null || v === undefined
+    ? NaN
+    : Number(String(v).replace(/\s/g, '').replace(',', '.'))
 const egal = (a, b) => Math.abs(a - b) < 0.0005
 
 /** Champ numérique avec indicateur « Conforme » / écart intégré */
@@ -44,11 +53,21 @@ function ChampControle({ libelle, valeur, onChange, attendu, formater, inputMode
           inputMode={inputMode}
           value={valeur}
           onChange={(e) => onChange(e.target.value)}
-          className={cn('pr-32', renseigne && (conforme ? 'border-okfg/60' : 'border-dfg/60 bg-dbg/30'))}
+          className={cn(
+            'pr-32',
+            renseigne && (conforme ? 'border-okfg/60' : 'border-dfg/60 bg-dbg/30'),
+          )}
         />
         {renseigne && (
           <span className="absolute top-1/2 right-2 -translate-y-1/2">
-            {conforme ? <Badge ton="ok">Conforme</Badge> : <Badge ton="danger">Écart {saisi > attendu ? '+' : '−'}{formater(Math.abs(saisi - attendu))}</Badge>}
+            {conforme ? (
+              <Badge ton="ok">Conforme</Badge>
+            ) : (
+              <Badge ton="danger">
+                Écart {saisi > attendu ? '+' : '−'}
+                {formater(Math.abs(saisi - attendu))}
+              </Badge>
+            )}
           </span>
         )}
       </div>
@@ -59,7 +78,11 @@ function ChampControle({ libelle, valeur, onChange, attendu, formater, inputMode
 function Saisie({ commande, stockActuel }) {
   const naviguer = useNavigate()
   const p = commande.devis?.produit
-  const attendu = { quantite: Number(commande.quantite), prix: Number(commande.devis?.prix_unitaire), montant: Math.round(commande.montant * 1000) / 1000 }
+  const attendu = {
+    quantite: Number(commande.quantite),
+    prix: Number(commande.devis?.prix_unitaire),
+    montant: Math.round(commande.montant * 1000) / 1000,
+  }
   const [numero, setNumero] = useState('')
   const [date, setDate] = useState(dateISO())
   const [quantite, setQuantite] = useState('')
@@ -67,9 +90,22 @@ function Saisie({ commande, stockActuel }) {
   const [montant, setMontant] = useState('')
   const [ecarts, setEcarts] = useState(null)
 
-  const valeurs = { quantite: versNombre(quantite), prix: versNombre(prix), montant: versNombre(montant) }
-  const complet = numero.trim() && date && !Number.isNaN(valeurs.quantite) && !Number.isNaN(valeurs.prix) && !Number.isNaN(valeurs.montant)
-  const conforme = complet && egal(valeurs.quantite, attendu.quantite) && egal(valeurs.prix, attendu.prix) && egal(valeurs.montant, attendu.montant)
+  const valeurs = {
+    quantite: versNombre(quantite),
+    prix: versNombre(prix),
+    montant: versNombre(montant),
+  }
+  const complet =
+    numero.trim() &&
+    date &&
+    !Number.isNaN(valeurs.quantite) &&
+    !Number.isNaN(valeurs.prix) &&
+    !Number.isNaN(valeurs.montant)
+  const conforme =
+    complet &&
+    egal(valeurs.quantite, attendu.quantite) &&
+    egal(valeurs.prix, attendu.prix) &&
+    egal(valeurs.montant, attendu.montant)
 
   const saisie = useMutation({
     mutationFn: () =>
@@ -88,47 +124,96 @@ function Saisie({ commande, stockActuel }) {
         return
       }
       await invalider('receptions', 'stock')
-      toast.success(`Facture enregistrée, nouveau stock : ${formatNombre(resultat?.nouveau_stock)} ${p?.unite}.`, {
-        description: `${reference('CMD', commande.id_commande)} reçue · ${p?.designation}`,
-      })
+      toast.success(
+        `Facture enregistrée, nouveau stock : ${formatNombre(resultat?.nouveau_stock)} ${p?.unite}.`,
+        {
+          description: `${reference('CMD', commande.id_commande)} reçue · ${p?.designation}`,
+        },
+      )
       naviguer('/chef/factures-fournisseur')
     },
     onError: (e) => toast.error(messageErreur(e)),
   })
 
   return (
-    <Carte as="form" onSubmit={(e) => { e.preventDefault(); setEcarts(null); saisie.mutate() }} noValidate>
+    <Carte
+      as="form"
+      onSubmit={(e) => {
+        e.preventDefault()
+        setEcarts(null)
+        saisie.mutate()
+      }}
+      noValidate
+    >
       <CarteEntete
         titre="2. Facture reçue"
         description={`Commande : ${formatNombre(attendu.quantite)} ${p?.unite} à ${formatMontant(attendu.prix)} · ${commande.devis?.fournisseur?.raison_sociale}`}
       />
       <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
         <Champ libelle="N° de facture" obligatoire>
-          <Input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Numéro indiqué sur la facture" autoFocus />
+          <Input
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+            placeholder="Numéro indiqué sur la facture"
+            autoFocus
+          />
         </Champ>
         <Champ libelle="Date de la facture" obligatoire>
-          <Input type="date" value={date} max={dateISO()} min={commande.date_commande} onChange={(e) => setDate(e.target.value)} />
+          <Input
+            type="date"
+            value={date}
+            max={dateISO()}
+            min={commande.date_commande}
+            onChange={(e) => setDate(e.target.value)}
+          />
         </Champ>
-        <ChampControle libelle="Quantité" valeur={quantite} onChange={setQuantite} attendu={attendu.quantite} formater={(v) => formatNombre(v)} inputMode="numeric" />
-        <ChampControle libelle="Prix unitaire (DT)" valeur={prix} onChange={setPrix} attendu={attendu.prix} formater={formatMontant} />
-        <ChampControle libelle="Montant total (DT)" valeur={montant} onChange={setMontant} attendu={attendu.montant} formater={formatMontant} />
+        <ChampControle
+          libelle="Quantité"
+          valeur={quantite}
+          onChange={setQuantite}
+          attendu={attendu.quantite}
+          formater={(v) => formatNombre(v)}
+          inputMode="numeric"
+        />
+        <ChampControle
+          libelle="Prix unitaire (DT)"
+          valeur={prix}
+          onChange={setPrix}
+          attendu={attendu.prix}
+          formater={formatMontant}
+        />
+        <ChampControle
+          libelle="Montant total (DT)"
+          valeur={montant}
+          onChange={setMontant}
+          attendu={attendu.montant}
+          formater={formatMontant}
+        />
       </div>
 
       {ecarts ? (
-        <Encart ton="danger" icone={TriangleAlert} titre="Facture non conforme : rien n'a été enregistré">
+        <Encart
+          ton="danger"
+          icone={TriangleAlert}
+          titre="Facture non conforme : rien n'a été enregistré"
+        >
           <ul className="mt-1.5 flex flex-col gap-1">
             {ecarts.map((e) => (
               <li key={e.champ}>
-                <strong>{LIBELLES_CHAMPS[e.champ] ?? e.champ}</strong> : attendu {e.champ === 'quantite' ? formatNombre(e.attendu) : formatMontant(e.attendu)}, saisi{' '}
+                <strong>{LIBELLES_CHAMPS[e.champ] ?? e.champ}</strong> : attendu{' '}
+                {e.champ === 'quantite' ? formatNombre(e.attendu) : formatMontant(e.attendu)}, saisi{' '}
                 {e.champ === 'quantite' ? formatNombre(e.saisi) : formatMontant(e.saisi)}
               </li>
             ))}
           </ul>
-          <p className="mt-2">Vérifiez la facture avec le fournisseur avant de la saisir à nouveau.</p>
+          <p className="mt-2">
+            Vérifiez la facture avec le fournisseur avant de la saisir à nouveau.
+          </p>
         </Encart>
       ) : conforme ? (
         <Encart ton="ok" icone={Check}>
-          Facture conforme. À l'enregistrement : commande « Reçue », mouvement « Réception fournisseur » et stock {formatNombre(stockActuel)} →{' '}
+          Facture conforme. À l'enregistrement : commande « Reçue », mouvement « Réception
+          fournisseur » et stock {formatNombre(stockActuel)} →{' '}
           {formatNombre(stockActuel + attendu.quantite)}.
         </Encart>
       ) : complet ? (
@@ -137,8 +222,12 @@ function Saisie({ commande, stockActuel }) {
         </Encart>
       ) : null}
 
-      <div className="flex flex-wrap justify-end gap-2.5 border-t border-line pt-5">
-        <Button type="button" variant="outline" onClick={() => naviguer('/chef/factures-fournisseur')}>
+      <div className="border-line flex flex-wrap justify-end gap-2.5 border-t pt-5">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => naviguer('/chef/factures-fournisseur')}
+        >
           Annuler
         </Button>
         <Button type="submit" disabled={!complet || saisie.isPending}>
@@ -157,7 +246,9 @@ export default function FactureFournisseurFormulaire() {
   const stock = useEtatStock()
   const enAttente = (commandes.data ?? []).filter((c) => c.etat === 'EN_ATTENTE')
   const commande = enAttente.find((c) => c.id_commande === idCommande)
-  const stockActuel = (stock.data ?? []).find((s) => s.id_produit === commande?.devis?.produit?.id_produit)?.quantite_stock ?? 0
+  const stockActuel =
+    (stock.data ?? []).find((s) => s.id_produit === commande?.devis?.produit?.id_produit)
+      ?.quantite_stock ?? 0
 
   return (
     <Page>
@@ -190,16 +281,23 @@ export default function FactureFournisseurFormulaire() {
                 key={c.id_commande}
                 commande={c}
                 actif={c.id_commande === idCommande}
-                onClick={() => setParametres({ commande: String(c.id_commande) }, { replace: true })}
+                onClick={() =>
+                  setParametres({ commande: String(c.id_commande) }, { replace: true })
+                }
               />
             ))}
           </motion.div>
         )}
         {idCommande && !commandes.isPending && !commande && (
-          <Encart ton="warn">La commande {reference('CMD', idCommande)} n'est plus en attente : elle a déjà été reçue ou annulée.</Encart>
+          <Encart ton="warn">
+            La commande {reference('CMD', idCommande)} n'est plus en attente : elle a déjà été reçue
+            ou annulée.
+          </Encart>
         )}
       </Carte>
-      {commande && <Saisie key={commande.id_commande} commande={commande} stockActuel={stockActuel} />}
+      {commande && (
+        <Saisie key={commande.id_commande} commande={commande} stockActuel={stockActuel} />
+      )}
     </Page>
   )
 }

@@ -51,7 +51,15 @@ export default function ActiviteChefs() {
       <PageEntete
         titre="Activité des chefs magasin"
         description="Consultation du journal des chefs magasin : opérations enregistrées automatiquement par le serveur, non modifiables."
-        actions={<Onglets options={PERIODES} valeur={periode} onChange={setPeriode} libelle="Période" taille="sm" />}
+        actions={
+          <Onglets
+            options={PERIODES}
+            valeur={periode}
+            onChange={setPeriode}
+            libelle="Période"
+            taille="sm"
+          />
+        }
       />
 
       {chefs.isPending ? (
@@ -71,24 +79,33 @@ export default function ActiviteChefs() {
                 variants={elementCascade.variants}
                 onClick={() => setIdChef(actif ? null : c.id_utilisateur)}
                 aria-pressed={actif}
-                className={`flex cursor-pointer items-start gap-3 rounded-[14px] border bg-surf p-4 text-left shadow-card transition-[border-color,box-shadow] hover:shadow-hover ${actif ? 'border-ink ring-1 ring-ink' : 'border-line hover:border-line2'}`}
+                className={`bg-surf shadow-card hover:shadow-hover flex cursor-pointer items-start gap-3 rounded-[14px] border p-4 text-left transition-[border-color,box-shadow] ${actif ? 'border-ink ring-ink ring-1' : 'border-line hover:border-line2'}`}
               >
                 <Avatar utilisateur={c} taille={40} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[15px] font-semibold text-ink">
-                    {c.prenom} {c.nom} {!c.actif && <span className="text-[12px] font-normal text-mutedtxt">(désactivé)</span>}
+                  <span className="text-ink block truncate text-[15px] font-semibold">
+                    {c.prenom} {c.nom}{' '}
+                    {!c.actif && (
+                      <span className="text-mutedtxt text-[12px] font-normal">(désactivé)</span>
+                    )}
                   </span>
-                  <span className="block text-[13px] text-mutedtxt tabular">
-                    {formatNombre(s.total)} opération(s) · {formatNombre(s.mouvements)} mouvement(s) · {formatNombre(s.factures)} facture(s)
+                  <span className="text-mutedtxt tabular block text-[13px]">
+                    {formatNombre(s.total)} opération(s) · {formatNombre(s.mouvements)} mouvement(s)
+                    · {formatNombre(s.factures)} facture(s)
                   </span>
-                  <span className="mt-1 block text-[12px] text-muted2">Dernière opération : {s.derniere ? formatDateHeure(s.derniere) : '—'}</span>
+                  <span className="text-muted2 mt-1 block text-[12px]">
+                    Dernière opération : {s.derniere ? formatDateHeure(s.derniere) : '—'}
+                  </span>
                 </span>
               </motion.button>
             )
           })}
           {chefs.data?.length === 0 && (
-            <p className="text-[14px] text-mutedtxt">
-              Aucun chef magasin. <Link to="/gerant/utilisateurs/nouveau" className="underline">Créer un compte</Link>
+            <p className="text-mutedtxt text-[14px]">
+              Aucun chef magasin.{' '}
+              <Link to="/gerant/utilisateurs/nouveau" className="underline">
+                Créer un compte
+              </Link>
             </p>
           )}
         </motion.div>
@@ -100,7 +117,11 @@ export default function ActiviteChefs() {
             libelle="Filtrer par chef magasin"
             valeur={idChef}
             onChange={setIdChef}
-            options={(chefs.data ?? []).map((c) => ({ valeur: c.id_utilisateur, libelle: `${c.prenom} ${c.nom}`, sousLibelle: c.email }))}
+            options={(chefs.data ?? []).map((c) => ({
+              valeur: c.id_utilisateur,
+              libelle: `${c.prenom} ${c.nom}`,
+              sousLibelle: c.email,
+            }))}
             placeholder="Tous les chefs magasin"
             recherchePlaceholder="Nom ou e-mail…"
             effacable

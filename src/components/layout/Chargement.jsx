@@ -26,17 +26,24 @@ export function ChargementPage() {
 /** Écran de démarrage pendant la lecture de la session */
 export function EcranDemarrage() {
   return (
-    <div className="flex min-h-svh items-center justify-center bg-bg" aria-busy="true" aria-label="Chargement">
+    <div
+      className="bg-bg flex min-h-svh items-center justify-center"
+      aria-busy="true"
+      aria-label="Chargement"
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="flex flex-col items-center gap-4"
       >
-        <motion.div animate={{ opacity: [1, 0.55, 1] }} transition={{ duration: 1.4, repeat: Infinity }}>
+        <motion.div
+          animate={{ opacity: [1, 0.55, 1] }}
+          transition={{ duration: 1.4, repeat: Infinity }}
+        >
           <Logo taille={56} inverse />
         </motion.div>
-        <p className="text-[13px] text-mutedtxt">Chargement de NBM Stock…</p>
+        <p className="text-mutedtxt text-[13px]">Chargement de NBM Stock…</p>
       </motion.div>
     </div>
   )

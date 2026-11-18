@@ -5,7 +5,11 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { reactiverCompte, reinitialiserMotDePasse, supprimerOuDesactiverCompte } from '@/api/utilisateurs'
+import {
+  reactiverCompte,
+  reinitialiserMotDePasse,
+  supprimerOuDesactiverCompte,
+} from '@/api/utilisateurs'
 import { messageErreur } from '@/lib/erreurs'
 import { invalider } from '@/lib/requetes'
 
@@ -31,7 +35,9 @@ export function useComptes({ onSupprime } = {}) {
         toast.success(`Compte de ${nom(u)} supprimé.`)
         onSupprime?.()
       } else {
-        toast.info(`Compte de ${nom(u)} désactivé car il a des données liées.`, { description: "La personne ne peut plus se connecter ; son historique est conservé." })
+        toast.info(`Compte de ${nom(u)} désactivé car il a des données liées.`, {
+          description: 'La personne ne peut plus se connecter ; son historique est conservé.',
+        })
       }
     },
     onError: (e) => toast.error(messageErreur(e)),
@@ -46,5 +52,11 @@ export function useComptes({ onSupprime } = {}) {
     onError: (e) => toast.error(messageErreur(e)),
   })
 
-  return { reinitialisation, suppression, reactivation, provisoire, fermerProvisoire: () => setProvisoire(null) }
+  return {
+    reinitialisation,
+    suppression,
+    reactivation,
+    provisoire,
+    fermerProvisoire: () => setProvisoire(null),
+  }
 }

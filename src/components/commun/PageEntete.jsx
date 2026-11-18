@@ -8,8 +8,12 @@ export function PageEntete({ titre, description, actions, badges, className }) {
   return (
     <header className={cn('flex flex-wrap items-end justify-between gap-x-6 gap-y-4', className)}>
       <div className="max-w-3xl min-w-0">
-        <h1 className="font-serif text-[30px] leading-[1.15] font-semibold tracking-[-0.02em] text-strong">{titre}</h1>
-        {description && <p className="mt-2 text-[15px] leading-normal text-mutedtxt">{description}</p>}
+        <h1 className="text-strong font-serif text-[30px] leading-[1.15] font-semibold tracking-[-0.02em]">
+          {titre}
+        </h1>
+        {description && (
+          <p className="text-mutedtxt mt-2 text-[15px] leading-normal">{description}</p>
+        )}
       </div>
       {(actions || badges) && (
         <div className="flex flex-wrap items-center gap-2.5">

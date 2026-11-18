@@ -23,7 +23,11 @@ const TONS_PASTILLE = {
 export function Pastille({ icone: Icone, ton = 'neutral', taille = 34, className }) {
   return (
     <span
-      className={cn('inline-flex shrink-0 items-center justify-center', TONS_PASTILLE[ton], className)}
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center',
+        TONS_PASTILLE[ton],
+        className,
+      )}
       style={{ width: taille, height: taille, borderRadius: taille >= 40 ? 11 : 10 }}
       aria-hidden="true"
     >
@@ -67,11 +71,22 @@ export function NombreAnime({ valeur, formater = formaterDefaut, duree = 0.5 }) 
   )
 }
 
-export function StatCard({ libelle, valeur, formater, sousTexte, icone, ton = 'neutral', to, chargement, className, children }) {
+export function StatCard({
+  libelle,
+  valeur,
+  formater,
+  sousTexte,
+  icone,
+  ton = 'neutral',
+  to,
+  chargement,
+  className,
+  children,
+}) {
   const contenu = (
     <>
       <div className="flex items-start justify-between gap-3">
-        <span className="text-[13px] font-medium text-mutedtxt">{libelle}</span>
+        <span className="text-mutedtxt text-[13px] font-medium">{libelle}</span>
         {icone && <Pastille icone={icone} ton={ton} />}
       </div>
       {chargement ? (
@@ -81,10 +96,14 @@ export function StatCard({ libelle, valeur, formater, sousTexte, icone, ton = 'n
         </>
       ) : (
         <>
-          <div className="text-[28px] leading-none font-semibold tracking-[-0.02em] text-strong tabular">
-            {typeof valeur === 'number' ? <NombreAnime valeur={valeur} formater={formater} /> : (valeur ?? '—')}
+          <div className="text-strong tabular text-[28px] leading-none font-semibold tracking-[-0.02em]">
+            {typeof valeur === 'number' ? (
+              <NombreAnime valeur={valeur} formater={formater} />
+            ) : (
+              (valeur ?? '—')
+            )}
           </div>
-          {sousTexte && <p className="text-[13px] leading-snug text-mutedtxt">{sousTexte}</p>}
+          {sousTexte && <p className="text-mutedtxt text-[13px] leading-snug">{sousTexte}</p>}
           {children}
         </>
       )}
@@ -92,7 +111,8 @@ export function StatCard({ libelle, valeur, formater, sousTexte, icone, ton = 'n
   )
   const classes = cn(
     'flex min-w-0 flex-col gap-3 rounded-[14px] border border-line bg-surf px-5 py-[18px] shadow-card transition-[box-shadow,border-color,transform] duration-200',
-    to && 'cursor-pointer hover:-translate-y-px hover:border-line2 hover:shadow-hover focus-visible:border-ink',
+    to &&
+      'cursor-pointer hover:-translate-y-px hover:border-line2 hover:shadow-hover focus-visible:border-ink',
     className,
   )
   if (to) {

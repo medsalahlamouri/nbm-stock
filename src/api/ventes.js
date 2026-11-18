@@ -19,7 +19,10 @@ export const CANAUX = {
 /** Clients avec le nombre de demandes et le total facturé */
 export async function listerClients() {
   const lignes = deballer(
-    await supabase.from('client').select('*, demande_client(id_demande, etat, facture_client(montant_total))').order('nom'),
+    await supabase
+      .from('client')
+      .select('*, demande_client(id_demande, etat, facture_client(montant_total))')
+      .order('nom'),
   )
   return lignes.map(({ demande_client: demandes, ...c }) => ({
     ...c,
@@ -33,7 +36,11 @@ export async function listerClients() {
 
 export async function creerClient({ nom, telephone, adresse }) {
   return deballer(
-    await supabase.from('client').insert({ nom: nom.trim(), telephone: vide(telephone), adresse: vide(adresse) }).select().single(),
+    await supabase
+      .from('client')
+      .insert({ nom: nom.trim(), telephone: vide(telephone), adresse: vide(adresse) })
+      .select()
+      .single(),
   )
 }
 
@@ -67,12 +74,20 @@ function enrichirDemande(d) {
 
 export async function listerDemandes() {
   return deballer(
-    await supabase.from('demande_client').select(SELECT_DEMANDE).order('date_demande', { ascending: false }).order('id_demande', { ascending: false }),
+    await supabase
+      .from('demande_client')
+      .select(SELECT_DEMANDE)
+      .order('date_demande', { ascending: false })
+      .order('id_demande', { ascending: false }),
   ).map(enrichirDemande)
 }
 
 export async function lireDemande(id) {
-  return enrichirDemande(deballer(await supabase.from('demande_client').select(SELECT_DEMANDE).eq('id_demande', id).single()))
+  return enrichirDemande(
+    deballer(
+      await supabase.from('demande_client').select(SELECT_DEMANDE).eq('id_demande', id).single(),
+    ),
+  )
 }
 
 /** Nouvelle demande → id ; le prix de chaque ligne est repris de la fiche article par le serveur */
@@ -81,7 +96,10 @@ export async function enregistrerDemande({ idClient, canal, date, lignes }) {
     p_id_client: Number(idClient),
     p_canal: canal,
     p_date: date,
-    p_lignes: lignes.map((l) => ({ id_produit: Number(l.id_produit), quantite: Number(l.quantite) })),
+    p_lignes: lignes.map((l) => ({
+      id_produit: Number(l.id_produit),
+      quantite: Number(l.quantite),
+    })),
   })
 }
 
@@ -89,7 +107,10 @@ export async function modifierDemande(id, { canal, lignes }) {
   return appelerRpc(supabase, 'modifier_demande', {
     p_id_demande: id,
     p_canal: canal,
-    p_lignes: lignes.map((l) => ({ id_produit: Number(l.id_produit), quantite: Number(l.quantite) })),
+    p_lignes: lignes.map((l) => ({
+      id_produit: Number(l.id_produit),
+      quantite: Number(l.quantite),
+    })),
   })
 }
 
@@ -103,13 +124,19 @@ const SELECT_FACTURE =
   '*, demande_client(id_demande, date_demande, canal, client(id_client, nom, telephone, adresse), ligne_demande(id_produit, quantite, prix_unitaire, produit(code, designation, unite)))'
 
 export async function listerFacturesClient({ depuis } = {}) {
-  let requete = supabase.from('facture_client').select(SELECT_FACTURE).order('date_facture', { ascending: false }).order('id_facture_c', { ascending: false })
+  let requete = supabase
+    .from('facture_client')
+    .select(SELECT_FACTURE)
+    .order('date_facture', { ascending: false })
+    .order('id_facture_c', { ascending: false })
   if (depuis) requete = requete.gte('date_facture', depuis)
   return deballer(await requete)
 }
 
 export async function lireFactureClient(id) {
-  return deballer(await supabase.from('facture_client').select(SELECT_FACTURE).eq('id_facture_c', id).single())
+  return deballer(
+    await supabase.from('facture_client').select(SELECT_FACTURE).eq('id_facture_c', id).single(),
+  )
 }
 
 /**

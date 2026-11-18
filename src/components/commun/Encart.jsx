@@ -23,7 +23,11 @@ export function Encart({ ton = 'info', titre, children, icone, action, className
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18 }}
       role={role ?? (ton === 'danger' ? 'alert' : 'status')}
-      className={cn('flex items-start gap-3 rounded-xl px-3.5 py-3 text-[14px] leading-snug', style.classes, className)}
+      className={cn(
+        'flex items-start gap-3 rounded-xl px-3.5 py-3 text-[14px] leading-snug',
+        style.classes,
+        className,
+      )}
     >
       <Icone className="mt-0.5 size-[18px] shrink-0" aria-hidden="true" />
       <div className="min-w-0 flex-1">

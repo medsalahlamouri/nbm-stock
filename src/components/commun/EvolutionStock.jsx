@@ -35,7 +35,9 @@ export function EvolutionStock({ produit, compact = false }) {
   const [periode, setPeriode] = useState(90)
   const historique = useHistoriqueProduit(produit)
   const mp = produit.type === 'MP'
-  const seuil = mp ? (produit.point_commande ?? produit.seuil) : (produit.seuil_minimum ?? produit.seuil)
+  const seuil = mp
+    ? (produit.point_commande ?? produit.seuil)
+    : (produit.seuil_minimum ?? produit.seuil)
   const enAlerte = seuil !== null && seuil !== undefined && produit.quantite_stock <= seuil
 
   const donnees = useMemo(() => {
@@ -53,14 +55,25 @@ export function EvolutionStock({ produit, compact = false }) {
       <CarteEntete
         titre="Évolution du stock"
         description="Stock en fin de journée, reconstitué à partir des mouvements"
-        action={<Onglets options={PERIODES} valeur={periode} onChange={setPeriode} libelle="Période" taille="sm" />}
+        action={
+          <Onglets
+            options={PERIODES}
+            valeur={periode}
+            onChange={setPeriode}
+            libelle="Période"
+            taille="sm"
+          />
+        }
       />
-      <div className="flex flex-wrap items-center gap-2 text-[14px] text-ink">
+      <div className="text-ink flex flex-wrap items-center gap-2 text-[14px]">
         <span>
-          Aujourd'hui : <strong className="tabular">{formatNombre(produit.quantite_stock)}</strong> {produit.unite}
+          Aujourd'hui : <strong className="tabular">{formatNombre(produit.quantite_stock)}</strong>{' '}
+          {produit.unite}
           {seuil !== null && seuil !== undefined && (
             <>
-              {' '}· {mp ? 'point de commande' : 'seuil minimum'} : <strong className="tabular">{formatNombre(seuil)}</strong>
+              {' '}
+              · {mp ? 'point de commande' : 'seuil minimum'} :{' '}
+              <strong className="tabular">{formatNombre(seuil)}</strong>
             </>
           )}
         </span>
@@ -79,7 +92,7 @@ export function EvolutionStock({ produit, compact = false }) {
           hauteur={compact ? 220 : 300}
         />
       )}
-      <p className="flex flex-wrap gap-x-5 gap-y-1 text-[12px] text-mutedtxt">
+      <p className="text-mutedtxt flex flex-wrap gap-x-5 gap-y-1 text-[12px]">
         <span>○ Stock en fin de journée</span>
         {seuil !== null && seuil !== undefined && (
           <span className="text-dfg">

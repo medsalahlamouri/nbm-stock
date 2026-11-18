@@ -9,26 +9,47 @@ const COLONNES =
 
 /** Ligne `utilisateur` de la personne connectée (la RLS ne laisse voir que la sienne au chef) */
 export async function lireUtilisateur(id) {
-  return deballer(await supabase.from('utilisateur').select(COLONNES).eq('id_utilisateur', id).single())
+  return deballer(
+    await supabase.from('utilisateur').select(COLONNES).eq('id_utilisateur', id).single(),
+  )
 }
 
 /** Comptes chef magasin (gérant) */
 export async function listerChefs() {
   return deballer(
-    await supabase.from('utilisateur').select(COLONNES).eq('profil', 'CHEF_MAGASIN').order('nom').order('prenom'),
+    await supabase
+      .from('utilisateur')
+      .select(COLONNES)
+      .eq('profil', 'CHEF_MAGASIN')
+      .order('nom')
+      .order('prenom'),
   )
 }
 
 /** Mise à jour de l'identité et des coordonnées (jamais e-mail, profil ni actif ici) */
 export async function modifierUtilisateur(id, champs) {
-  const autorises = ['nom', 'prenom', 'telephone', 'date_naissance', 'adresse', 'ville', 'code_postal', 'photo']
+  const autorises = [
+    'nom',
+    'prenom',
+    'telephone',
+    'date_naissance',
+    'adresse',
+    'ville',
+    'code_postal',
+    'photo',
+  ]
   const donnees = Object.fromEntries(
     Object.entries(champs)
       .filter(([cle]) => autorises.includes(cle))
       .map(([cle, valeur]) => [cle, valeur === '' ? null : valeur]),
   )
   return deballer(
-    await supabase.from('utilisateur').update(donnees).eq('id_utilisateur', id).select(COLONNES).single(),
+    await supabase
+      .from('utilisateur')
+      .update(donnees)
+      .eq('id_utilisateur', id)
+      .select(COLONNES)
+      .single(),
   )
 }
 
@@ -40,10 +61,13 @@ export async function envoyerPhoto(id, fichier) {
   if (!['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
     throw new ErreurApplication('Format non accepté : choisissez une image JPG, PNG ou WebP.')
   }
-  if (fichier.size > 2 * 1024 * 1024) throw new ErreurApplication('Image trop lourde : 2 Mo maximum.')
+  if (fichier.size > 2 * 1024 * 1024)
+    throw new ErreurApplication('Image trop lourde : 2 Mo maximum.')
   const chemin = `${id}/avatar.${extension}`
   deballer(
-    await supabase.storage.from('photos').upload(chemin, fichier, { upsert: true, contentType: fichier.type }),
+    await supabase.storage
+      .from('photos')
+      .upload(chemin, fichier, { upsert: true, contentType: fichier.type }),
   )
   return modifierUtilisateur(id, { photo: chemin })
 }
@@ -74,13 +98,15 @@ async function gererComptes(corps) {
 export const creerChef = (champs) => gererComptes({ action: 'creer', ...champs })
 
 /** Nouveau mot de passe provisoire → { mot_de_passe_provisoire } */
-export const reinitialiserMotDePasse = (id) => gererComptes({ action: 'reinitialiser_mdp', id_utilisateur: id })
+export const reinitialiserMotDePasse = (id) =>
+  gererComptes({ action: 'reinitialiser_mdp', id_utilisateur: id })
 
 /** Change l'e-mail de connexion (sans id : le gérant lui-même) */
 export const modifierEmail = (email, id) =>
   gererComptes({ action: 'modifier_email', email, ...(id ? { id_utilisateur: id } : {}) })
 
 /** → { resultat: 'SUPPRIME' | 'DESACTIVE' } */
-export const supprimerOuDesactiverCompte = (id) => gererComptes({ action: 'supprimer_ou_desactiver', id_utilisateur: id })
+export const supprimerOuDesactiverCompte = (id) =>
+  gererComptes({ action: 'supprimer_ou_desactiver', id_utilisateur: id })
 
 export const reactiverCompte = (id) => gererComptes({ action: 'reactiver', id_utilisateur: id })

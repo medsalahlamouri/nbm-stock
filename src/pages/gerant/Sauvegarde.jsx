@@ -7,7 +7,15 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { motion } from 'motion/react'
-import { Check, Database, Download, HardDrive, Loader2, ShieldCheck, TriangleAlert } from 'lucide-react'
+import {
+  Check,
+  Database,
+  Download,
+  HardDrive,
+  Loader2,
+  ShieldCheck,
+  TriangleAlert,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { derniereSauvegarde, telechargerSauvegarde } from '@/api/journal'
 import { formatDateHeure, formatNombre } from '@/lib/format'
@@ -49,17 +57,31 @@ export default function Sauvegarde() {
 
   return (
     <Page>
-      <PageEntete titre="Sauvegarde des données" description="Téléchargez une copie complète des données de NBM Stock au format JSON." />
+      <PageEntete
+        titre="Sauvegarde des données"
+        description="Téléchargez une copie complète des données de NBM Stock au format JSON."
+      />
       <div className="grid items-start gap-[18px] lg:grid-cols-[2fr_minmax(300px,1fr)]">
         <Carte>
-          <CarteEntete titre="Télécharger la sauvegarde" description="Toutes les tables de l'application, telles qu'elles sont au moment du téléchargement." icone={<Database className="mt-0.5 size-5 text-gold2" aria-hidden="true" />} />
+          <CarteEntete
+            titre="Télécharger la sauvegarde"
+            description="Toutes les tables de l'application, telles qu'elles sont au moment du téléchargement."
+            icone={<Database className="text-gold2 mt-0.5 size-5" aria-hidden="true" />}
+          />
           <ul className="grid gap-x-6 gap-y-1.5 text-[14px] sm:grid-cols-2">
             {TABLES.map(([cle, libelle]) => (
-              <li key={cle} className="flex items-center justify-between gap-2 border-b border-line3 py-1.5">
-                <span className="flex items-center gap-2 text-ink2">
-                  <Check className="size-3.5 text-okfg" aria-hidden="true" /> {libelle}
+              <li
+                key={cle}
+                className="border-line3 flex items-center justify-between gap-2 border-b py-1.5"
+              >
+                <span className="text-ink2 flex items-center gap-2">
+                  <Check className="text-okfg size-3.5" aria-hidden="true" /> {libelle}
                 </span>
-                {resultat?.tables?.[cle] !== undefined && <span className="text-[13px] text-mutedtxt tabular">{formatNombre(resultat.tables[cle])} ligne(s)</span>}
+                {resultat?.tables?.[cle] !== undefined && (
+                  <span className="text-mutedtxt tabular text-[13px]">
+                    {formatNombre(resultat.tables[cle])} ligne(s)
+                  </span>
+                )}
               </li>
             ))}
           </ul>
@@ -69,7 +91,11 @@ export default function Sauvegarde() {
               {sauvegarde.isPending ? 'Préparation…' : 'Télécharger la sauvegarde'}
             </Button>
             {resultat && (
-              <motion.span initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} className="text-[13px] text-okfg">
+              <motion.span
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-okfg text-[13px]"
+              >
                 {resultat.nom}
               </motion.span>
             )}
@@ -86,7 +112,11 @@ export default function Sauvegarde() {
                 <LigneInfo libelle="Date" fort>
                   {formatDateHeure(derniere.data.date_heure)}
                 </LigneInfo>
-                <LigneInfo libelle="Par">{derniere.data.utilisateur ? `${derniere.data.utilisateur.prenom} ${derniere.data.utilisateur.nom}` : '—'}</LigneInfo>
+                <LigneInfo libelle="Par">
+                  {derniere.data.utilisateur
+                    ? `${derniere.data.utilisateur.prenom} ${derniere.data.utilisateur.nom}`
+                    : '—'}
+                </LigneInfo>
               </dl>
             ) : (
               <Encart ton="warn" icone={TriangleAlert}>
@@ -96,18 +126,21 @@ export default function Sauvegarde() {
           </Carte>
           <Carte>
             <CarteEntete titre="Bonnes pratiques" />
-            <ul className="flex flex-col gap-3 text-[14px] text-ink3">
+            <ul className="text-ink3 flex flex-col gap-3 text-[14px]">
               <li className="flex gap-2.5">
-                <HardDrive className="mt-0.5 size-4 shrink-0 text-mutedtxt" aria-hidden="true" />
-                Conservez le fichier hors de la plateforme (clé USB, disque externe), au moins une fois par semaine.
+                <HardDrive className="text-mutedtxt mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                Conservez le fichier hors de la plateforme (clé USB, disque externe), au moins une
+                fois par semaine.
               </li>
               <li className="flex gap-2.5">
-                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-mutedtxt" aria-hidden="true" />
-                Le fichier contient des données personnelles et commerciales : gardez-le en lieu sûr.
+                <ShieldCheck className="text-mutedtxt mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                Le fichier contient des données personnelles et commerciales : gardez-le en lieu
+                sûr.
               </li>
               <li className="flex gap-2.5">
-                <Database className="mt-0.5 size-4 shrink-0 text-mutedtxt" aria-hidden="true" />
-                La restauration se fait hors de l'application, par l'administrateur de la base de données.
+                <Database className="text-mutedtxt mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                La restauration se fait hors de l'application, par l'administrateur de la base de
+                données.
               </li>
             </ul>
           </Carte>

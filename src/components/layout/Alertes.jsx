@@ -16,11 +16,14 @@ import { Skeleton } from '@/components/ui/skeleton'
 function Ligne({ to, icone, ton, titre, detail, badge }) {
   return (
     <li>
-      <Link to={to} className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surf2">
+      <Link
+        to={to}
+        className="hover:bg-surf2 flex items-center gap-3 rounded-lg px-2 py-2 transition-colors"
+      >
         <Pastille icone={icone} ton={ton} taille={32} />
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-semibold text-ink">{titre}</span>
-          <span className="block truncate text-[12px] text-mutedtxt">{detail}</span>
+          <span className="text-ink block truncate text-[13px] font-semibold">{titre}</span>
+          <span className="text-mutedtxt block truncate text-[12px]">{detail}</span>
         </span>
         {badge}
       </Link>
@@ -33,7 +36,8 @@ export function Alertes() {
   const profil = utilisateur?.profil
   const gerant = profil === 'GERANT'
   const { data, isPending } = useAlertes(profil)
-  const total = (data?.stock.length ?? 0) + (data?.retards.length ?? 0) + (data?.aReceptionner.length ?? 0)
+  const total =
+    (data?.stock.length ?? 0) + (data?.retards.length ?? 0) + (data?.aReceptionner.length ?? 0)
 
   return (
     <Popover>
@@ -41,16 +45,25 @@ export function Alertes() {
         <button
           type="button"
           aria-label={total > 0 ? `Alertes : ${total}` : 'Alertes'}
-          className="relative inline-flex size-[38px] cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surf text-ink transition-colors hover:bg-surf2 active:scale-95"
+          className="border-line bg-surf text-ink hover:bg-surf2 relative inline-flex size-[38px] cursor-pointer items-center justify-center rounded-[10px] border transition-colors active:scale-95"
         >
           <Bell className="size-[18px]" />
-          {total > 0 && <span className="absolute top-2 right-2 size-2 rounded-full bg-red ring-2 ring-surf" aria-hidden="true" />}
+          {total > 0 && (
+            <span
+              className="bg-red ring-surf absolute top-2 right-2 size-2 rounded-full ring-2"
+              aria-hidden="true"
+            />
+          )}
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[360px] max-w-[calc(100vw-24px)] rounded-[14px] p-0">
-        <div className="border-b border-line px-4 py-3">
-          <p className="text-[14px] font-semibold text-ink">Alertes</p>
-          <p className="text-[12px] text-mutedtxt">{total > 0 ? `${formatNombre(total)} élément(s) demandent votre attention` : 'Rien à signaler'}</p>
+        <div className="border-line border-b px-4 py-3">
+          <p className="text-ink text-[14px] font-semibold">Alertes</p>
+          <p className="text-mutedtxt text-[12px]">
+            {total > 0
+              ? `${formatNombre(total)} élément(s) demandent votre attention`
+              : 'Rien à signaler'}
+          </p>
         </div>
         <div className="max-h-[420px] overflow-y-auto p-2">
           {isPending ? (
@@ -59,7 +72,9 @@ export function Alertes() {
               <Skeleton className="h-10" />
             </div>
           ) : total === 0 ? (
-            <p className="px-3 py-6 text-center text-[13px] text-mutedtxt">Aucun produit en alerte, aucune commande en retard.</p>
+            <p className="text-mutedtxt px-3 py-6 text-center text-[13px]">
+              Aucun produit en alerte, aucune commande en retard.
+            </p>
           ) : (
             <ul className="flex flex-col">
               {data.retards.map((r) => (

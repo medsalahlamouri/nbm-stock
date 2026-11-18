@@ -21,7 +21,13 @@ import { invalider } from '@/lib/requetes'
 import { telephone } from '@/lib/schemas'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Page, PageEntete } from '@/components/commun/PageEntete'
 import { Carte } from '@/components/commun/Carte'
 import { BadgeEtat } from '@/components/commun/Badge'
@@ -49,7 +55,11 @@ function FormulaireClient({ client, onFermer }) {
     formState: { errors, isSubmitting, dirtyFields },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { nom: client?.nom ?? '', telephone: client?.telephone ? formatTelephone(client.telephone) : '', adresse: client?.adresse ?? '' },
+    defaultValues: {
+      nom: client?.nom ?? '',
+      telephone: client?.telephone ? formatTelephone(client.telephone) : '',
+      adresse: client?.adresse ?? '',
+    },
   })
   const soumettre = async (valeurs) => {
     try {
@@ -64,13 +74,27 @@ function FormulaireClient({ client, onFermer }) {
   }
   return (
     <form onSubmit={handleSubmit(soumettre)} noValidate className="flex flex-col gap-4">
-      <Champ libelle="Nom" obligatoire erreur={errors.nom?.message} modifie={modification && dirtyFields.nom}>
+      <Champ
+        libelle="Nom"
+        obligatoire
+        erreur={errors.nom?.message}
+        modifie={modification && dirtyFields.nom}
+      >
         <Input autoFocus placeholder="Nom et prénom ou raison sociale" {...register('nom')} />
       </Champ>
-      <Champ libelle="Téléphone" aide="8 chiffres" erreur={errors.telephone?.message} modifie={modification && dirtyFields.telephone}>
+      <Champ
+        libelle="Téléphone"
+        aide="8 chiffres"
+        erreur={errors.telephone?.message}
+        modifie={modification && dirtyFields.telephone}
+      >
         <Input type="tel" inputMode="numeric" placeholder="55 000 000" {...register('telephone')} />
       </Champ>
-      <Champ libelle="Adresse" erreur={errors.adresse?.message} modifie={modification && dirtyFields.adresse}>
+      <Champ
+        libelle="Adresse"
+        erreur={errors.adresse?.message}
+        modifie={modification && dirtyFields.adresse}
+      >
         <Input {...register('adresse')} />
       </Champ>
       <PiedFormulaire
@@ -94,7 +118,9 @@ export default function Clients() {
 
   const liste = clients.data ?? []
   const filtres = liste.filter(
-    (c) => (statut === 'tous' || (statut === 'actifs' ? c.actif : !c.actif)) && correspond(recherche, c.nom, c.telephone, c.adresse, reference('CLI', c.id_client)),
+    (c) =>
+      (statut === 'tous' || (statut === 'actifs' ? c.actif : !c.actif)) &&
+      correspond(recherche, c.nom, c.telephone, c.adresse, reference('CLI', c.id_client)),
   )
 
   const colonnes = [
@@ -102,12 +128,39 @@ export default function Clients() {
       id: 'nom',
       entete: 'Client',
       tri: (c) => c.nom,
-      cellule: (c) => <CellulePrincipale avant={<InitialesCarre texte={c.nom} />} titre={c.nom} sousTitre={<span className="font-mono">{reference('CLI', c.id_client)}</span>} />,
+      cellule: (c) => (
+        <CellulePrincipale
+          avant={<InitialesCarre texte={c.nom} />}
+          titre={c.nom}
+          sousTitre={<span className="font-mono">{reference('CLI', c.id_client)}</span>}
+        />
+      ),
     },
-    { id: 'tel', entete: 'Téléphone', cellule: (c) => <span className="tabular">{formatTelephone(c.telephone)}</span> },
-    { id: 'adresse', entete: 'Adresse', tri: (c) => c.adresse, cellule: (c) => <span className="text-ink3">{c.adresse || '—'}</span> },
-    { id: 'demandes', entete: 'Demandes', align: 'right', tri: (c) => c.nb_demandes, cellule: (c) => formatNombre(c.nb_demandes) },
-    { id: 'total', entete: 'Total facturé', align: 'right', tri: (c) => c.total_facture, cellule: (c) => <strong>{formatMontant(c.total_facture)}</strong> },
+    {
+      id: 'tel',
+      entete: 'Téléphone',
+      cellule: (c) => <span className="tabular">{formatTelephone(c.telephone)}</span>,
+    },
+    {
+      id: 'adresse',
+      entete: 'Adresse',
+      tri: (c) => c.adresse,
+      cellule: (c) => <span className="text-ink3">{c.adresse || '—'}</span>,
+    },
+    {
+      id: 'demandes',
+      entete: 'Demandes',
+      align: 'right',
+      tri: (c) => c.nb_demandes,
+      cellule: (c) => formatNombre(c.nb_demandes),
+    },
+    {
+      id: 'total',
+      entete: 'Total facturé',
+      align: 'right',
+      tri: (c) => c.total_facture,
+      cellule: (c) => <strong>{formatMontant(c.total_facture)}</strong>,
+    },
     { id: 'statut', entete: 'Statut', cellule: (c) => <BadgeEtat etat={statutActif(c.actif)} /> },
     {
       id: 'actions',
@@ -115,12 +168,31 @@ export default function Clients() {
       align: 'right',
       cellule: (c) => (
         <div className="flex justify-end gap-1">
-          {c.actif && <ActionIcone libelle="Nouvelle demande" icone={FilePlus} to={`/chef/demandes/nouvelle?client=${c.id_client}`} />}
-          <ActionIcone libelle="Modifier" icone={Pencil} onClick={() => setFenetre({ client: c })} />
+          {c.actif && (
+            <ActionIcone
+              libelle="Nouvelle demande"
+              icone={FilePlus}
+              to={`/chef/demandes/nouvelle?client=${c.id_client}`}
+            />
+          )}
+          <ActionIcone
+            libelle="Modifier"
+            icone={Pencil}
+            onClick={() => setFenetre({ client: c })}
+          />
           {c.actif ? (
-            <ActionIcone libelle="Supprimer ou désactiver" icone={Trash2} ton="danger" onClick={() => confirmation.ouvrir(c)} />
+            <ActionIcone
+              libelle="Supprimer ou désactiver"
+              icone={Trash2}
+              ton="danger"
+              onClick={() => confirmation.ouvrir(c)}
+            />
           ) : (
-            <ActionIcone libelle="Réactiver" icone={RotateCcw} onClick={() => reactivation.mutate(c.id_client)} />
+            <ActionIcone
+              libelle="Réactiver"
+              icone={RotateCcw}
+              onClick={() => reactivation.mutate(c.id_client)}
+            />
           )}
         </div>
       ),
@@ -140,14 +212,26 @@ export default function Clients() {
       />
       <Carte sansPadding className="gap-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 p-[22px] pb-4">
-          <Recherche valeur={recherche} onChange={setRecherche} placeholder="Nom, téléphone, adresse" />
+          <Recherche
+            valeur={recherche}
+            onChange={setRecherche}
+            placeholder="Nom, téléphone, adresse"
+          />
           <Onglets
             valeur={statut}
             onChange={setStatut}
             libelle="Statut"
             options={[
-              { valeur: 'actifs', libelle: 'Actifs', compteur: liste.filter((c) => c.actif).length },
-              { valeur: 'inactifs', libelle: 'Inactifs', compteur: liste.filter((c) => !c.actif).length },
+              {
+                valeur: 'actifs',
+                libelle: 'Actifs',
+                compteur: liste.filter((c) => c.actif).length,
+              },
+              {
+                valeur: 'inactifs',
+                libelle: 'Inactifs',
+                compteur: liste.filter((c) => !c.actif).length,
+              },
               { valeur: 'tous', libelle: 'Tous', compteur: liste.length },
             ]}
           />
@@ -166,7 +250,11 @@ export default function Clients() {
             <EtatVide
               icone={Users}
               titre={liste.length ? 'Aucun client ne correspond' : 'Aucun client enregistré'}
-              message={liste.length ? 'Modifiez la recherche ou le filtre.' : 'Ajoutez un client pour enregistrer ses demandes.'}
+              message={
+                liste.length
+                  ? 'Modifiez la recherche ou le filtre.'
+                  : 'Ajoutez un client pour enregistrer ses demandes.'
+              }
               action={
                 !liste.length && (
                   <Button onClick={() => setFenetre({})}>
@@ -186,7 +274,8 @@ export default function Clients() {
             <DialogDescription>
               {fenetre?.client ? (
                 <>
-                  <span className="font-mono">{reference('CLI', fenetre.client.id_client)}</span> · {formatNombre(fenetre.client.nb_demandes)} demande(s) ·{' '}
+                  <span className="font-mono">{reference('CLI', fenetre.client.id_client)}</span> ·{' '}
+                  {formatNombre(fenetre.client.nb_demandes)} demande(s) ·{' '}
                   <Link to="/chef/demandes" className="underline underline-offset-2">
                     voir les demandes
                   </Link>
@@ -196,7 +285,13 @@ export default function Clients() {
               )}
             </DialogDescription>
           </DialogHeader>
-          {fenetre && <FormulaireClient key={fenetre.client?.id_client ?? 'nouveau'} client={fenetre.client} onFermer={() => setFenetre(null)} />}
+          {fenetre && (
+            <FormulaireClient
+              key={fenetre.client?.id_client ?? 'nouveau'}
+              client={fenetre.client}
+              onFermer={() => setFenetre(null)}
+            />
+          )}
         </DialogContent>
       </Dialog>
 

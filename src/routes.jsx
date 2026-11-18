@@ -7,7 +7,12 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router'
 import { AppShell } from '@/components/layout/AppShell'
-import { RedirectionAccueil, RouteProfil, RouteProtegee, RoutePublique } from '@/components/layout/Gardes'
+import {
+  RedirectionAccueil,
+  RouteProfil,
+  RouteProtegee,
+  RoutePublique,
+} from '@/components/layout/Gardes'
 import { PageErreur, PageIntrouvable } from '@/pages/erreurs/PagesErreur'
 
 // Accès
@@ -82,31 +87,139 @@ export const router = createBrowserRouter([
               {
                 element: <AppShell />,
                 children: [
-                  { index: true, element: <TableauDeBordGerant />, handle: fil({ libelle: 'Accueil', to: G }, 'Tableau de bord') },
-                  { path: 'stock/matieres', element: <StockMatieres />, handle: fil('Stock', 'Matières premières') },
-                  { path: 'stock/articles', element: <StockArticles />, handle: fil('Stock', 'Articles') },
-                  { path: 'fournisseurs', element: <Fournisseurs />, handle: fil('Achats', 'Fournisseurs') },
-                  { path: 'fournisseurs/nouveau', element: <FournisseurFormulaire />, handle: fil('Achats', { libelle: 'Fournisseurs', to: `${G}/fournisseurs` }, 'Nouveau') },
-                  { path: 'fournisseurs/:id', element: <FournisseurFiche />, handle: fil('Achats', { libelle: 'Fournisseurs', to: `${G}/fournisseurs` }, 'Fiche') },
-                  { path: 'fournisseurs/:id/modifier', element: <FournisseurFormulaire />, handle: fil('Achats', { libelle: 'Fournisseurs', to: `${G}/fournisseurs` }, 'Modifier') },
+                  {
+                    index: true,
+                    element: <TableauDeBordGerant />,
+                    handle: fil({ libelle: 'Accueil', to: G }, 'Tableau de bord'),
+                  },
+                  {
+                    path: 'stock/matieres',
+                    element: <StockMatieres />,
+                    handle: fil('Stock', 'Matières premières'),
+                  },
+                  {
+                    path: 'stock/articles',
+                    element: <StockArticles />,
+                    handle: fil('Stock', 'Articles'),
+                  },
+                  {
+                    path: 'fournisseurs',
+                    element: <Fournisseurs />,
+                    handle: fil('Achats', 'Fournisseurs'),
+                  },
+                  {
+                    path: 'fournisseurs/nouveau',
+                    element: <FournisseurFormulaire />,
+                    handle: fil(
+                      'Achats',
+                      { libelle: 'Fournisseurs', to: `${G}/fournisseurs` },
+                      'Nouveau',
+                    ),
+                  },
+                  {
+                    path: 'fournisseurs/:id',
+                    element: <FournisseurFiche />,
+                    handle: fil(
+                      'Achats',
+                      { libelle: 'Fournisseurs', to: `${G}/fournisseurs` },
+                      'Fiche',
+                    ),
+                  },
+                  {
+                    path: 'fournisseurs/:id/modifier',
+                    element: <FournisseurFormulaire />,
+                    handle: fil(
+                      'Achats',
+                      { libelle: 'Fournisseurs', to: `${G}/fournisseurs` },
+                      'Modifier',
+                    ),
+                  },
                   { path: 'devis', element: <Devis />, handle: fil('Achats', 'Devis') },
-                  { path: 'devis/nouveau', element: <DevisFormulaire />, handle: fil('Achats', { libelle: 'Devis', to: `${G}/devis` }, 'Nouveau') },
-                  { path: 'devis/:id/modifier', element: <DevisFormulaire />, handle: fil('Achats', { libelle: 'Devis', to: `${G}/devis` }, 'Modifier') },
-                  { path: 'commander', element: <Commander />, handle: fil('Achats', 'Comparer et commander') },
+                  {
+                    path: 'devis/nouveau',
+                    element: <DevisFormulaire />,
+                    handle: fil('Achats', { libelle: 'Devis', to: `${G}/devis` }, 'Nouveau'),
+                  },
+                  {
+                    path: 'devis/:id/modifier',
+                    element: <DevisFormulaire />,
+                    handle: fil('Achats', { libelle: 'Devis', to: `${G}/devis` }, 'Modifier'),
+                  },
+                  {
+                    path: 'commander',
+                    element: <Commander />,
+                    handle: fil('Achats', 'Comparer et commander'),
+                  },
                   { path: 'commandes', element: <Commandes />, handle: fil('Achats', 'Commandes') },
-                  { path: 'commandes/:id', element: <CommandeDetail />, handle: fil('Achats', { libelle: 'Commandes', to: `${G}/commandes` }, 'Détail') },
-                  { path: 'parametres', element: <Parametres />, handle: fil('Statistiques', 'Paramètres de calcul') },
-                  { path: 'calcul', element: <Calcul />, handle: fil('Statistiques', 'Quantité à commander') },
-                  { path: 'statistiques', element: <Statistiques />, handle: fil('Statistiques', 'Statistiques') },
-                  { path: 'utilisateurs', element: <Utilisateurs />, handle: fil('Administration', 'Utilisateurs') },
-                  { path: 'utilisateurs/nouveau', element: <UtilisateurFormulaire />, handle: fil('Administration', { libelle: 'Utilisateurs', to: `${G}/utilisateurs` }, 'Nouveau chef magasin') },
-                  { path: 'utilisateurs/:id', element: <UtilisateurFiche />, handle: fil('Administration', { libelle: 'Utilisateurs', to: `${G}/utilisateurs` }, 'Fiche') },
-                  { path: 'utilisateurs/:id/modifier', element: <UtilisateurFormulaire />, handle: fil('Administration', { libelle: 'Utilisateurs', to: `${G}/utilisateurs` }, 'Modifier') },
-                  { path: 'activite-chefs', element: <ActiviteChefs />, handle: fil('Administration', 'Activité des chefs') },
-                  { path: 'sauvegarde', element: <Sauvegarde />, handle: fil('Administration', 'Sauvegarde') },
+                  {
+                    path: 'commandes/:id',
+                    element: <CommandeDetail />,
+                    handle: fil('Achats', { libelle: 'Commandes', to: `${G}/commandes` }, 'Détail'),
+                  },
+                  {
+                    path: 'parametres',
+                    element: <Parametres />,
+                    handle: fil('Statistiques', 'Paramètres de calcul'),
+                  },
+                  {
+                    path: 'calcul',
+                    element: <Calcul />,
+                    handle: fil('Statistiques', 'Quantité à commander'),
+                  },
+                  {
+                    path: 'statistiques',
+                    element: <Statistiques />,
+                    handle: fil('Statistiques', 'Statistiques'),
+                  },
+                  {
+                    path: 'utilisateurs',
+                    element: <Utilisateurs />,
+                    handle: fil('Administration', 'Utilisateurs'),
+                  },
+                  {
+                    path: 'utilisateurs/nouveau',
+                    element: <UtilisateurFormulaire />,
+                    handle: fil(
+                      'Administration',
+                      { libelle: 'Utilisateurs', to: `${G}/utilisateurs` },
+                      'Nouveau chef magasin',
+                    ),
+                  },
+                  {
+                    path: 'utilisateurs/:id',
+                    element: <UtilisateurFiche />,
+                    handle: fil(
+                      'Administration',
+                      { libelle: 'Utilisateurs', to: `${G}/utilisateurs` },
+                      'Fiche',
+                    ),
+                  },
+                  {
+                    path: 'utilisateurs/:id/modifier',
+                    element: <UtilisateurFormulaire />,
+                    handle: fil(
+                      'Administration',
+                      { libelle: 'Utilisateurs', to: `${G}/utilisateurs` },
+                      'Modifier',
+                    ),
+                  },
+                  {
+                    path: 'activite-chefs',
+                    element: <ActiviteChefs />,
+                    handle: fil('Administration', 'Activité des chefs'),
+                  },
+                  {
+                    path: 'sauvegarde',
+                    element: <Sauvegarde />,
+                    handle: fil('Administration', 'Sauvegarde'),
+                  },
                   { path: 'compte', element: <MonCompte />, handle: fil('Compte', 'Mon compte') },
-                  { path: 'activite', element: <MonActivite />, handle: fil('Administration', 'Mon activité') },
-                  { path: '*', element: <PageIntrouvable /> },
+                  {
+                    path: 'activite',
+                    element: <MonActivite />,
+                    handle: fil('Administration', 'Mon activité'),
+                  },
+                  { path: '*', element: <PageIntrouvable dansApplication /> },
                 ],
               },
             ],
@@ -122,25 +235,93 @@ export const router = createBrowserRouter([
               {
                 element: <AppShell />,
                 children: [
-                  { index: true, element: <TableauDeBordChef />, handle: fil({ libelle: 'Accueil', to: C }, 'Tableau de bord') },
+                  {
+                    index: true,
+                    element: <TableauDeBordChef />,
+                    handle: fil({ libelle: 'Accueil', to: C }, 'Tableau de bord'),
+                  },
                   { path: 'produits', element: <Produits />, handle: fil('Stock', 'Produits') },
-                  { path: 'produits/nouveau', element: <ProduitFormulaire />, handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Nouveau') },
-                  { path: 'produits/:id', element: <ProduitFiche />, handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Fiche') },
-                  { path: 'produits/:id/modifier', element: <ProduitFormulaire />, handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Modifier') },
-                  { path: 'mouvements', element: <Mouvements />, handle: fil('Stock', 'Mouvements') },
-                  { path: 'mouvements/nouveau', element: <MouvementFormulaire />, handle: fil('Stock', { libelle: 'Mouvements', to: `${C}/mouvements` }, 'Nouveau') },
-                  { path: 'inventaire', element: <Inventaire />, handle: fil('Stock', 'Inventaire') },
-                  { path: 'factures-fournisseur', element: <FacturesFournisseur />, handle: fil('Achats', 'Factures fournisseur') },
-                  { path: 'factures-fournisseur/nouvelle', element: <FactureFournisseurFormulaire />, handle: fil('Achats', { libelle: 'Factures fournisseur', to: `${C}/factures-fournisseur` }, 'Saisir') },
+                  {
+                    path: 'produits/nouveau',
+                    element: <ProduitFormulaire />,
+                    handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Nouveau'),
+                  },
+                  {
+                    path: 'produits/:id',
+                    element: <ProduitFiche />,
+                    handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Fiche'),
+                  },
+                  {
+                    path: 'produits/:id/modifier',
+                    element: <ProduitFormulaire />,
+                    handle: fil('Stock', { libelle: 'Produits', to: `${C}/produits` }, 'Modifier'),
+                  },
+                  {
+                    path: 'mouvements',
+                    element: <Mouvements />,
+                    handle: fil('Stock', 'Mouvements'),
+                  },
+                  {
+                    path: 'mouvements/nouveau',
+                    element: <MouvementFormulaire />,
+                    handle: fil(
+                      'Stock',
+                      { libelle: 'Mouvements', to: `${C}/mouvements` },
+                      'Nouveau',
+                    ),
+                  },
+                  {
+                    path: 'inventaire',
+                    element: <Inventaire />,
+                    handle: fil('Stock', 'Inventaire'),
+                  },
+                  {
+                    path: 'factures-fournisseur',
+                    element: <FacturesFournisseur />,
+                    handle: fil('Achats', 'Factures fournisseur'),
+                  },
+                  {
+                    path: 'factures-fournisseur/nouvelle',
+                    element: <FactureFournisseurFormulaire />,
+                    handle: fil(
+                      'Achats',
+                      { libelle: 'Factures fournisseur', to: `${C}/factures-fournisseur` },
+                      'Saisir',
+                    ),
+                  },
                   { path: 'clients', element: <Clients />, handle: fil('Ventes', 'Clients') },
                   { path: 'demandes', element: <Demandes />, handle: fil('Ventes', 'Demandes') },
-                  { path: 'demandes/nouvelle', element: <DemandeFormulaire />, handle: fil('Ventes', { libelle: 'Demandes', to: `${C}/demandes` }, 'Nouvelle') },
-                  { path: 'demandes/:id/modifier', element: <DemandeFormulaire />, handle: fil('Ventes', { libelle: 'Demandes', to: `${C}/demandes` }, 'Modifier') },
-                  { path: 'factures-client', element: <FacturesClient />, handle: fil('Ventes', 'Factures client') },
-                  { path: 'factures-client/nouvelle', element: <FactureClientFormulaire />, handle: fil('Ventes', { libelle: 'Factures client', to: `${C}/factures-client` }, 'Établir') },
+                  {
+                    path: 'demandes/nouvelle',
+                    element: <DemandeFormulaire />,
+                    handle: fil('Ventes', { libelle: 'Demandes', to: `${C}/demandes` }, 'Nouvelle'),
+                  },
+                  {
+                    path: 'demandes/:id/modifier',
+                    element: <DemandeFormulaire />,
+                    handle: fil('Ventes', { libelle: 'Demandes', to: `${C}/demandes` }, 'Modifier'),
+                  },
+                  {
+                    path: 'factures-client',
+                    element: <FacturesClient />,
+                    handle: fil('Ventes', 'Factures client'),
+                  },
+                  {
+                    path: 'factures-client/nouvelle',
+                    element: <FactureClientFormulaire />,
+                    handle: fil(
+                      'Ventes',
+                      { libelle: 'Factures client', to: `${C}/factures-client` },
+                      'Établir',
+                    ),
+                  },
                   { path: 'compte', element: <MonCompte />, handle: fil('Compte', 'Mon compte') },
-                  { path: 'activite', element: <MonActivite />, handle: fil('Compte', 'Mon activité') },
-                  { path: '*', element: <PageIntrouvable /> },
+                  {
+                    path: 'activite',
+                    element: <MonActivite />,
+                    handle: fil('Compte', 'Mon activité'),
+                  },
+                  { path: '*', element: <PageIntrouvable dansApplication /> },
                 ],
               },
             ],
