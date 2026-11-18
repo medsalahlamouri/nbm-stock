@@ -192,7 +192,7 @@ export function DataTable({
 }
 
 /** Pagination : « ‹ 1 2 3 › » + « Page p / P » */
-export function Pagination({ page, nbPages, onPage }) {
+function Pagination({ page, nbPages, onPage }) {
   if (nbPages <= 1) return <span className="text-mutedtxt text-[13px]">Page 1 / 1</span>
   const pages = []
   const debut = Math.max(1, Math.min(page - 2, nbPages - 4))

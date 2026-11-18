@@ -132,7 +132,7 @@ export function initiales(...parties) {
 }
 
 /** Normalise un texte pour une recherche insensible aux accents et à la casse */
-export function normaliser(texte) {
+function normaliser(texte) {
   return String(texte ?? '')
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
@@ -207,7 +207,7 @@ function moinsDeMille(n) {
 }
 
 /** Entier en toutes lettres (jusqu'aux milliards) */
-export function nombreEnLettres(nombre) {
+function nombreEnLettres(nombre) {
   let n = Math.floor(Math.abs(Number(nombre) || 0))
   if (n === 0) return 'zéro'
   const groupes = [

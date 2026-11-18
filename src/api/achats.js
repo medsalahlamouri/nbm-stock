@@ -123,14 +123,14 @@ const SELECT_COMMANDE =
   '*, devis(id_devis, prix_unitaire, delai_livraison, date_devis, fournisseur(id_fournisseur, raison_sociale, telephone, email), produit(id_produit, code, designation, unite)), facture_fournisseur(*)'
 
 /** Date de livraison prévue = date de commande + délai du devis */
-export function datePrevue(commande) {
+function datePrevue(commande) {
   const date = new Date(`${commande.date_commande}T00:00:00`)
   date.setDate(date.getDate() + Number(commande.devis?.delai_livraison ?? 0))
   return date
 }
 
 /** Nombre de jours entre aujourd'hui et la livraison prévue (négatif = retard) */
-export function joursAvantLivraison(commande) {
+function joursAvantLivraison(commande) {
   const aujourdHui = new Date()
   aujourdHui.setHours(0, 0, 0, 0)
   return Math.round((datePrevue(commande) - aujourdHui) / 86_400_000)

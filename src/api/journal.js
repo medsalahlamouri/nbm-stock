@@ -40,7 +40,7 @@ export function libelleAction(action) {
 }
 
 /** Domaines utilisés par les onglets de filtre (objets et actions concernés) */
-export const DOMAINES_JOURNAL = {
+const DOMAINES_JOURNAL = {
   stock: { objets: ['produit', 'mouvement_stock'], actions: ['MOUVEMENT', 'INVENTAIRE'] },
   achats: {
     objets: ['fournisseur', 'devis', 'commande_fournisseur', 'facture_fournisseur'],

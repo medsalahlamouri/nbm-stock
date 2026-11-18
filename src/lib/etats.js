@@ -4,7 +4,7 @@
  */
 import { pluriel } from '@/lib/format'
 
-export const ETATS_STOCK = {
+const ETATS_STOCK = {
   SUFFISANT: { libelle: 'Suffisant', ton: 'ok' },
   A_COMMANDER: { libelle: 'À commander', ton: 'danger' },
   COMMANDE_EN_COURS: { libelle: 'Commande en cours', ton: 'info' },
@@ -12,7 +12,7 @@ export const ETATS_STOCK = {
 }
 export const etatStock = (etat) => ETATS_STOCK[etat] ?? { libelle: etat ?? '—', ton: 'neutral' }
 
-export const ETATS_COMMANDE = {
+const ETATS_COMMANDE = {
   EN_ATTENTE: { libelle: 'En attente', ton: 'warn' },
   RECUE: { libelle: 'Reçue', ton: 'ok' },
   ANNULEE: { libelle: 'Annulée', ton: 'neutral' },
@@ -32,7 +32,7 @@ export function etatCommande(commande) {
   return { libelle: `Dans ${pluriel(jours, 'jour')}`, ton: 'info' }
 }
 
-export const ETATS_DEMANDE = {
+const ETATS_DEMANDE = {
   EN_ATTENTE: { libelle: 'En attente', ton: 'warn' },
   FACTUREE: { libelle: 'Facturée', ton: 'ok' },
   ANNULEE: { libelle: 'Annulée', ton: 'neutral' },

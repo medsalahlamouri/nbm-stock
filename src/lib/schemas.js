@@ -17,7 +17,7 @@ export const emailFacultatif = z
   .trim()
   .refine((v) => v === '' || z.email().safeParse(v).success, 'Adresse e-mail invalide.')
 
-export const emailObligatoire = z
+const emailObligatoire = z
   .string()
   .trim()
   .min(1, "L'adresse e-mail est obligatoire.")

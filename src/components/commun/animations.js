@@ -4,7 +4,7 @@
  * demande de réduire les animations (prefers-reduced-motion).
  */
 
-export const TRANSITION = { duration: 0.22, ease: [0.22, 1, 0.36, 1] }
+const TRANSITION = { duration: 0.22, ease: [0.22, 1, 0.36, 1] }
 
 /** Apparition d'une carte ou d'un bloc : fondu + léger glissement vers le haut */
 export const apparition = {

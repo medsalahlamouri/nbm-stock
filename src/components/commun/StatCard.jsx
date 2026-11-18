@@ -39,7 +39,7 @@ export function Pastille({ icone: Icone, ton = 'neutral', taille = 34, className
 /** Nombre qui s'anime de 0 (ou de sa valeur précédente) jusqu'à sa valeur, au format français */
 const formaterDefaut = (v) => formatNombre(v)
 
-export function NombreAnime({ valeur, formater = formaterDefaut, duree = 0.5 }) {
+function NombreAnime({ valeur, formater = formaterDefaut, duree = 0.5 }) {
   const ref = useRef(null)
   const precedent = useRef(0)
   const reduit = useReducedMotion()
