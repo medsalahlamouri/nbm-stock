@@ -1,5 +1,5 @@
 /*
- * Badge d'état (docs/DESIGN.md §4) : pastille arrondie 24 px, couleur selon le ton.
+ * Badge d'état : pastille arrondie 24 px, couleur selon le ton.
  * Les correspondances états du back-end → { libelle, ton } sont dans src/lib/etats.js.
  */
 import { cn } from '@/lib/utils'

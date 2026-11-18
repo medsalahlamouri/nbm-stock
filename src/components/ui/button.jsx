@@ -1,4 +1,4 @@
-// Composant shadcn/ui « button » (licence MIT), adapté aux gabarits de la maquette (docs/DESIGN.md §4) :
+// Composant shadcn/ui « button » (licence MIT), adapté aux gabarits de la maquette :
 // principal noir 40 px, secondaire blanc bordé, petit bouton 32 px, bouton-icône 38 px, retour visuel au clic.
 import * as React from 'react'
 import { cva } from 'class-variance-authority'

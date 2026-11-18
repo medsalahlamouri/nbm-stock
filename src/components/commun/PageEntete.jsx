@@ -1,5 +1,5 @@
 /*
- * Tête de page (docs/DESIGN.md §3) : titre h1 Fraunces 30 px + phrase d'introduction à gauche,
+ * Tête de page : titre h1 Fraunces 30 px + phrase d'introduction à gauche,
  * boutons d'action à droite.
  */
 import { cn } from '@/lib/utils'

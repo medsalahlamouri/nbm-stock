@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 /*
  * Thème clair / sombre de l'application.
- * - Le thème est porté par l'attribut data-theme sur <html> (variables CSS de docs/DESIGN.md).
+ * - Le thème est porté par l'attribut data-theme sur <html>.
  * - Le choix est mémorisé dans localStorage (clé « nbm-theme »).
  * - Sans choix mémorisé, on suit la préférence du système.
  * Un petit script dans index.html applique le thème avant le premier affichage (pas de flash).

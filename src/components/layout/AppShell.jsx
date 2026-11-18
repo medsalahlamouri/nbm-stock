@@ -1,5 +1,5 @@
 /*
- * Habillage des écrans connectés (docs/DESIGN.md §3) :
+ * Habillage des écrans connectés :
  * menu latéral noir fixe (≥ 1024 px) ou en panneau coulissant (tablette), en-tête, contenu centré.
  * Le contenu de chaque page apparaît avec une courte transition ; les pages sont chargées à la demande.
  */

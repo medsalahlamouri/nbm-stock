@@ -1,5 +1,5 @@
 /*
- * Habillage des pages d'accès (docs/DESIGN.md §6) : fond --bg avec halo radial clair en haut et fines
+ * Habillage des pages d'accès : fond --bg avec halo radial clair en haut et fines
  * lignes verticales tous les 88 px, logo inversé 64 px, « NBM », carte centrée de 440 px, pied de page,
  * bouton thème en haut à droite.
  */

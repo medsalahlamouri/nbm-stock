@@ -1,5 +1,5 @@
 /*
- * États d'un écran (docs/CONVENTIONS.md §4 règle 15) : chargement (squelettes), vide (message + action), erreur.
+ * États d'un écran : chargement (squelettes), vide (message + action), erreur.
  */
 import { motion } from 'motion/react'
 import { AlertTriangle, Inbox, RefreshCw } from 'lucide-react'

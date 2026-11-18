@@ -1,5 +1,5 @@
 /*
- * Encart d'alerte (docs/DESIGN.md §4) : rayon 12 px, padding 12×14 px, fond et texte selon le ton,
+ * Encart d'alerte : rayon 12 px, padding 12×14 px, fond et texte selon le ton,
  * icône à gauche.
  */
 import { motion } from 'motion/react'

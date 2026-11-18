@@ -1,7 +1,7 @@
 /*
  * Feuille de style globale de NBM Stock.
  * 1. Tailwind CSS 4 et animations de shadcn/ui
- * 2. Variables de la maquette (docs/DESIGN.md §1), thème clair et sombre
+ * 2. Variables de la maquette, thème clair et sombre
  * 3. Jetons shadcn/ui reliés aux variables de la maquette
  * 4. Exposition des jetons à Tailwind (@theme inline) : bg-surf, text-muted, bg-okbg…
  */
@@ -190,7 +190,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Variables de la maquette (noms courts de DESIGN.md) */
+  /* Variables de la maquette */
   --color-bg: var(--bg);
   --color-surf: var(--surf);
   --color-surf2: var(--surf2);
@@ -270,7 +270,7 @@
   h3 {
     text-wrap: balance;
   }
-  /* Focus visible au clavier : contour 2 px couleur encre (DESIGN.md) */
+  /* Focus visible au clavier : contour 2 px couleur encre */
   :focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 2px;

@@ -1,5 +1,5 @@
 /*
- * Gardes de routes (docs/CONVENTIONS.md §4 règles 5 et 7).
+ * Gardes de routes.
  * - RouteProtegee : il faut être connecté ; mot de passe provisoire → /changer-mot-de-passe obligatoire.
  * - RouteProfil : un profil n'ouvre jamais les écrans de l'autre (redirection vers son tableau de bord).
  * - RoutePublique : la page de connexion redirige une personne déjà connectée.

@@ -1,5 +1,5 @@
 /*
- * Logo NBM (docs/DESIGN.md §5) : deux montants et une diagonale dorée.
+ * Logo NBM : deux montants et une diagonale dorée.
  * `inverse` : carré foncé et montants clairs (page de connexion).
  */
 export function Logo({ taille = 34, inverse = false, className }) {

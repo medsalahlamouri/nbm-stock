@@ -1,5 +1,5 @@
 /*
- * Carte / section (docs/DESIGN.md §4) : fond --surf, bordure --line, rayon 14 px, padding 22 px.
+ * Carte / section : fond --surf, bordure --line, rayon 14 px, padding 22 px.
  * CarteEntete : titre h2 16 px + description en --muted + action à droite.
  */
 import { motion } from 'motion/react'

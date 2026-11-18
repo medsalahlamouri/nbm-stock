@@ -1,5 +1,5 @@
 /*
- * Fenêtre de confirmation (docs/CONVENTIONS.md §4 règle 10) : avant toute suppression, désactivation,
+ * Fenêtre de confirmation : avant toute suppression, désactivation,
  * annulation ou validation d'inventaire. Construite sur AlertDialog de shadcn/ui.
  * Le bouton de confirmation affiche un état de chargement pendant l'action ; la fenêtre se ferme
  * seulement si l'action réussit.

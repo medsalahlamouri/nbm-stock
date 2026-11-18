@@ -1,5 +1,5 @@
 /*
- * Menus latéraux du gérant et du chef magasin (docs/DESIGN.md §3).
+ * Menus latéraux du gérant et du chef magasin.
  * `compteur` désigne le compteur affiché à droite du lien (voir useCompteursMenu) :
  * rouge pour les retards (gérant), doré pour les éléments à traiter (chef).
  */

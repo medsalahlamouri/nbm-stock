@@ -1,5 +1,5 @@
 /*
- * Carte indicateur (docs/DESIGN.md §4) : libellé, pastille d'icône colorée, valeur 28 px animée, sous-texte.
+ * Carte indicateur : libellé, pastille d'icône colorée, valeur 28 px animée, sous-texte.
  * Cliquable si `to` est fourni (légère élévation au survol).
  */
 import { useEffect, useRef } from 'react'

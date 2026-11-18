@@ -1,5 +1,5 @@
 /*
- * Menu latéral noir (docs/DESIGN.md §3) : logo, sections, liens avec compteurs, carte utilisateur.
+ * Menu latéral noir : logo, sections, liens avec compteurs, carte utilisateur.
  * Lien actif : fond --sideon, texte blanc, trait clair à gauche (la pastille glisse d'un lien à l'autre).
  */
 import { Link, NavLink } from 'react-router'

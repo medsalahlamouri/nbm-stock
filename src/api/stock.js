@@ -169,7 +169,7 @@ export async function supprimerOuDesactiver(objet, id) {
 
 const CLES = { fournisseur: 'id_fournisseur', client: 'id_client', produit: 'id_produit' }
 
-/** Réactivation : update ... set actif = true (autorisé par BACKEND.md §5) */
+/** Réactivation : update ... set actif = true */
 export async function reactiver(objet, id) {
   return deballer(
     await supabase.from(objet).update({ actif: true }).eq(CLES[objet], id).select().single(),

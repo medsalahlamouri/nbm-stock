@@ -1,5 +1,5 @@
 /*
- * Suppression d'un fournisseur, d'un client ou d'un produit (docs/CONVENTIONS.md §4 règle 11) :
+ * Suppression d'un fournisseur, d'un client ou d'un produit :
  * rpc('supprimer_ou_desactiver') supprime l'élément s'il n'a aucune donnée liée, sinon le désactive.
  * Le résultat est annoncé clairement ; la réactivation remet actif = true.
  */

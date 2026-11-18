@@ -1,5 +1,5 @@
 /*
- * Tableau paginé et triable (docs/DESIGN.md §4, docs/CONVENTIONS.md §4 règle 14) :
+ * Tableau paginé et triable :
  * en-têtes 12 px majuscules sur fond --surf2, lignes 52 px, colonnes numériques à droite,
  * pagination par 10 lignes avec « lignes 1 à 10 sur N » et pages numérotées.
  *

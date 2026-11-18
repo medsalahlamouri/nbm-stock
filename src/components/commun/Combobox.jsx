@@ -1,6 +1,6 @@
 /*
- * Combobox (docs/DESIGN.md §4) : champ de recherche + liste filtrée, insensible aux accents et à la casse,
- * avec sous-libellé grisé. Utilisée pour les listes longues (produits, fournisseurs, clients) — règle §13.
+ * Combobox : champ de recherche + liste filtrée, insensible aux accents et à la casse,
+ * avec sous-libellé grisé. Utilisée pour les listes longues (produits, fournisseurs, clients).
  * Construite sur les composants shadcn/ui Popover et Command (cmdk).
  */
 import { useState } from 'react'

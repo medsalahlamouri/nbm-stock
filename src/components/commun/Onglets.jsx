@@ -1,7 +1,7 @@
 /*
- * Onglets segmentés (docs/DESIGN.md §4, « segmented control ») : fond --seg, onglet actif fond --surf
+ * Onglets segmentés : fond --seg, onglet actif fond --surf
  * avec ombre, compteur à côté du libellé. L'onglet actif glisse d'une option à l'autre (motion layoutId).
- * Utilisés pour les filtres à peu de choix (état, motif, type, canal, statut) — règle des filtres §13.
+ * Utilisés pour les filtres à peu de choix (état, motif, type, canal, statut).
  */
 import { useId } from 'react'
 import { motion } from 'motion/react'

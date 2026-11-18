@@ -1,5 +1,5 @@
 /*
- * Routes de l'application (docs/ECRANS.md §D).
+ * Routes de l'application.
  * - Chaque page est chargée à la demande (React.lazy) : le premier affichage reste léger.
  * - `handle.fil` décrit le fil d'Ariane de l'en-tête.
  * - Gardes : connexion obligatoire, puis profil GERANT ou CHEF_MAGASIN selon la branche.

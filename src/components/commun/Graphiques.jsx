@@ -1,5 +1,5 @@
 /*
- * Graphiques (Recharts) au style de la maquette (docs/DESIGN.md §4) :
+ * Graphiques (Recharts) au style de la maquette :
  * barres --strong à coins arrondis 4 px avec valeur au-dessus, grille pointillée --grid,
  * axes 11-12 px --muted ; anneau avec total au centre et légende chiffrée.
  * Les graphiques s'animent à l'apparition (désactivé si le système demande moins d'animations).

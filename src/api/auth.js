@@ -1,5 +1,5 @@
 /*
- * Authentification (UC01) — docs/BACKEND.md §2.
+ * Authentification (UC01).
  * Connexion par e-mail et mot de passe, enregistrement de la connexion, mot de passe provisoire, déconnexion.
  */
 import { supabase } from '@/lib/supabase'
