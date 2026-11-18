@@ -14,10 +14,9 @@ Toutes les interfaces, tous les messages et tous les commentaires de code sont *
 |---|---|
 | `docs/BACKEND.md` | Contrat Supabase : tables, vues, fonctions RPC (paramètres et retours), Edge Functions, Storage, droits par profil |
 | `docs/DESIGN.md` | Système visuel : couleurs (thème clair et sombre), typographie, composants, logo |
-| `docs/ECRANS.md` | Les 46 écrans : route, profil, contenu, actions, source de données |
-| `docs/maquette/` | Captures PNG de la maquette ; `INDEX.md` associe chaque capture à sa fiche et liste les écarts retenus |
+| `docs/ECRANS.md` | Les 46 écrans : route, profil, contenu, actions, source de données ; écarts retenus avec la maquette |
 
-En cas de doute : **la maquette fait foi pour le visuel**, **`docs/BACKEND.md` pour les données et les règles**.
+En cas de doute : **`docs/DESIGN.md` fait foi pour le visuel**, **`docs/BACKEND.md` pour les données et les règles**.
 
 ---
 
@@ -62,9 +61,7 @@ src/
   pages/gerant/                écrans du gérant
   pages/chef/                  écrans du chef magasin
   pages/erreurs/               pages 404 et erreur
-docs/                          documents de référence
-  maquette/captures/           captures PNG de la maquette (01a-connexion.png…)
-  maquette/INDEX.md            correspondance captures ↔ fiches, écarts retenus
+docs/                          documents de référence (conventions, back-end, design, écrans)
 ```
 
 Le dépôt ne contient que la front-end : aucun serveur, aucune migration, aucune Edge Function.

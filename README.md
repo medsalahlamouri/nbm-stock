@@ -66,8 +66,7 @@ src/
   pages/gerant/            écrans du gérant (B1 à B14)
   pages/chef/              écrans du chef magasin (C1 à C10ter)
   pages/erreurs/           pages 404 et erreur
-docs/                      conventions de développement, contrat back-end, système visuel,
-                           fiches des écrans, maquette (captures + index)
+docs/                      conventions de développement, contrat back-end, système visuel, fiches des écrans
 ```
 
 ## Principes

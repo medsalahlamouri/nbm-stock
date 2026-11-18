@@ -1,8 +1,8 @@
 # Écrans de l'application — fiches de développement
 
-Une fiche par écran de la maquette (fichier `*.dc.html` d'origine entre parenthèses).
+Une fiche par écran (nom de l'écran dans la maquette entre parenthèses).
 G = gérant, C = chef magasin. Les sources de données renvoient à `docs/BACKEND.md`.
-Pour la mise en page exacte, se reporter à la capture correspondante de la maquette (`docs/maquette/INDEX.md`).
+Les écarts retenus entre la maquette et le back-end sont listés en section E.
 
 ---
 
@@ -266,3 +266,19 @@ Pour la mise en page exacte, se reporter à la capture correspondante de la maqu
 | `/chef/compte`, `/chef/activite` | A3, A4 | C |
 
 Toute route d'un autre profil redirige vers le tableau de bord de l'utilisateur ; une route inconnue affiche une page 404 sobre.
+
+---
+
+## E. Écarts retenus entre la maquette et le back-end
+
+Quand la maquette et le back-end divergent, le back-end fait foi.
+
+| Écran | Ce que montre la maquette | Ce que permet le back-end | Choix retenu |
+|---|---|---|---|
+| C4, C5 | Modifier ou supprimer un mouvement saisi ; motifs « Retour atelier », « Perte / casse » ; date, heure, observation | Aucune RPC de modification ni de suppression ; `enregistrer_mouvement(p_id_produit, p_quantite)` déduit le motif (MP → Consommation atelier, article → Production atelier) et date le mouvement à l'instant | Pas de modification ni de suppression ; les corrections passent par l'inventaire (C6). Motif affiché en lecture seule |
+| B1, B2, B11 | « Valeur du stock MP » | `v_etat_stock.valeur_stock` n'est renseignée que pour les articles (stock × prix de vente) | Calculée dans la front-end : stock × dernier prix d'achat facturé (à défaut, meilleur devis) |
+| B12 | Références `USR-02`, `USR-03` | `id_utilisateur` est un uuid, sans numéro | Pas de référence affichée ; e-mail en sous-ligne |
+| C10ter | Adresse et téléphone de NBM sur la facture | Aucune table « entreprise » | Nom et ville seulement, à compléter dans `src/config/entreprise.js` |
+| B5 | « fournisseur depuis avril 2026 » | Pas de date de création dans `fournisseur` | Non affiché |
+| C9bis | Date de la demande modifiable | `modifier_demande` ne modifie ni le client ni la date | Client et date verrouillés en modification |
+| C3bis, B9 | Création d'une matière première par le gérant (attendue) | `creer_produit` est réservée au chef magasin | Le chef crée les produits ; le gérant règle leurs paramètres de calcul et passe les commandes |
